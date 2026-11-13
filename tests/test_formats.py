@@ -90,3 +90,16 @@ def test_ledger_persists_and_enforces_budget(tmp_path):
     with pytest.raises(BudgetExceeded):
         led.check(0.05)
     assert Ledger(p, budget=0.10).total == pytest.approx(0.06)  # survives restarts
+
+
+def test_regex_key_args():
+    resp = {"content": [{"type": "tool_use", "id": "t", "name": "Bash",
+                         "input": {"command": "cd apps/web && pnpm add lodash"}}]}
+    d = extract_decision(ANTHROPIC, resp)
+    assert d.key(["command~\\bpnpm\\b"]) == 'Bash({"command~\\\\bpnpm\\\\b": true})'
+    other = extract_decision(ANTHROPIC, {"content": [{"type": "tool_use", "id": "t", "name": "Bash",
+                                                      "input": {"command": "npm install lodash"}}]})
+    assert other.key(["command~\\bpnpm\\b"]) != d.key(["command~\\bpnpm\\b"])
+    # missing argument counts as "no match", not an error
+    assert "false" in extract_decision(ANTHROPIC, {"content": [
+        {"type": "tool_use", "id": "t", "name": "Read", "input": {"path": "x"}}]}).key(["command~pnpm"])

@@ -1,0 +1,492 @@
+{
+ "record": "experiments/phase0/results/deepseek-flash/records/tool_result_sentence_config.anthropic.json",
+ "n": 20,
+ "key_args": [
+  "path~server\\.yaml"
+ ],
+ "base_url": "https://api.deepseek.com/anthropic",
+ "ablation": [
+  "removed text '\\nserver.yaml'"
+ ],
+ "summary": {
+  "baseline": "Read({\"path~server\\\\.yaml\": true})",
+  "n_ok": 20,
+  "n_error": 0,
+  "same_decision": 0,
+  "same_rate": 0.0,
+  "same_rate_ci95": [
+   0.0,
+   0.16113012549493322
+  ],
+  "same_tool_name": 0,
+  "distribution": [
+   [
+    "Bash({\"path~server\\\\.yaml\": false})",
+    20
+   ]
+  ],
+  "cost": 0.0029654399999999997
+ },
+ "samples": [
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" --include=*.py --include=*.yaml --include=*.ini --include=*.md . | head -40; ls config"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 75
+   },
+   "cost": 0.00014737200000000002,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.2
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "The comment says this file isn't read anymore. Checking the real config.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -la config; grep -rn \"8080\\|port\" --include=*.yaml --include=*.py --include=*.md . | head -40"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 85
+   },
+   "cost": 0.00015937200000000002,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 0.91
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "The ini file is stale; let me check what the app actually reads.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|server.yaml\\|config.ini\\|port\" --include=*.py --include=*.yaml --include=*.yml --include=*.md . | head -40"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 93
+   },
+   "cost": 0.00016897199999999998,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.05
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -la config; cat app.py; cat config/logging.yaml; grep -rn \"8080\" --include=\"*\" . | head -50"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 68
+   },
+   "cost": 0.00013897199999999998,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.13
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "That file isn't read. Checking for the real config.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\\|server.yaml\" --include=*.py --include=*.yaml --include=*.ini --include=*.md . | head -40; ls -a config"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 91
+   },
+   "cost": 0.000166572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.63
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -a config; grep -rn \"8080\" --include=* . | grep -v \"^./.git/\" | head -30"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 66
+   },
+   "cost": 0.000136572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.88
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "cat app.py; echo ---; grep -rn \"8080\" --include=* . | grep -v \"^./.git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 64
+   },
+   "cost": 0.000134172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.74
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -a config; cat app.py | head -60; grep -rn \"8080\\|9090\\|server.yaml\\|config.ini\" --exclude-dir=.git . | head -40"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 78
+   },
+   "cost": 0.00015097199999999998,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.05
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -a; grep -rn \"8080\\|server.yaml\\|config\" app.py | head -30"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 58
+   },
+   "cost": 0.000126972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.86
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "The comment says this file is stale; checking the actual source and config dir.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|server.yaml\\|port\" --include=*.py --include=*.yaml --include=*.ini --include=*.md . | head -50; echo ---; ls -la config"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 98
+   },
+   "cost": 0.000174972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.9
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "That file is noted as stale. Checking the real config source.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --include=* . | grep -v \"^./.git/\"; echo ---; grep -rn \"server.yaml\\|config.ini\" app.py"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 87
+   },
+   "cost": 0.000161772,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.82
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "The config.ini is stale. Checking what the app actually reads.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\\|yaml\\|ini\" app.py README.md | head -50"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 73
+   },
+   "cost": 0.00014497199999999997,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.28
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -a config; grep -rn \"8080\" --include=* -r . 2>/dev/null | grep -v \"^./.git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 69
+   },
+   "cost": 0.00014017199999999999,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.92
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -a config; cat README.md; grep -rn \"8080\\|port\" app.py | head -40"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 61
+   },
+   "cost": 0.000130572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.5
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -a config; grep -rn \"8080\\|port\" app.py README.md 2>/dev/null | head -30"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 64
+   },
+   "cost": 0.000134172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.64
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "The config.ini says it's no longer read. Let me check what the app actually uses.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -a; grep -rn \"8080\" . --exclude-dir=.git 2>/dev/null; grep -rn \"config\" app.py"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 88
+   },
+   "cost": 0.00016297199999999997,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 4.32
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "The ini file isn't read. Checking what is actually used.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "cat app.py; ls -a config; grep -rn \"8080\\|port\" --include=*.py --include=*.yaml --include=*.yml --include=*.ini --include=*.md . | grep -v node_modules"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 99
+   },
+   "cost": 0.000176172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 4.5
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "The config.ini is stale — let me check what app.py actually reads.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -n \"8080\\|port\\|config\" app.py README.md; ls -a config"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 73
+   },
+   "cost": 0.00014497199999999997,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 4.19
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "ls -la config; cat app.py; cat config/logging.yaml | head -20"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 54
+   },
+   "cost": 0.000122172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 4.67
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "config.ini says it's no longer read. Checking the actual source.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" app.py config/ README.md | head -50"
+    }
+   },
+   "usage": {
+    "input_uncached": 181,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 71
+   },
+   "cost": 0.000142572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 5.1
+  }
+ ]
+}

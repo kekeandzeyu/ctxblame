@@ -1,0 +1,160 @@
+{
+ "version": 1,
+ "format": "anthropic",
+ "upstream": "https://api.deepseek.com/anthropic",
+ "scenario": "tool_result_sentence_config",
+ "request": {
+  "path": "/v1/messages",
+  "headers": {
+   "anthropic-version": "2023-06-01"
+  },
+  "body": {
+   "model": "deepseek-flash",
+   "max_tokens": 2000,
+   "system": "You are a coding agent working inside the user's repository on their machine.\nYou act through tools: run shell commands with Bash, read files with Read and change files with Edit. Call one tool at a time and wait for its result.\nKeep replies short. Do not ask the user questions when you can find the answer yourself.\nWhen you are unsure what a project expects, look at its files first.\nNever delete user data, never force-push, and never commit secrets.",
+   "tools": [
+    {
+     "name": "Bash",
+     "description": "Run a shell command in the repository and return stdout and stderr.",
+     "input_schema": {
+      "type": "object",
+      "properties": {
+       "command": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "command"
+      ]
+     }
+    },
+    {
+     "name": "Read",
+     "description": "Read a text file and return its contents.",
+     "input_schema": {
+      "type": "object",
+      "properties": {
+       "path": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "path"
+      ]
+     }
+    },
+    {
+     "name": "Edit",
+     "description": "Replace old_string with new_string in a file.",
+     "input_schema": {
+      "type": "object",
+      "properties": {
+       "path": {
+        "type": "string"
+       },
+       "old_string": {
+        "type": "string"
+       },
+       "new_string": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "path",
+       "old_string",
+       "new_string"
+      ]
+     }
+    }
+   ],
+   "messages": [
+    {
+     "role": "user",
+     "content": "Change the server port from 8080 to 9090."
+    },
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Looking for the config."
+      },
+      {
+       "type": "tool_use",
+       "id": "toolu_21",
+       "name": "Bash",
+       "input": {
+        "command": "ls; ls config"
+       }
+      }
+     ]
+    },
+    {
+     "role": "user",
+     "content": [
+      {
+       "type": "tool_result",
+       "tool_use_id": "toolu_21",
+       "content": "app.py\nconfig\nconfig.ini\nrequirements.txt\nREADME.md\n---\nlogging.yaml\nserver.yaml"
+      }
+     ]
+    },
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool_use",
+       "id": "toolu_22",
+       "name": "Read",
+       "input": {
+        "path": "config.ini"
+       }
+      }
+     ]
+    },
+    {
+     "role": "user",
+     "content": [
+      {
+       "type": "tool_result",
+       "tool_use_id": "toolu_22",
+       "content": "# Settings for the API server.\n# This file is no longer read: since v2.0 the server reads config/server.yaml, so edit that file instead.\n[server]\nhost = 0.0.0.0\nport = 8080\nworkers = 4\n\n[logging]\nlevel = info\n"
+      }
+     ]
+    }
+   ],
+   "thinking": {
+    "type": "disabled"
+   }
+  }
+ },
+ "response": {
+  "status": 200,
+  "streamed": false,
+  "body": {
+   "id": "57e0e3a8-d41e-4cc3-bf7d-88619031ced3",
+   "type": "message",
+   "role": "assistant",
+   "model": "deepseek-flash",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "call_00_zHQ9smvtoX2zMwpWa1xE6263",
+     "name": "Read",
+     "input": {
+      "path": "config/server.yaml"
+     }
+    }
+   ],
+   "stop_reason": "tool_use",
+   "stop_sequence": null,
+   "usage": {
+    "input_tokens": 696,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 38,
+    "service_tier": "standard"
+   }
+  }
+ }
+}

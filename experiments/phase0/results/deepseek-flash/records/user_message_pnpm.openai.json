@@ -1,0 +1,161 @@
+{
+ "version": 1,
+ "format": "openai",
+ "upstream": "https://api.deepseek.com",
+ "scenario": "user_message_pnpm",
+ "request": {
+  "path": "/chat/completions",
+  "headers": {},
+  "body": {
+   "model": "deepseek-flash",
+   "max_tokens": 2000,
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a coding agent working inside the user's repository on their machine.\nYou act through tools: run shell commands with Bash, read files with Read and change files with Edit. Call one tool at a time and wait for its result.\nKeep replies short. Do not ask the user questions when you can find the answer yourself.\nWhen you are unsure what a project expects, look at its files first.\nNever delete user data, never force-push, and never commit secrets."
+    },
+    {
+     "role": "user",
+     "content": "Hi! Some context before we start: this is the monorepo for our web shop. We use pnpm in this repo, never npm or yarn. The storefront lives in apps/web and shared UI code in packages/ui."
+    },
+    {
+     "role": "assistant",
+     "content": "Thanks, I'll take a look around.",
+     "tool_calls": [
+      {
+       "id": "toolu_31",
+       "type": "function",
+       "function": {
+        "name": "Bash",
+        "arguments": "{\"command\": \"ls; cat apps/web/package.json\"}"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "tool_call_id": "toolu_31",
+     "content": "apps\npackages\npackage.json\nturbo.json\nREADME.md\n---\n{\n  \"name\": \"web\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"15.1.0\",\n    \"react\": \"19.0.0\"\n  }\n}"
+    },
+    {
+     "role": "assistant",
+     "content": "The storefront is a Next.js app in apps/web. What would you like me to do?"
+    },
+    {
+     "role": "user",
+     "content": "Add lodash as a dependency of the storefront."
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "Bash",
+      "description": "Run a shell command in the repository and return stdout and stderr.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "command": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "command"
+       ]
+      }
+     }
+    },
+    {
+     "type": "function",
+     "function": {
+      "name": "Read",
+      "description": "Read a text file and return its contents.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "path": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "path"
+       ]
+      }
+     }
+    },
+    {
+     "type": "function",
+     "function": {
+      "name": "Edit",
+      "description": "Replace old_string with new_string in a file.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "path": {
+         "type": "string"
+        },
+        "old_string": {
+         "type": "string"
+        },
+        "new_string": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "path",
+        "old_string",
+        "new_string"
+       ]
+      }
+     }
+    }
+   ],
+   "thinking": {
+    "type": "disabled"
+   }
+  }
+ },
+ "response": {
+  "status": 200,
+  "streamed": false,
+  "body": {
+   "id": "bc7788c2-e97e-4674-9da1-e15841f7ea9a",
+   "object": "chat.completion",
+   "created": 1794563366,
+   "model": "deepseek-flash",
+   "choices": [
+    {
+     "index": 0,
+     "message": {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+       {
+        "index": 0,
+        "id": "call_00_oo8s61glb9vtD5VGpTpJ7069",
+        "type": "function",
+        "function": {
+         "name": "Bash",
+         "arguments": "{\"command\": \"cd apps/web && pnpm add lodash 2>&1 | tail -20\"}"
+        }
+       }
+      ]
+     },
+     "logprobs": null,
+     "finish_reason": "tool_calls"
+    }
+   ],
+   "usage": {
+    "prompt_tokens": 697,
+    "completion_tokens": 53,
+    "total_tokens": 750,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 697
+   },
+   "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+ }
+}

@@ -1,0 +1,172 @@
+{
+ "version": 1,
+ "format": "openai",
+ "upstream": "https://api.deepseek.com",
+ "scenario": "tool_result_sentence_config",
+ "request": {
+  "path": "/chat/completions",
+  "headers": {},
+  "body": {
+   "model": "deepseek-v4-pro",
+   "max_tokens": 2000,
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a coding agent working inside the user's repository on their machine.\nYou act through tools: run shell commands with Bash, read files with Read and change files with Edit. Call one tool at a time and wait for its result.\nKeep replies short. Do not ask the user questions when you can find the answer yourself.\nWhen you are unsure what a project expects, look at its files first.\nNever delete user data, never force-push, and never commit secrets."
+    },
+    {
+     "role": "user",
+     "content": "Change the server port from 8080 to 9090."
+    },
+    {
+     "role": "assistant",
+     "content": "Looking for the config.",
+     "tool_calls": [
+      {
+       "id": "toolu_21",
+       "type": "function",
+       "function": {
+        "name": "Bash",
+        "arguments": "{\"command\": \"ls; ls config\"}"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "tool_call_id": "toolu_21",
+     "content": "app.py\nconfig\nconfig.ini\nrequirements.txt\nREADME.md\n---\nlogging.yaml\nserver.yaml"
+    },
+    {
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "toolu_22",
+       "type": "function",
+       "function": {
+        "name": "Read",
+        "arguments": "{\"path\": \"config.ini\"}"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "tool_call_id": "toolu_22",
+     "content": "# Settings for the API server.\n# This file is no longer read: since v2.0 the server reads config/server.yaml, so edit that file instead.\n[server]\nhost = 0.0.0.0\nport = 8080\nworkers = 4\n\n[logging]\nlevel = info\n"
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "Bash",
+      "description": "Run a shell command in the repository and return stdout and stderr.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "command": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "command"
+       ]
+      }
+     }
+    },
+    {
+     "type": "function",
+     "function": {
+      "name": "Read",
+      "description": "Read a text file and return its contents.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "path": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "path"
+       ]
+      }
+     }
+    },
+    {
+     "type": "function",
+     "function": {
+      "name": "Edit",
+      "description": "Replace old_string with new_string in a file.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "path": {
+         "type": "string"
+        },
+        "old_string": {
+         "type": "string"
+        },
+        "new_string": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "path",
+        "old_string",
+        "new_string"
+       ]
+      }
+     }
+    }
+   ],
+   "thinking": {
+    "type": "disabled"
+   }
+  }
+ },
+ "response": {
+  "status": 200,
+  "streamed": false,
+  "body": {
+   "id": "3461a4b3-6d6b-43b0-8a5a-d856d8b6d438",
+   "object": "chat.completion",
+   "created": 1794563508,
+   "model": "deepseek-v4-pro",
+   "choices": [
+    {
+     "index": 0,
+     "message": {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+       {
+        "index": 0,
+        "id": "call_00_OLy3tAGVLTI4empnthK73884",
+        "type": "function",
+        "function": {
+         "name": "Read",
+         "arguments": "{\"path\": \"config/server.yaml\"}"
+        }
+       }
+      ]
+     },
+     "logprobs": null,
+     "finish_reason": "tool_calls"
+    }
+   ],
+   "usage": {
+    "prompt_tokens": 717,
+    "completion_tokens": 44,
+    "total_tokens": 761,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 717
+   },
+   "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+ }
+}

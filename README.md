@@ -38,6 +38,25 @@ normalized arguments (or only the `--key-args` you name), with a 95% interval.
 Every call is priced and logged to `.ctxblame/spend.jsonl`; `--budget`
 (default $5) is a hard cap across runs.
 
+## Ablation
+
+```sh
+uv run ctxblame-replay traces/<record>.json --list-units          # what can be removed
+uv run ctxblame-replay traces/<record>.json -n 20 --remove pair:toolu_12
+uv run ctxblame-replay traces/<record>.json -n 20 --remove-text "We use pnpm in this repo."
+uv run ctxblame-replay traces/<record>.json -n 10 --remove-random 45 --seed 1 --protect "<the user's task>"
+```
+
+Removing a tool call always removes its result too (and the reverse), empty
+messages are dropped and same-role neighbours merged, so the ablated request
+stays valid. `--key-arg 'command~\bpnpm\b'` makes "same decision" mean "the
+command matches this regex" instead of exact arguments.
+
+## Phase 0 results
+
+See [experiments/phase0](experiments/phase0/README.md): five planted-cause
+scenarios, both wire formats, two DeepSeek models.
+
 ## Tests
 
 ```sh

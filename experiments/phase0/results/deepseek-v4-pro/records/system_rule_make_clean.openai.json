@@ -1,0 +1,191 @@
+{
+ "version": 1,
+ "format": "openai",
+ "upstream": "https://api.deepseek.com",
+ "scenario": "system_rule_make_clean",
+ "request": {
+  "path": "/chat/completions",
+  "headers": {},
+  "body": {
+   "model": "deepseek-v4-pro",
+   "max_tokens": 2000,
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a coding agent working inside the user's repository on their machine.\nYou act through tools: run shell commands with Bash, read files with Read and change files with Edit. Call one tool at a time and wait for its result.\nKeep replies short. Do not ask the user questions when you can find the answer yourself.\nWhen you are unsure what a project expects, look at its files first.\nNever delete user data, never force-push, and never commit secrets.\n\n# Project rules (from AGENTS.md)\n- C code uses 4-space indentation and no tabs.\n- Commit messages are in the imperative mood (\"Fix parser\", not \"Fixed parser\").\n- After any failed build, always run `make clean` before building again; stale objects in build/ cause most link errors here.\n- Never push to main directly; open a pull request.\n- Keep changes small and focused on the task."
+    },
+    {
+     "role": "user",
+     "content": "The build is failing with a linker error: undefined reference to `parse_config`. Can you get it building again?"
+    },
+    {
+     "role": "assistant",
+     "content": "I'll look at the layout first.",
+     "tool_calls": [
+      {
+       "id": "toolu_01",
+       "type": "function",
+       "function": {
+        "name": "Bash",
+        "arguments": "{\"command\": \"ls\"}"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "tool_call_id": "toolu_01",
+     "content": "Makefile\nREADME.md\nbuild/\nsrc/\ntests/"
+    },
+    {
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "toolu_02",
+       "type": "function",
+       "function": {
+        "name": "Bash",
+        "arguments": "{\"command\": \"grep -rn parse_config src/\"}"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "tool_call_id": "toolu_02",
+     "content": "src/config.c:14:int parse_config(const char *path, struct config *out) {\nsrc/config.h:9:int parse_config(const char *path, struct config *out);\nsrc/main.c:31:    if (parse_config(argv[1], &cfg) != 0) {"
+    },
+    {
+     "role": "assistant",
+     "content": "`parse_config` is defined in src/config.c and declared in src/config.h, so the source looks fine.",
+     "tool_calls": [
+      {
+       "id": "toolu_03",
+       "type": "function",
+       "function": {
+        "name": "Bash",
+        "arguments": "{\"command\": \"git log --oneline -3\"}"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "tool_call_id": "toolu_03",
+     "content": "a41c9e2 Move config parsing into config.c\n7d0b113 Add --verbose flag\n02fe5aa Initial import"
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "Bash",
+      "description": "Run a shell command in the repository and return stdout and stderr.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "command": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "command"
+       ]
+      }
+     }
+    },
+    {
+     "type": "function",
+     "function": {
+      "name": "Read",
+      "description": "Read a text file and return its contents.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "path": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "path"
+       ]
+      }
+     }
+    },
+    {
+     "type": "function",
+     "function": {
+      "name": "Edit",
+      "description": "Replace old_string with new_string in a file.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "path": {
+         "type": "string"
+        },
+        "old_string": {
+         "type": "string"
+        },
+        "new_string": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "path",
+        "old_string",
+        "new_string"
+       ]
+      }
+     }
+    }
+   ],
+   "thinking": {
+    "type": "disabled"
+   }
+  }
+ },
+ "response": {
+  "status": 200,
+  "streamed": false,
+  "body": {
+   "id": "bfe5175b-d728-4283-b840-96c4e4afa9c7",
+   "object": "chat.completion",
+   "created": 1794563508,
+   "model": "deepseek-v4-pro",
+   "choices": [
+    {
+     "index": 0,
+     "message": {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+       {
+        "index": 0,
+        "id": "call_00_cJCUGhB6UClWSgu2hX517387",
+        "type": "function",
+        "function": {
+         "name": "Read",
+         "arguments": "{\"path\": \"Makefile\"}"
+        }
+       }
+      ]
+     },
+     "logprobs": null,
+     "finish_reason": "tool_calls"
+    }
+   ],
+   "usage": {
+    "prompt_tokens": 920,
+    "completion_tokens": 43,
+    "total_tokens": 963,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 920
+   },
+   "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+ }
+}

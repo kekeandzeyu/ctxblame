@@ -1,0 +1,503 @@
+{
+ "record": "experiments/phase0/results/deepseek-flash/records/tool_result_sentence_config.openai.json",
+ "n": 20,
+ "key_args": [
+  "path~server\\.yaml"
+ ],
+ "base_url": "https://api.deepseek.com",
+ "ablation": [
+  "removed text '# This file is no longer read: since v2.0 the server reads c'",
+  "removed text '\\nserver.yaml'"
+ ],
+ "summary": {
+  "baseline": "Read({\"path~server\\\\.yaml\": true})",
+  "n_ok": 20,
+  "n_error": 0,
+  "same_decision": 0,
+  "same_rate": 0.0,
+  "same_rate_ci95": [
+   0.0,
+   0.16113012549493322
+  ],
+  "same_tool_name": 1,
+  "distribution": [
+   [
+    "Bash({\"path~server\\\\.yaml\": false})",
+    18
+   ],
+   [
+    "Edit({\"path~server\\\\.yaml\": false})",
+    1
+   ],
+   [
+    "Read({\"path~server\\\\.yaml\": false})",
+    1
+   ]
+  ],
+  "cost": 0.00240144
+ },
+ "samples": [
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --include=* . | grep -v \"^./.git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 58
+   },
+   "cost": 0.000119172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 0.76
+  },
+  {
+   "ok": true,
+   "key": "Edit({\"path~server\\\\.yaml\": false})",
+   "name": "Edit",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Edit",
+    "args": {
+     "path": "config.ini",
+     "old_string": "port = 8080",
+     "new_string": "port = 9090"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 80
+   },
+   "cost": 0.000145572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.1
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" --include=*.py --include=*.md --include=*.ini --include=*.yaml --include=*.txt ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 73
+   },
+   "cost": 0.000137172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 0.83
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --exclude-dir=.git ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 0.7
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" . --exclude-dir=.git"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.47
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" --include=*.py --include=*.md --include=*.ini --include=*.yaml ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 68
+   },
+   "cost": 0.000131172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.39
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" . --exclude-dir=.git"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.62
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" . --include=* | head -20"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 53
+   },
+   "cost": 0.00011317199999999999,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.73
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --include=\"*\" . | grep -v \".git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 57
+   },
+   "cost": 0.00011797199999999999,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.21
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" . --include=* | grep -v \"\\.git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 57
+   },
+   "cost": 0.00011797199999999999,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.3
+  },
+  {
+   "ok": true,
+   "key": "Read({\"path~server\\\\.yaml\": false})",
+   "name": "Read",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Read",
+    "args": {
+     "path": "app.py"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 37
+   },
+   "cost": 9.397200000000001e-05,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.67
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --exclude-dir=.git ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.77
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" --include=* . | grep -v \"^./.git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 60
+   },
+   "cost": 0.00012157200000000001,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.08
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --include=\"*\" . | grep -v \".git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 57
+   },
+   "cost": 0.00011797199999999999,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.41
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --include=\"*\" . | grep -v \"^./.git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 59
+   },
+   "cost": 0.000120372,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.3
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" . --include=* 2>/dev/null | grep -v \"^./.git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 63
+   },
+   "cost": 0.000125172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.81
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" . --exclude-dir=.git"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 4.42
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --exclude-dir=.git ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 4.17
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" --include=*.py --include=*.ini --include=*.md --include=*.yaml --include=*.txt ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 73
+   },
+   "cost": 0.000137172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 4.2
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_calls",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" --include=*.py --include=*.ini --include=*.md --include=*.yaml ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 68
+   },
+   "cost": 0.000131172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 4.68
+  }
+ ]
+}

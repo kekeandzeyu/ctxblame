@@ -24,6 +24,7 @@ from aiohttp import ClientError, ClientSession, ClientTimeout
 
 from .formats import (ANTHROPIC, Decision, Usage, assemble_stream, detect_format,
                       extract_decision, extract_usage)
+from .ablate import AblationError, list_units, remove_random_span, remove_text, remove_units
 from .pricing import BudgetExceeded, Ledger, cost, resolve_model
 from .sse import parse_sse
 
@@ -78,6 +79,7 @@ class Sample:
     name: str | None = None
     stop: str | None = None
     text: str = ""
+    call: dict | None = None  # first tool call, {"name", "args"}, for inspection
     usage: dict | None = None
     cost: float = 0.0
     model: str | None = None
@@ -152,8 +154,9 @@ class Replayer:
         except Exception as e:
             return Sample(ok=False, error=str(e)[:300], seconds=round(time.time() - t0, 2))
         d = extract_decision(self.fmt, resp)
+        call = {"name": d.calls[0].name, "args": d.calls[0].args} if d.calls else None
         return Sample(ok=True, key=d.key(key_args), name=d.key(name_only=True), stop=d.stop,
-                      text=d.text[:200], usage=asdict(usage), cost=c, model=model,
+                      text=d.text[:200], call=call, usage=asdict(usage), cost=c, model=model,
                       seconds=round(time.time() - t0, 2))
 
     async def run(self, body: dict, n: int, key_args: list[str] | None) -> list[Sample]:
@@ -234,8 +237,19 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Replay a recorded LLM request N times.")
     ap.add_argument("record", type=Path)
     ap.add_argument("-n", type=int, default=10)
-    ap.add_argument("--key-args", default=None,
-                    help="comma-separated tool arguments that define 'same decision' (default: all)")
+    ap.add_argument("--key-arg", action="append", default=[],
+                    help="tool argument that defines 'same decision'; repeatable. "
+                         "'arg~regex' compares a regex match instead of the exact value (default: all args)")
+    ap.add_argument("--list-units", action="store_true", help="print removable units and exit")
+    ap.add_argument("--remove", action="append", default=[], metavar="UNIT",
+                    help="remove a unit (msg[3], pair:<id>, system, tool:<name>); repeatable")
+    ap.add_argument("--remove-text", action="append", default=[], metavar="TEXT",
+                    help="remove an exact text span wherever it occurs; repeatable")
+    ap.add_argument("--remove-random", type=int, default=None, metavar="CHARS",
+                    help="control: remove a random run of whole sentences/lines of about CHARS chars")
+    ap.add_argument("--protect", action="append", default=[], metavar="TEXT",
+                    help="text --remove-random must not touch (e.g. the cause, the user's task)")
+    ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--base-url", default=None, help="default: the upstream the record was made against")
     ap.add_argument("--api-key-env", default=None, help="env var holding the key (never pass the key itself)")
     ap.add_argument("--concurrency", type=int, default=4)
@@ -246,15 +260,24 @@ def main(argv: list[str] | None = None) -> int:
 
     rec = load_record(args.record)
     fmt = rec["format"]
+    body = rec["request"]["body"]
+    if args.list_units:
+        for u in list_units(fmt, body):
+            print(f"{u.id:28s} {u.kind:10s} {u.chars:6d}  {u.label}")
+        return 0
+    try:
+        body, ablation = ablate(fmt, body, args)
+    except AblationError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 6
     base = (args.base_url or rec["upstream"]).rstrip("/")
     key_env = args.api_key_env or default_key_env(fmt, base)
     api_key = os.environ.get(key_env)
     if not api_key:
         print(f"error: set {key_env} in the environment", file=sys.stderr)
         return 2
-    body = rec["request"]["body"]
     resolve_model(body.get("model", ""), base)  # fail early on unknown prices
-    key_args = args.key_args.split(",") if args.key_args else None
+    key_args = args.key_arg or None
     baseline = extract_decision(fmt, record_response(rec))
     est = estimate_cost(rec, base)
 
@@ -262,6 +285,8 @@ def main(argv: list[str] | None = None) -> int:
     if ledger.total + est > args.budget:
         print(f"error: budget exhausted (${ledger.total:.4f} of ${args.budget:.2f})", file=sys.stderr)
         return 3
+    if ablation:
+        print("Ablation: " + "; ".join(ablation))
     print(f"Replaying {args.n}x {fmt} request to {base} (~${est:.4f}/call worst case; "
           f"spent so far ${ledger.total:.4f})")
     rp = Replayer(fmt, base + rec["request"]["path"], build_headers(fmt, rec["request"].get("headers"), api_key),
@@ -280,10 +305,24 @@ def main(argv: list[str] | None = None) -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     out = args.out / f"{args.record.stem}.replay-{rp.run_id}.json"
     out.write_text(json.dumps({"record": str(args.record), "n": args.n, "key_args": key_args,
-                               "base_url": base, "summary": summary,
+                               "base_url": base, "ablation": ablation, "summary": summary,
                                "samples": [asdict(s) for s in samples]}, indent=1, ensure_ascii=False))
     print(f"Saved: {out}")
     return 0
+
+
+def ablate(fmt: str, body: dict, args) -> tuple[dict, list[str]]:
+    done = []
+    if args.remove:
+        body = remove_units(fmt, body, args.remove)
+        done.append("removed " + ", ".join(args.remove))
+    for t in args.remove_text:
+        body = remove_text(fmt, body, t)
+        done.append(f"removed text {t[:60]!r}")
+    if args.remove_random:
+        body, removed = remove_random_span(fmt, body, args.remove_random, random.Random(args.seed), args.protect)
+        done.append(f"removed random span ({len(removed)} chars, seed {args.seed}): {removed.strip()[:80]!r}")
+    return body, done
 
 
 class _Retry(Exception):

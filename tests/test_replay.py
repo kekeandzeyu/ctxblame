@@ -197,3 +197,26 @@ def test_missing_key_env(tmp_path, monkeypatch):
     monkeypatch.delenv("NOPE", raising=False)
     rec = write_record(tmp_path, "openai", "http://127.0.0.1:9")
     assert replay.main([str(rec), "--api-key-env", "NOPE"]) == 2
+
+
+def test_cli_ablation_sends_ablated_body(tmp_path, monkeypatch, capsys):
+    monkeypatch.setenv("K", FAKE_KEY)
+    app = make_upstream()
+    with ServerThread(app) as base:
+        rec = write_record(tmp_path, "openai", base)
+        rc = replay.main([str(rec), "-n", "2", "--api-key-env", "K", "--remove-text", "list ",
+                          "--key-arg", "command~^ls", "--ledger", str(tmp_path / "s.jsonl"),
+                          "--out", str(tmp_path / "runs")])
+    assert rc == 0
+    assert app[CALLS][0]["body"]["messages"][0]["content"] == "files"
+    assert "Ablation: removed text 'list '" in capsys.readouterr().out
+    run = json.loads(next((tmp_path / "runs").glob("*.json")).read_text())
+    assert run["ablation"] == ["removed text 'list '"]
+    assert run["samples"][0]["call"] == {"name": "Bash", "args": {"command": "ls -la"}}
+
+
+def test_cli_list_units_needs_no_key(tmp_path, monkeypatch, capsys):
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    rec = write_record(tmp_path, "anthropic", "http://127.0.0.1:9")
+    assert replay.main([str(rec), "--list-units"]) == 0
+    assert "msg[0]" in capsys.readouterr().out

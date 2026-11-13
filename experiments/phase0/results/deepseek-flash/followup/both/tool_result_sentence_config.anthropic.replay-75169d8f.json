@@ -1,0 +1,509 @@
+{
+ "record": "experiments/phase0/results/deepseek-flash/records/tool_result_sentence_config.anthropic.json",
+ "n": 20,
+ "key_args": [
+  "path~server\\.yaml"
+ ],
+ "base_url": "https://api.deepseek.com/anthropic",
+ "ablation": [
+  "removed text '# This file is no longer read: since v2.0 the server reads c'",
+  "removed text '\\nserver.yaml'"
+ ],
+ "summary": {
+  "baseline": "Read({\"path~server\\\\.yaml\": true})",
+  "n_ok": 20,
+  "n_error": 0,
+  "same_decision": 0,
+  "same_rate": 0.0,
+  "same_rate_ci95": [
+   0.0,
+   0.16113012549493322
+  ],
+  "same_tool_name": 0,
+  "distribution": [
+   [
+    "Bash({\"path~server\\\\.yaml\": false})",
+    14
+   ],
+   [
+    "Edit({\"path~server\\\\.yaml\": false})",
+    6
+   ]
+  ],
+  "cost": 0.00255864
+ },
+ "samples": [
+  {
+   "ok": true,
+   "key": "Edit({\"path~server\\\\.yaml\": false})",
+   "name": "Edit",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Edit",
+    "args": {
+     "path": "config.ini",
+     "old_string": "port = 8080",
+     "new_string": "port = 9090"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 80
+   },
+   "cost": 0.000145572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 0.9
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 45
+   },
+   "cost": 0.000103572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 0.88
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" . --include=* | head -20"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 53
+   },
+   "cost": 0.00011317199999999999,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 0.54
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" app.py README.md config | head -30"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 56
+   },
+   "cost": 0.000116772,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 0.7
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --exclude-dir=.git . | head -50"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 56
+   },
+   "cost": 0.000116772,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.27
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --exclude-dir=.git ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.72
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --exclude-dir=.git ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.61
+  },
+  {
+   "ok": true,
+   "key": "Edit({\"path~server\\\\.yaml\": false})",
+   "name": "Edit",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Edit",
+    "args": {
+     "path": "config.ini",
+     "old_string": "port = 8080",
+     "new_string": "port = 9090"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 80
+   },
+   "cost": 0.000145572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 1.87
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --exclude-dir=.git ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.06
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" --include=*.py --include=*.ini --include=*.yaml --include=*.md . | head -40"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 72
+   },
+   "cost": 0.000135972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.22
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\\|port\" --include=*.py --include=*.ini --include=*.md --include=*.yaml ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 68
+   },
+   "cost": 0.000131172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.48
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" . --exclude-dir=.git"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.53
+  },
+  {
+   "ok": true,
+   "key": "Edit({\"path~server\\\\.yaml\": false})",
+   "name": "Edit",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Edit",
+    "args": {
+     "path": "config.ini",
+     "old_string": "port = 8080",
+     "new_string": "port = 9090"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 80
+   },
+   "cost": 0.000145572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 2.84
+  },
+  {
+   "ok": true,
+   "key": "Edit({\"path~server\\\\.yaml\": false})",
+   "name": "Edit",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Edit",
+    "args": {
+     "path": "config.ini",
+     "old_string": "port = 8080",
+     "new_string": "port = 9090"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 80
+   },
+   "cost": 0.000145572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.02
+  },
+  {
+   "ok": true,
+   "key": "Edit({\"path~server\\\\.yaml\": false})",
+   "name": "Edit",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Edit",
+    "args": {
+     "path": "config.ini",
+     "old_string": "port = 8080",
+     "new_string": "port = 9090"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 123
+   },
+   "cost": 0.000197172,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.64
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --exclude-dir=.git ."
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 52
+   },
+   "cost": 0.000111972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.21
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --include=* . 2>/dev/null"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 54
+   },
+   "cost": 0.000114372,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.98
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" --include=* . | grep -v \"\\.git/\""
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 57
+   },
+   "cost": 0.00011797199999999999,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.89
+  },
+  {
+   "ok": true,
+   "key": "Bash({\"path~server\\\\.yaml\": false})",
+   "name": "Bash",
+   "stop": "tool_use",
+   "text": "Checking app.py for other hardcoded ports first.",
+   "call": {
+    "name": "Bash",
+    "args": {
+     "command": "grep -rn \"8080\" . --exclude-dir=.git"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 62
+   },
+   "cost": 0.000123972,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 3.83
+  },
+  {
+   "ok": true,
+   "key": "Edit({\"path~server\\\\.yaml\": false})",
+   "name": "Edit",
+   "stop": "tool_use",
+   "text": "",
+   "call": {
+    "name": "Edit",
+    "args": {
+     "path": "config.ini",
+     "old_string": "port = 8080",
+     "new_string": "port = 9090"
+    }
+   },
+   "usage": {
+    "input_uncached": 155,
+    "input_cache_read": 512,
+    "input_cache_write": 0,
+    "output": 80
+   },
+   "cost": 0.000145572,
+   "model": "deepseek-flash",
+   "error": null,
+   "seconds": 4.53
+  }
+ ]
+}

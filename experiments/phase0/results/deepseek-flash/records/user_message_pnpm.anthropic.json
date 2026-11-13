@@ -1,0 +1,150 @@
+{
+ "version": 1,
+ "format": "anthropic",
+ "upstream": "https://api.deepseek.com/anthropic",
+ "scenario": "user_message_pnpm",
+ "request": {
+  "path": "/v1/messages",
+  "headers": {
+   "anthropic-version": "2023-06-01"
+  },
+  "body": {
+   "model": "deepseek-flash",
+   "max_tokens": 2000,
+   "system": "You are a coding agent working inside the user's repository on their machine.\nYou act through tools: run shell commands with Bash, read files with Read and change files with Edit. Call one tool at a time and wait for its result.\nKeep replies short. Do not ask the user questions when you can find the answer yourself.\nWhen you are unsure what a project expects, look at its files first.\nNever delete user data, never force-push, and never commit secrets.",
+   "tools": [
+    {
+     "name": "Bash",
+     "description": "Run a shell command in the repository and return stdout and stderr.",
+     "input_schema": {
+      "type": "object",
+      "properties": {
+       "command": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "command"
+      ]
+     }
+    },
+    {
+     "name": "Read",
+     "description": "Read a text file and return its contents.",
+     "input_schema": {
+      "type": "object",
+      "properties": {
+       "path": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "path"
+      ]
+     }
+    },
+    {
+     "name": "Edit",
+     "description": "Replace old_string with new_string in a file.",
+     "input_schema": {
+      "type": "object",
+      "properties": {
+       "path": {
+        "type": "string"
+       },
+       "old_string": {
+        "type": "string"
+       },
+       "new_string": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "path",
+       "old_string",
+       "new_string"
+      ]
+     }
+    }
+   ],
+   "messages": [
+    {
+     "role": "user",
+     "content": "Hi! Some context before we start: this is the monorepo for our web shop. We use pnpm in this repo, never npm or yarn. The storefront lives in apps/web and shared UI code in packages/ui."
+    },
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Thanks, I'll take a look around."
+      },
+      {
+       "type": "tool_use",
+       "id": "toolu_31",
+       "name": "Bash",
+       "input": {
+        "command": "ls; cat apps/web/package.json"
+       }
+      }
+     ]
+    },
+    {
+     "role": "user",
+     "content": [
+      {
+       "type": "tool_result",
+       "tool_use_id": "toolu_31",
+       "content": "apps\npackages\npackage.json\nturbo.json\nREADME.md\n---\n{\n  \"name\": \"web\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"15.1.0\",\n    \"react\": \"19.0.0\"\n  }\n}"
+      }
+     ]
+    },
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The storefront is a Next.js app in apps/web. What would you like me to do?"
+      }
+     ]
+    },
+    {
+     "role": "user",
+     "content": "Add lodash as a dependency of the storefront."
+    }
+   ],
+   "thinking": {
+    "type": "disabled"
+   }
+  }
+ },
+ "response": {
+  "status": 200,
+  "streamed": false,
+  "body": {
+   "id": "8e6a7ac5-bf04-4cc6-8151-20a7c7f30034",
+   "type": "message",
+   "role": "assistant",
+   "model": "deepseek-flash",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "call_00_BX21XA70JiU8Vs7frVcG7805",
+     "name": "Bash",
+     "input": {
+      "command": "cd apps/web && pnpm add lodash"
+     }
+    }
+   ],
+   "stop_reason": "tool_use",
+   "stop_sequence": null,
+   "usage": {
+    "input_tokens": 697,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 45,
+    "service_tier": "standard"
+   }
+  }
+ }
+}

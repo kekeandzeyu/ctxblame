@@ -48,7 +48,9 @@ class Decision:
 
         The decision is the first tool call: its name plus normalized
         arguments (all of them, or only ``key_args``). No tool call -> a
-        fixed label, so "answered in text" is itself a decision.
+        fixed label, so "answered in text" is itself a decision. A key_args
+        entry "arg~regex" compares whether the argument matches the regex
+        instead of its exact value.
         """
         if not self.calls:
             return "<no tool call>"
@@ -57,7 +59,15 @@ class Decision:
             return c.name
         args = c.args
         if isinstance(args, dict) and key_args:
-            args = {k: args.get(k) for k in key_args}
+            sel = {}
+            for spec in key_args:
+                if "~" in spec:  # "arg~regex": does the argument match?
+                    k, rx = spec.split("~", 1)
+                    v = args.get(k)
+                    sel[spec] = v is not None and re.search(rx, str(v)) is not None
+                else:
+                    sel[spec] = args.get(spec)
+            args = sel
         return f"{c.name}({json.dumps(normalize(args), sort_keys=True, ensure_ascii=False)})"
 
 
