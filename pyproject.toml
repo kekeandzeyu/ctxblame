@@ -1,0 +1,29 @@
+[project]
+name = "ctxblame"
+version = "0.1.0"
+description = "git blame for LLM agent decisions: find which context chunk caused a tool call"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "kekeandzeyu", email = "162712521+kekeandzeyu@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.14.5",
+]
+
+[project.scripts]
+ctxblame-proxy = "ctxblame.proxy:main"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
