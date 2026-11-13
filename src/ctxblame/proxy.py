@@ -1,8 +1,10 @@
-"""Recording proxy for the Anthropic Messages API (and compatible endpoints).
+"""Recording proxy for LLM APIs: Anthropic Messages and OpenAI Chat Completions.
 
-Point a client at it with ``ANTHROPIC_BASE_URL=http://127.0.0.1:8787``. Every
-request is forwarded unchanged to the upstream; each ``POST .../v1/messages``
-exchange is also saved as one JSON file: the parsed request body, the response
+Point a client at it (``ANTHROPIC_BASE_URL=http://127.0.0.1:8787`` for
+Anthropic-format clients, ``OPENAI_BASE_URL=http://127.0.0.1:8787`` for OpenAI
+ones). Every request is forwarded unchanged to the upstream; each
+``POST .../v1/messages`` or ``POST .../chat/completions`` exchange is also
+saved as one JSON file: the parsed request body, the response
 body (or, for streams, every raw SSE event plus the reassembled message).
 
 Credentials are forwarded but never recorded: auth-like headers are dropped
@@ -23,7 +25,8 @@ from pathlib import Path
 
 from aiohttp import ClientSession, ClientTimeout, web
 
-from .sse import SSEParser, assemble_message
+from .formats import assemble_stream, detect_format
+from .sse import SSEParser
 
 RECORD_VERSION = 1
 CLIENT_KEY = web.AppKey("client", ClientSession)
@@ -52,8 +55,10 @@ def forward_headers(headers) -> dict[str, str]:
     return out
 
 
-def is_messages_call(method: str, path: str) -> bool:
-    return method == "POST" and path.rstrip("/").endswith("/v1/messages")
+def recorded_format(method: str, path: str) -> str | None:
+    """Which exchanges get recorded: Anthropic /v1/messages and OpenAI
+    /chat/completions POSTs. Everything else is passed through only."""
+    return detect_format(path) if method == "POST" else None
 
 
 class Recorder:
@@ -88,10 +93,10 @@ def make_app(upstream: str, out_dir: Path, quiet: bool = False) -> web.Applicati
     async def handle(request: web.Request) -> web.StreamResponse:
         body = await request.read()
         url = upstream + request.path_qs
-        record_it = is_messages_call(request.method, request.path)
+        fmt = recorded_format(request.method, request.path)
         t0 = time.time()
         rec: dict | None = None
-        if record_it:
+        if fmt is not None:
             try:
                 req_json = json.loads(body) if body else None
             except json.JSONDecodeError:
@@ -100,6 +105,7 @@ def make_app(upstream: str, out_dir: Path, quiet: bool = False) -> web.Applicati
                 "version": RECORD_VERSION,
                 "id": uuid.uuid4().hex,
                 "started_at": datetime.now(timezone.utc).isoformat(),
+                "format": fmt,
                 "upstream": upstream,
                 "request": {
                     "method": request.method,
@@ -156,7 +162,7 @@ def make_app(upstream: str, out_dir: Path, quiet: bool = False) -> web.Applicati
                 }
                 if streaming:
                     rec["response"]["events"] = events
-                    rec["response"]["message"] = assemble_message(events)
+                    rec["response"]["message"] = assemble_stream(fmt, events)
                 else:
                     raw = b"".join(chunks)
                     try:
@@ -178,9 +184,10 @@ def make_app(upstream: str, out_dir: Path, quiet: bool = False) -> web.Applicati
 
 
 def main(argv: list[str] | None = None) -> None:
-    ap = argparse.ArgumentParser(description="Record Anthropic Messages API traffic.")
+    ap = argparse.ArgumentParser(description="Record LLM API traffic (Anthropic or OpenAI format).")
     ap.add_argument("--upstream", default=os.environ.get("CTXBLAME_UPSTREAM", "https://api.anthropic.com"),
-                    help="e.g. https://api.anthropic.com or https://api.deepseek.com/anthropic")
+                    help="e.g. https://api.deepseek.com/anthropic (Anthropic format), "
+                         "https://api.deepseek.com (OpenAI format), https://api.anthropic.com")
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8787)
     ap.add_argument("--out", type=Path, default=Path("traces"))

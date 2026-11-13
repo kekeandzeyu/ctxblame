@@ -172,3 +172,70 @@ def assemble_message(events: list[SSEEvent | dict]) -> dict:
     if error is not None:
         msg["_stream_error"] = error
     return msg
+
+
+def assemble_openai_chunks(events: list[SSEEvent | dict]) -> dict:
+    """Rebuild a ``chat.completion`` object from OpenAI-format stream chunks.
+
+    Tool calls arrive as fragments keyed by ``index``; the first fragment has
+    ``id`` and ``function.name``, later ones only ``function.arguments`` text.
+    """
+    out: dict = {}
+    choices: dict[int, dict] = {}
+    complete = False
+    error = None
+    for raw in events:
+        if isinstance(raw, dict):
+            raw = SSEEvent(raw.get("event"), raw.get("data", ""))
+        data = raw.data.strip()
+        if not data:
+            continue
+        if data == "[DONE]":
+            complete = True
+            continue
+        try:
+            payload = json.loads(data)
+        except json.JSONDecodeError:
+            continue
+        if "error" in payload and "choices" not in payload:
+            error = payload["error"]
+            continue
+        for k in ("id", "created", "model", "system_fingerprint"):
+            if payload.get(k) is not None:
+                out.setdefault(k, payload[k])
+        if payload.get("usage"):
+            out["usage"] = payload["usage"]
+        for ch in payload.get("choices") or []:
+            i = ch.get("index", 0)
+            c = choices.setdefault(i, {"index": i, "message": {"role": "assistant", "content": None},
+                                       "finish_reason": None})
+            msg = c["message"]
+            d = ch.get("delta") or {}
+            if d.get("role"):
+                msg["role"] = d["role"]
+            for fld in ("content", "reasoning_content"):
+                if d.get(fld) is not None:
+                    msg[fld] = (msg.get(fld) or "") + d[fld]
+            for tc in d.get("tool_calls") or []:
+                calls = msg.setdefault("tool_calls", [])
+                idx = tc.get("index", len(calls))
+                while len(calls) <= idx:
+                    calls.append({"id": None, "type": "function", "function": {"name": "", "arguments": ""}})
+                call = calls[idx]
+                if tc.get("id"):
+                    call["id"] = tc["id"]
+                if tc.get("type"):
+                    call["type"] = tc["type"]
+                fn = tc.get("function") or {}
+                if fn.get("name"):
+                    call["function"]["name"] += fn["name"]
+                if fn.get("arguments"):
+                    call["function"]["arguments"] += fn["arguments"]
+            if ch.get("finish_reason"):
+                c["finish_reason"] = ch["finish_reason"]
+    out["object"] = "chat.completion"
+    out["choices"] = [choices[i] for i in sorted(choices)]
+    out["_stream_complete"] = complete
+    if error is not None:
+        out["_stream_error"] = error
+    return out
