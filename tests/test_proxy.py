@@ -6,6 +6,7 @@ from aiohttp import ClientSession, web
 from aiohttp.test_utils import TestServer
 
 from ctxblame.proxy import make_app
+from ctxblame.trace import load_trace
 
 from test_sse import TOOL_STREAM
 
@@ -47,7 +48,7 @@ def fake_upstream() -> web.Application:
 async def _run(tmp: Path):
     up_app = fake_upstream()
     async with TestServer(up_app) as up:
-        proxy_app = make_app(str(up.make_url("/anthropic")), tmp, quiet=True)
+        proxy_app = make_app(str(up.make_url("/anthropic")), tmp / "t.jsonl", quiet=True)
         async with TestServer(proxy_app) as px, ClientSession() as s:
             hdrs = {"x-api-key": FAKE_KEY, "Authorization": f"Bearer {FAKE_KEY}",
                     "anthropic-version": "2023-06-01", "content-type": "application/json"}
@@ -74,12 +75,12 @@ def test_proxy_forwards_and_records(tmp_path):
     assert seen[0]["headers"]["x-api-key"] == FAKE_KEY
     assert seen[0]["path"] == "/anthropic/v1/messages"
 
-    files = sorted(tmp_path.glob("*.json"))
-    assert len(files) == 2  # count_tokens is passed through, not recorded
-    for f in files:
-        assert FAKE_KEY not in f.read_text()
-
-    recs = [json.loads(f.read_text()) for f in files]
+    trace = (tmp_path / "t.jsonl").read_text()
+    assert FAKE_KEY not in trace
+    recs = [json.loads(l) for l in trace.splitlines()]
+    assert len(recs) == 2  # count_tokens is passed through, not recorded
+    assert [r["step"] for r in recs] == [1, 2]
+    assert [s.step for s in load_trace(tmp_path / "t.jsonl")] == [1, 2]
     stream_rec = next(r for r in recs if r["response"]["streamed"])
     plain_rec = next(r for r in recs if not r["response"]["streamed"])
 

@@ -4,8 +4,9 @@ Point a client at it (``ANTHROPIC_BASE_URL=http://127.0.0.1:8787`` for
 Anthropic-format clients, ``OPENAI_BASE_URL=http://127.0.0.1:8787`` for OpenAI
 ones). Every request is forwarded unchanged to the upstream; each
 ``POST .../v1/messages`` or ``POST .../chat/completions`` exchange is also
-saved as one JSON file: the parsed request body, the response
-body (or, for streams, every raw SSE event plus the reassembled message).
+appended to a JSON-lines trace as one numbered step: the parsed request body,
+the response body (or, for streams, every raw SSE event plus the reassembled
+message).
 
 Credentials are forwarded but never recorded: auth-like headers are dropped
 from the saved record.
@@ -15,7 +16,6 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import itertools
 import json
 import os
 import time
@@ -26,9 +26,10 @@ from pathlib import Path
 from aiohttp import ClientSession, ClientTimeout, web
 
 from .formats import assemble_stream, detect_format
+from .trace import TraceWriter
 from .sse import SSEParser
 
-RECORD_VERSION = 1
+RECORD_VERSION = 2  # 2: records carry a step number and live in a JSON-lines trace
 CLIENT_KEY = web.AppKey("client", ClientSession)
 
 HOP_BY_HOP = {
@@ -61,24 +62,15 @@ def recorded_format(method: str, path: str) -> str | None:
     return detect_format(path) if method == "POST" else None
 
 
-class Recorder:
-    def __init__(self, out_dir: Path) -> None:
-        self.out_dir = out_dir
-        self.out_dir.mkdir(parents=True, exist_ok=True)
-        self._seq = itertools.count(1)
-
-    def save(self, record: dict) -> Path:
-        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
-        path = self.out_dir / f"{stamp}-{next(self._seq):04d}-{record['id'][:8]}.json"
-        tmp = path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(record, ensure_ascii=False, indent=1))
-        tmp.replace(path)
-        return path
+def default_trace_path(out_dir: Path) -> Path:
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+    return Path(out_dir) / f"{stamp}-{uuid.uuid4().hex[:6]}.jsonl"
 
 
-def make_app(upstream: str, out_dir: Path, quiet: bool = False) -> web.Application:
+def make_app(upstream: str, trace: Path, quiet: bool = False) -> web.Application:
+    """Proxy to ``upstream``, appending recorded steps to the trace file ``trace``."""
     upstream = upstream.rstrip("/")
-    recorder = Recorder(out_dir)
+    recorder = TraceWriter(trace)
     app = web.Application(client_max_size=256 * 1024**2)
 
     async def on_startup(app: web.Application) -> None:
@@ -103,6 +95,7 @@ def make_app(upstream: str, out_dir: Path, quiet: bool = False) -> web.Applicati
                 req_json = None
             rec = {
                 "version": RECORD_VERSION,
+                "step": recorder.next_step(),
                 "id": uuid.uuid4().hex,
                 "started_at": datetime.now(timezone.utc).isoformat(),
                 "format": fmt,
@@ -171,8 +164,8 @@ def make_app(upstream: str, out_dir: Path, quiet: bool = False) -> web.Applicati
                         rec["response"]["body_text"] = raw.decode("utf-8", "replace")
                 path = recorder.save(rec)
                 if not quiet:
-                    print(f"recorded {request.path} -> {up.status} "
-                          f"{'stream' if streaming else 'json'} {path}", flush=True)
+                    print(f"step {rec['step']}: {request.path} -> {up.status} "
+                          f"{'stream' if streaming else 'json'} ({path})", flush=True)
 
         await resp.write_eof()
         return resp
@@ -183,17 +176,29 @@ def make_app(upstream: str, out_dir: Path, quiet: bool = False) -> web.Applicati
     return app
 
 
-def main(argv: list[str] | None = None) -> None:
-    ap = argparse.ArgumentParser(description="Record LLM API traffic (Anthropic or OpenAI format).")
+def add_args(ap: argparse.ArgumentParser) -> None:
     ap.add_argument("--upstream", default=os.environ.get("CTXBLAME_UPSTREAM", "https://api.anthropic.com"),
                     help="e.g. https://api.deepseek.com/anthropic (Anthropic format), "
                          "https://api.deepseek.com (OpenAI format), https://api.anthropic.com")
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8787)
+    ap.add_argument("--trace", type=Path, default=None,
+                    help="trace file to append to (default: a new file in --out)")
     ap.add_argument("--out", type=Path, default=Path("traces"))
-    args = ap.parse_args(argv)
-    print(f"ctxblame proxy: http://{args.host}:{args.port} -> {args.upstream}, saving to {args.out}/")
-    web.run_app(make_app(args.upstream, args.out), host=args.host, port=args.port, print=None)
+
+
+def run(args) -> int:
+    trace = args.trace or default_trace_path(args.out)
+    print(f"ctxblame record: http://{args.host}:{args.port} -> {args.upstream}\n"
+          f"trace: {trace}")
+    web.run_app(make_app(args.upstream, trace), host=args.host, port=args.port, print=None)
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="Record LLM API traffic (Anthropic or OpenAI format).")
+    add_args(ap)
+    return run(ap.parse_args(argv))
 
 
 if __name__ == "__main__":

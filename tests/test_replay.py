@@ -131,12 +131,13 @@ def test_replay_measures_reproduce_rate(tmp_path, monkeypatch, capsys, fmt, stre
     with ServerThread(app) as base:
         rec = write_record(tmp_path, fmt, base, stream)
         # base url contains no "deepseek", so name the key env explicitly
-        rc = replay.main([str(rec), "-n", "10", "--api-key-env", "DEEPSEEK_API_KEY",
+        rc = replay.main([str(rec), "-n", "10", "--api-key-env", "DEEPSEEK_API_KEY", "--match", "exact",
                           "--ledger", str(tmp_path / "spend.jsonl"), "--out", str(tmp_path / "runs")])
     assert rc == 0
     out = capsys.readouterr().out
     assert "Same decision:  7/10 = 70%" in out
     assert "Same tool name: 9/10" in out
+    assert "Verdict:   stable" in out
 
     run = json.loads(next((tmp_path / "runs").glob("*.json")).read_text())
     s = run["summary"]
