@@ -1,0 +1,994 @@
+{
+ "case": "p1/pytest/openai/step1",
+ "expect": "rule + tool example, redundant",
+ "carriers": [
+  "- Run the test suite with `python -m pytest -q`. Do not use `uv run`; the\n  sandbox has no network.",
+  "e.g. `python -m pytest -q`"
+ ],
+ "score": {
+  "result": "causes",
+  "found": true,
+  "carriers_found": 1,
+  "carriers": 2,
+  "members": 1,
+  "precision": 1.0,
+  "cost": 0.3700105199999886,
+  "replays": 435
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase1/results/traces/openai-1.jsonl",
+  "step": 1,
+  "match": "args",
+  "any_call": true,
+  "recorded": "bash({\"command~^python -m pytest\": true})",
+  "target": "bash({\"command~^python -m pytest\": true})",
+  "baseline": {
+   "baseline": "bash({\"command~^python -m pytest\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 8,
+   "same_rate": 0.8,
+   "same_rate_ci95": [
+    0.49015684672072335,
+    0.9433190520193067
+   ],
+   "same_tool_name": null,
+   "modal": "list_dir({\"command~^python -m pytest\": false})",
+   "modal_rate": 1.0,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 8/10 replays",
+   "distribution": [
+    [
+     "list_dir({\"command~^python -m pytest\": false})",
+     10
+    ],
+    [
+     "bash({\"command~^python -m pytest\": true})",
+     8
+    ],
+    [
+     "read_file({\"command~^python -m pytest\": false})",
+     4
+    ]
+   ],
+   "cost": 0.0077748
+  },
+  "everything_removed": {
+   "k": 2,
+   "n": 15,
+   "verdict": "flipped",
+   "cost": 0.0066396,
+   "dist": [
+    [
+     "bash({\"command~^python -m pytest\": false})",
+     12
+    ],
+    [
+     "list_dir({\"command~^python -m pytest\": false})",
+     3
+    ],
+    [
+     "bash({\"command~^python -m pytest\": true})",
+     2
+    ]
+   ],
+   "note": ""
+  },
+  "result": "causes",
+  "causes": [
+   {
+    "members": [
+     {
+      "id": "sys@msg0.p7.4",
+      "kind": "line",
+      "label": "system ¶7 line 4",
+      "text": "- Run the test suite with `python -m pytest -q`."
+     }
+    ],
+    "together": {
+     "k": 7,
+     "n": 35,
+     "verdict": "flipped",
+     "cost": 0.03081144,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       29
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       26
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       7
+      ]
+     ],
+     "note": ""
+    },
+    "specific": true,
+    "alone": {},
+    "controls": [
+     {
+      "removed": "## Style / - Python 3.12, type hints on public fun…",
+      "k": 8,
+      "n": 10,
+      "verdict": "kept",
+      "cost": 0.011670119999999999,
+      "dist": [
+       [
+        "list_dir({\"command~^python -m pytest\": false})",
+        9
+       ],
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        8
+       ],
+       [
+        "read_file({\"command~^python -m pytest\": false})",
+        3
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "redirection. / Run one command per call.",
+      "k": 9,
+      "n": 10,
+      "verdict": "kept",
+      "cost": 0.015572039999999999,
+      "dist": [
+       [
+        "list_dir({\"command~^python -m pytest\": false})",
+        10
+       ],
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        9
+       ],
+       [
+        "read_file({\"command~^python -m pytest\": false})",
+        4
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   }
+  ],
+  "notes": [],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 2,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.0066396,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       12
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       3
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00520872,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       5
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       5
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.009653160000000001,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       13
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       4
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.012419,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       6
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.007923959999999999,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       10
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p6",
+     "sys@msg0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01924296,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       25
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       11
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       10
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p4",
+     "sys@msg0.p5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01606704,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       15
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2",
+     "sys@msg0.p3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0098274,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       5
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 12,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.02489388,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       24
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       12
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       8
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 12,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01584352,
+     "dist": [
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       14
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       12
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       3
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.02467608,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       27
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       8
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       7
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 1,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.01346796,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       15
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       6
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       6
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00900372,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       5
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 6,
+     "n": 30,
+     "verdict": "flipped",
+     "cost": 0.01396296,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       22
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       12
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01819224,
+     "dist": [
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       26
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       22
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       11
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.6",
+     "sys@msg0.p7.7",
+     "sys@msg0.p7.8",
+     "sys@msg0.p7.9"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00841896,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       5
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.1",
+     "sys@msg0.p7.2",
+     "sys@msg0.p7.3",
+     "sys@msg0.p7.4",
+     "sys@msg0.p7.5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01399596,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       11
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       7
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.7",
+     "sys@msg0.p7.8",
+     "sys@msg0.p7.9"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00842556,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       5
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.4",
+     "sys@msg0.p7.5",
+     "sys@msg0.p7.6"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 3,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.01335708,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       16
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       12
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.6"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.01201728,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       8
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       8
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.4",
+     "sys@msg0.p7.5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 12,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.0250008,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       28
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       12
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       11
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01594428,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       13
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       9
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.0233046,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       23
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       20
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.4"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 7,
+     "n": 35,
+     "verdict": "flipped",
+     "cost": 0.03081144,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       29
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       26
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p8.1",
+     "sys@msg0.p8.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.011670119999999999,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       8
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2.12",
+     "sys@msg0.p2.13"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.015572039999999999,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       10
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 0.3700105199999886,
+  "replays": 435
+ }
+}

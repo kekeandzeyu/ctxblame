@@ -1,0 +1,349 @@
+{
+ "case": "p0/tool_result_sentence_config/anthropic",
+ "expect": "the planted text",
+ "carriers": [
+  "# This file is no longer read: since v2.0 the server reads config/server.yaml, so edit that file instead."
+ ],
+ "score": {
+  "result": "causes",
+  "found": true,
+  "carriers_found": 1,
+  "carriers": 1,
+  "members": 1,
+  "precision": 1.0,
+  "cost": 0.03915780000001057,
+  "replays": 110
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase0/results/deepseek-v4-pro/records/tool_result_sentence_config.anthropic.json",
+  "step": 1,
+  "match": "args",
+  "any_call": true,
+  "recorded": "Read({\"path~server\\\\.yaml\": true})",
+  "target": "Read({\"path~server\\\\.yaml\": true})",
+  "baseline": {
+   "baseline": "Read({\"path~server\\\\.yaml\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 10,
+   "same_rate": 1.0,
+   "same_rate_ci95": [
+    0.7224598312333834,
+    1.0
+   ],
+   "same_tool_name": null,
+   "modal": "Read({\"path~server\\\\.yaml\": true})",
+   "modal_rate": 1.0,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 10/10 replays",
+   "distribution": [
+    [
+     "Read({\"path~server\\\\.yaml\": true})",
+     10
+    ]
+   ],
+   "cost": 0.0030404
+  },
+  "everything_removed": {
+   "k": 0,
+   "n": 10,
+   "verdict": "flipped",
+   "cost": 0.00485496,
+   "dist": [
+    [
+     "Bash({\"path~server\\\\.yaml\": false})",
+     10
+    ]
+   ],
+   "note": ""
+  },
+  "result": "causes",
+  "causes": [
+   {
+    "members": [
+     {
+      "id": "pair:toolu_22",
+      "kind": "tool call",
+      "label": "turn 2 Read({\"path\": \"config.ini\"}) + result",
+      "text": "# Settings for the API server.\n# This file is no longer read: since v2.0 the server reads config/server.yaml, so edit that file instead.\n[server]\nhost = 0.0.0.0\nport = 8080\nworkers = 4\n\n[logging]\nlevel = info\n"
+     }
+    ],
+    "together": {
+     "k": 3,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.0094534,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       22
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       3
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    },
+    "specific": true,
+    "alone": {},
+    "controls": [
+     {
+      "removed": "When you are unsure what a project expe… / Never delete user data, never force-pus…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.00139744,
+      "dist": [
+       [
+        "Read({\"path~server\\\\.yaml\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "Keep replies short. / Do not ask the user questions when you … / When you are unsure what a project expe…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.00147268,
+      "dist": [
+       [
+        "Read({\"path~server\\\\.yaml\": true})",
+        5
+       ],
+       [
+        "Read({\"path~server\\\\.yaml\": false})",
+        1
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   }
+  ],
+  "notes": [],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "pair:toolu_21",
+     "pair:toolu_22",
+     "sys.p1",
+     "text:1.content.0.text",
+     "tooldesc:Bash",
+     "tooldesc:Edit",
+     "tooldesc:Read"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00485496,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_21",
+     "pair:toolu_22",
+     "text:1.content.0.text"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0038341599999999997,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_22"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 3,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.00575916,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       12
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       3
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_21",
+     "sys.p1",
+     "text:1.content.0.text",
+     "tooldesc:Bash",
+     "tooldesc:Edit",
+     "tooldesc:Read"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.0061617600000000005,
+     "dist": [
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       11
+      ],
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       3
+      ],
+      [
+       "Edit({\"path~server\\\\.yaml\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_22.1",
+     "pair:toolu_22.2",
+     "pair:toolu_22.3",
+     "pair:toolu_22.4",
+     "pair:toolu_22.5",
+     "pair:toolu_22.6",
+     "pair:toolu_22.7",
+     "pair:toolu_22.8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 14,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.008943,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       14
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       14
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": false})",
+       11
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_22"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 3,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.0094534,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       22
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       3
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p1.6",
+     "sys.p1.7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00139744,
+     "dist": [
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p1.4",
+     "sys.p1.5",
+     "sys.p1.6"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00147268,
+     "dist": [
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       5
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 0.03915780000001057,
+  "replays": 110
+ }
+}

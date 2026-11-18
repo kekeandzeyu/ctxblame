@@ -1,0 +1,415 @@
+{
+ "case": "p0/system_section_deploy_freeze/openai",
+ "expect": "the planted text",
+ "carriers": [
+  "Before any production deploy, check the `deploy-freeze` calendar with check_calendar; deploying during a freeze is not allowed."
+ ],
+ "score": {
+  "result": "causes",
+  "found": true,
+  "carriers_found": 1,
+  "carriers": 1,
+  "members": 1,
+  "precision": 1.0,
+  "cost": 0.0493376399999903,
+  "replays": 105
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase0/results/deepseek-v4-pro/records/system_section_deploy_freeze.openai.json",
+  "step": 1,
+  "match": "args",
+  "any_call": true,
+  "recorded": "check_calendar({\"calendar~freeze\": true})",
+  "target": "check_calendar({\"calendar~freeze\": true})",
+  "baseline": {
+   "baseline": "check_calendar({\"calendar~freeze\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 10,
+   "same_rate": 1.0,
+   "same_rate_ci95": [
+    0.7224598312333834,
+    1.0
+   ],
+   "same_tool_name": null,
+   "modal": "check_calendar({\"calendar~freeze\": true})",
+   "modal_rate": 1.0,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 10/10 replays",
+   "distribution": [
+    [
+     "check_calendar({\"calendar~freeze\": true})",
+     10
+    ]
+   ],
+   "cost": 0.00462308
+  },
+  "everything_removed": {
+   "k": 0,
+   "n": 10,
+   "verdict": "flipped",
+   "cost": 0.00487872,
+   "dist": [
+    [
+     "deploy({\"calendar~freeze\": false})",
+     5
+    ],
+    [
+     "check_calendar({\"calendar~freeze\": false})",
+     5
+    ]
+   ],
+   "note": ""
+  },
+  "result": "causes",
+  "causes": [
+   {
+    "members": [
+     {
+      "id": "sys@msg0.p2.3",
+      "kind": "line",
+      "label": "system ¶2 line 3",
+      "text": "Before any production deploy, check the `deploy-freeze` calendar with check_calendar; deploying during a freeze is not allowed."
+     }
+    ],
+    "together": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.00928312,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       19
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    },
+    "specific": true,
+    "alone": {},
+    "controls": [
+     {
+      "removed": "Production deploys go through the deplo… / Staging deploys need no approval.",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.00217096,
+      "dist": [
+       [
+        "check_calendar({\"calendar~freeze\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "Do not ask the user questions when you … / When you are unsure what a project expe…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0021062800000000003,
+      "dist": [
+       [
+        "check_calendar({\"calendar~freeze\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   }
+  ],
+  "notes": [],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "pair:toolu_41",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "text:2.content",
+     "tooldesc:Bash",
+     "tooldesc:Read",
+     "tooldesc:check_calendar",
+     "tooldesc:deploy"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00487872,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       5
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_41",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "text:2.content"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.005544,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       9
+      ],
+      [
+       "deploy({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_41",
+     "text:2.content"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00198748,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p1",
+     "sys@msg0.p2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00503404,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       4
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       4
+      ],
+      [
+       "Bash({\"calendar~freeze\": false})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00435776,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       8
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_41",
+     "sys@msg0.p1",
+     "text:2.content",
+     "tooldesc:Bash",
+     "tooldesc:Read",
+     "tooldesc:check_calendar",
+     "tooldesc:deploy"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00276144,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2.3",
+     "sys@msg0.p2.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.004365679999999999,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       9
+      ],
+      [
+       "Bash({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00222508,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2.3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00450296,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       9
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2.3"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.00928312,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       19
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2.2",
+     "sys@msg0.p2.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00217096,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p1.5",
+     "sys@msg0.p1.6"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0021062800000000003,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 0.0493376399999903,
+  "replays": 105
+ }
+}

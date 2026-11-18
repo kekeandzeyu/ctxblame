@@ -1,0 +1,325 @@
+{
+ "case": "p0/tool_result_sentence_config/openai",
+ "expect": "the planted text",
+ "carriers": [
+  "# This file is no longer read: since v2.0 the server reads config/server.yaml, so edit that file instead."
+ ],
+ "score": {
+  "result": "none_found",
+  "found": false,
+  "carriers_found": 0,
+  "carriers": 1,
+  "members": 0,
+  "precision": null,
+  "cost": 0.052491120000013325,
+  "replays": 135
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase0/results/deepseek-v4-pro/records/tool_result_sentence_config.openai.json",
+  "step": 1,
+  "match": "args",
+  "any_call": true,
+  "recorded": "Read({\"path~server\\\\.yaml\": true})",
+  "target": "Read({\"path~server\\\\.yaml\": true})",
+  "baseline": {
+   "baseline": "Read({\"path~server\\\\.yaml\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 10,
+   "same_rate": 1.0,
+   "same_rate_ci95": [
+    0.7224598312333834,
+    1.0
+   ],
+   "same_tool_name": null,
+   "modal": "Read({\"path~server\\\\.yaml\": true})",
+   "modal_rate": 1.0,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 10/10 replays",
+   "distribution": [
+    [
+     "Read({\"path~server\\\\.yaml\": true})",
+     10
+    ]
+   ],
+   "cost": 0.0030404
+  },
+  "everything_removed": {
+   "k": 0,
+   "n": 10,
+   "verdict": "flipped",
+   "cost": 0.00494604,
+   "dist": [
+    [
+     "Bash({\"path~server\\\\.yaml\": false})",
+     10
+    ]
+   ],
+   "note": ""
+  },
+  "result": "none_found",
+  "causes": [],
+  "notes": [
+   "dropped an unconfirmed finding (text:2.content, pair:toolu_22): 10/30 after more replays"
+  ],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "pair:toolu_21",
+     "pair:toolu_22",
+     "sys@msg0.p1",
+     "text:2.content",
+     "tooldesc:Bash",
+     "tooldesc:Edit",
+     "tooldesc:Read"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00494604,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_21",
+     "pair:toolu_22",
+     "text:2.content"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00466576,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_22"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.00578292,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       9
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       8
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_21",
+     "text:2.content"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 18,
+     "n": 30,
+     "verdict": "kept",
+     "cost": 0.01227072,
+     "dist": [
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       18
+      ],
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       10
+      ],
+      [
+       "Edit({\"path~server\\\\.yaml\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_21"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00189068,
+     "dist": [
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "text:2.content"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0014937999999999998,
+     "dist": [
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_22",
+     "text:2.content"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.007766,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       17
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       5
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": false})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_21",
+     "sys@msg0.p1",
+     "tooldesc:Bash",
+     "tooldesc:Edit",
+     "tooldesc:Read"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00210012,
+     "dist": [
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_22.1",
+     "pair:toolu_22.2",
+     "pair:toolu_22.3",
+     "pair:toolu_22.4",
+     "pair:toolu_22.5",
+     "pair:toolu_22.6",
+     "pair:toolu_22.7",
+     "pair:toolu_22.8",
+     "text:2.content"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 10,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.00457644,
+     "dist": [
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       10
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": false})",
+       9
+      ],
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_22",
+     "text:2.content"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 10,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01172424,
+     "dist": [
+      [
+       "Bash({\"path~server\\\\.yaml\": false})",
+       22
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": true})",
+       10
+      ],
+      [
+       "Read({\"path~server\\\\.yaml\": false})",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 0.052491120000013325,
+  "replays": 135
+ }
+}

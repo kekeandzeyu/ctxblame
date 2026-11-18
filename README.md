@@ -3,7 +3,7 @@
 "git blame" for LLM agent decisions: replay one recorded LLM request with
 pieces of context removed and report which chunk caused the decision.
 Works with any model: the evidence comes from replays, not from the model's
-own explanation. Status: early feasibility spike, not ready for use.
+own explanation. Status: early; the blame engine works on the validation cases below, not yet on PyPI.
 
 Two wire formats are supported, which covers most models: Anthropic Messages
 (`/v1/messages`) and OpenAI Chat Completions (`/chat/completions`).
@@ -62,6 +62,53 @@ command matches this regex" instead of exact arguments. `--any-call` counts a re
 decision when any of its parallel tool calls matches. `thinking:msg[i]`
 removes one turn's reasoning (its calls get fresh ids, so a provider that
 keeps reasoning server-side cannot restore it).
+
+## Blame
+
+```sh
+uv run ctxblame why traces/<trace>.jsonl --step 14
+```
+
+```
+Decision:  Bash({"command~\\bpnpm\\b": true})
+Baseline:  10/10 replays (stable)
+Chunks:    8 (3 tool desc, 1 system, 1 user, 2 assistant, 1 tool call)
+Everything but the task removed: 0/10  -> the decision comes from the context
+
+Cause 1 (removing it flips the decision: 1/20):
+  - turn 0 user message sentence 3: 'We use pnpm in this repo, never npm or yarn.'
+  controls (random same-size removals): 5/5, 5/5
+
+Tests: 16, replays: 160, cost $0.07
+```
+
+How it works:
+
+1. **Baseline.** Replay the step unchanged. If no decision comes back
+   reliably it stops ("coin flip"); if the recorded call is unusual it
+   explains the usual one instead.
+2. **Chunks.** System-prompt paragraphs, earlier user and assistant text, each
+   tool call with its result, each turn's reasoning, tool descriptions. The
+   task (the latest user message with text) is never removed.
+3. **Search.** If removing every chunk keeps the decision, the context does
+   not carry it. Otherwise delta debugging finds a minimal set of chunks
+   whose removal flips it: one chunk is a cause; several are *redundant
+   carriers* of one cause (only removing all of them flips it, and each one
+   alone is shown). Then it looks for further, independent causes.
+4. **Refine** each member to the sentences or lines that matter, with the
+   other carriers held removed.
+5. **Check.** Each finding is confirmed with more replays, and compared with
+   random removals of the same size. Findings that random removals reproduce
+   too are reported as *context the decision needs (not specific)*, not as
+   causes.
+
+Each test replays in batches of 5 until the rate is clearly above or below
+half the baseline rate (a flip needs at least 10 replays). By default a reply
+counts as the same decision when *any* of its parallel calls matches
+(`--first-call` to compare only the first). Removing reasoning gives those
+calls fresh ids; a provider that then demands the reasoning makes it
+"not removable", and the report says so. `--budget` caps the spend and the
+full log of tests is saved as JSON in `runs/`.
 
 ## Phase 0 results
 

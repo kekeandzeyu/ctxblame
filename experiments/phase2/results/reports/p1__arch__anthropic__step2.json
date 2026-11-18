@@ -1,0 +1,1589 @@
+{
+ "case": "p1/arch/anthropic/step2",
+ "expect": "rule line; the restating reasoning cannot be removed at this provider",
+ "carriers": [
+  "- Before editing anything under src/, read docs/ARCHITECTURE.md; it explains\n  which module owns which wire format."
+ ],
+ "score": {
+  "result": "none_found",
+  "found": false,
+  "carriers_found": 0,
+  "carriers": 1,
+  "members": 0,
+  "precision": null,
+  "cost": 0.5406024800000004,
+  "replays": 790
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase1/results/traces/anthropic-1.jsonl",
+  "step": 2,
+  "match": "intent",
+  "any_call": true,
+  "recorded": "read docs/ARCHITECTURE.md",
+  "target": "read docs/ARCHITECTURE.md",
+  "baseline": {
+   "baseline": "read docs/ARCHITECTURE.md",
+   "match": "intent (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 10,
+   "same_rate": 1.0,
+   "same_rate_ci95": [
+    0.7224598312333834,
+    1.0
+   ],
+   "same_tool_name": null,
+   "modal": "read docs/ARCHITECTURE.md",
+   "modal_rate": 1.0,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 10/10 replays",
+   "distribution": [
+    [
+     "read docs/ARCHITECTURE.md",
+     10
+    ],
+    [
+     "read tests/test_formats.py",
+     8
+    ],
+    [
+     "list src",
+     4
+    ],
+    [
+     "list tests",
+     2
+    ]
+   ],
+   "cost": 0.00607508
+  },
+  "everything_removed": {
+   "k": 0,
+   "n": 10,
+   "verdict": "flipped",
+   "cost": 0.00454124,
+   "dist": [
+    [
+     "run pwd",
+     7
+    ],
+    [
+     "list .",
+     4
+    ],
+    [
+     "read tests/test_formats.py",
+     2
+    ],
+    [
+     "run pytest",
+     1
+    ]
+   ],
+   "note": ""
+  },
+  "result": "none_found",
+  "causes": [],
+  "notes": [
+   "reasoning: not removable (the provider requires earlier reasoning to be passed back); it is part of the context that cannot be tested",
+   "dropped an unconfirmed finding (sys0.p7.2, pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7, pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26): 19/30 after more replays",
+   "removing all removable context flips the decision, but no small set does: the reasoning that cannot be removed probably carries it too"
+  ],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "thinking:msg[1]"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 0,
+     "verdict": "rejected",
+     "cost": 0.0,
+     "dist": [],
+     "note": "HTTP 400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"The `content[].thinking` in the thinking mode must be passed back to the API. (request_id: 70debf62-d488-46ae-ba10-a56239ebf1ec)\"}}"
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p1",
+     "sys0.p2",
+     "sys0.p3",
+     "sys0.p4",
+     "sys0.p5",
+     "sys0.p6",
+     "sys0.p7",
+     "sys0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00454124,
+     "dist": [
+      [
+       "run pwd",
+       7
+      ],
+      [
+       "list .",
+       4
+      ],
+      [
+       "read tests/test_formats.py",
+       2
+      ],
+      [
+       "run pytest",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p3",
+     "sys0.p4",
+     "sys0.p5",
+     "sys0.p6",
+     "sys0.p7",
+     "sys0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00473264,
+     "dist": [
+      [
+       "list .",
+       9
+      ],
+      [
+       "read AGENTS.md",
+       5
+      ],
+      [
+       "run pwd",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7",
+     "sys0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00611204,
+     "dist": [
+      [
+       "list .",
+       8
+      ],
+      [
+       "read tests/test_formats.py",
+       6
+      ],
+      [
+       "run pytest",
+       3
+      ],
+      [
+       "run pwd",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01133352,
+     "dist": [
+      [
+       "list .",
+       14
+      ],
+      [
+       "run pytest",
+       11
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       8
+      ],
+      [
+       "read tests/test_formats.py",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys0.p7",
+     "sys0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00300344,
+     "dist": [
+      [
+       "read tests/test_formats.py",
+       5
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ],
+      [
+       "list docs",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.00647152,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       9
+      ],
+      [
+       "list src",
+       8
+      ],
+      [
+       "read tests/test_formats.py",
+       6
+      ],
+      [
+       "list tests",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0041624,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ],
+      [
+       "read tests/test_formats.py",
+       3
+      ],
+      [
+       "search extract_usage|Usage|input_uncached",
+       2
+      ],
+      [
+       "search OPENAI_STREAM|extract_usage|Usage",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00306856,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ],
+      [
+       "read tests/test_formats.py",
+       4
+      ],
+      [
+       "list src",
+       1
+      ],
+      [
+       "search extract_usage|class Usage|input_uncached",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 13,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01059036,
+     "dist": [
+      [
+       "read tests/test_formats.py",
+       13
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       13
+      ],
+      [
+       "list src",
+       8
+      ],
+      [
+       "list docs",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "sys0.p7",
+     "sys0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 19,
+     "n": 30,
+     "verdict": "kept",
+     "cost": 0.0227898,
+     "dist": [
+      [
+       "read tests/test_formats.py",
+       22
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       19
+      ],
+      [
+       "list .",
+       19
+      ],
+      [
+       "read AGENTS.md",
+       9
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7",
+     "sys0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01121868,
+     "dist": [
+      [
+       "list src",
+       11
+      ],
+      [
+       "read tests/test_formats.py",
+       9
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       8
+      ],
+      [
+       "list docs",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00514536,
+     "dist": [
+      [
+       "list .",
+       8
+      ],
+      [
+       "run pytest",
+       5
+      ],
+      [
+       "run pwd",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "sys0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 15,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01902252,
+     "dist": [
+      [
+       "list .",
+       23
+      ],
+      [
+       "read tests/test_formats.py",
+       18
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       15
+      ],
+      [
+       "read AGENTS.md",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.0175098,
+     "dist": [
+      [
+       "list src",
+       27
+      ],
+      [
+       "list tests",
+       21
+      ],
+      [
+       "list docs",
+       20
+      ],
+      [
+       "read tests/test_formats.py",
+       11
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys0.p1",
+     "sys0.p2",
+     "sys0.p3",
+     "sys0.p4",
+     "sys0.p5",
+     "sys0.p6",
+     "sys0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00289784,
+     "dist": [
+      [
+       "read tests/test_formats.py",
+       5
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ],
+      [
+       "search assemble_openai_chunks|extract_usage|Usage",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7.6",
+     "sys0.p7.7",
+     "sys0.p7.8",
+     "sys0.p7.9"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01147608,
+     "dist": [
+      [
+       "list .",
+       15
+      ],
+      [
+       "run pytest",
+       11
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       9
+      ],
+      [
+       "read tests/test_formats.py",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7.1",
+     "sys0.p7.2",
+     "sys0.p7.3",
+     "sys0.p7.4",
+     "sys0.p7.5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00602712,
+     "dist": [
+      [
+       "list .",
+       8
+      ],
+      [
+       "run pytest",
+       7
+      ],
+      [
+       "run pwd",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7.4",
+     "sys0.p7.5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 10,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01985544,
+     "dist": [
+      [
+       "list .",
+       27
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       10
+      ],
+      [
+       "run pwd",
+       9
+      ],
+      [
+       "run pytest",
+       9
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7.1",
+     "sys0.p7.2",
+     "sys0.p7.3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00615516,
+     "dist": [
+      [
+       "run pytest",
+       10
+      ],
+      [
+       "list .",
+       8
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7.3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01190772,
+     "dist": [
+      [
+       "list .",
+       13
+      ],
+      [
+       "run pytest",
+       12
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       8
+      ],
+      [
+       "read tests/test_formats.py",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7.1",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00645348,
+     "dist": [
+      [
+       "run pytest",
+       10
+      ],
+      [
+       "list .",
+       9
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00630828,
+     "dist": [
+      [
+       "list .",
+       10
+      ],
+      [
+       "run pytest",
+       9
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.1",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.2",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.3",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.4",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.5",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.6",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00395032,
+     "dist": [
+      [
+       "run pwd",
+       7
+      ],
+      [
+       "list .",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.5",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.6",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.01112144,
+     "dist": [
+      [
+       "list src",
+       18
+      ],
+      [
+       "list tests",
+       18
+      ],
+      [
+       "list docs",
+       14
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 30,
+     "verdict": "flipped",
+     "cost": 0.01647624,
+     "dist": [
+      [
+       "list src",
+       24
+      ],
+      [
+       "list docs",
+       22
+      ],
+      [
+       "list tests",
+       21
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       9
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.1",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.10",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.11",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.12",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.13",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.14",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.15",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.16",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.17",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.18",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.19",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.2",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.20",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.21",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.22",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.23",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.24",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.25",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.27",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.28",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.29",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.3",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.4",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.5",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.6",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.8",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.9",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0055422399999999995,
+     "dist": [
+      [
+       "run pytest",
+       5
+      ],
+      [
+       "list .",
+       5
+      ],
+      [
+       "read AGENTS.md",
+       2
+      ],
+      [
+       "list src",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.16",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.17",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.18",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.19",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.20",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.21",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.22",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.23",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.24",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.25",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.27",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.28",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.29",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 3,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.0097086,
+     "dist": [
+      [
+       "run pytest",
+       9
+      ],
+      [
+       "list .",
+       5
+      ],
+      [
+       "read AGENTS.md",
+       3
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.23",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.24",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.25",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.27",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.28",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.29",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 3,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.01097712,
+     "dist": [
+      [
+       "list .",
+       14
+      ],
+      [
+       "run pytest",
+       4
+      ],
+      [
+       "read tests/test_formats.py",
+       4
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.27",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.28",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.29",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 14,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.02113056,
+     "dist": [
+      [
+       "list .",
+       23
+      ],
+      [
+       "read tests/test_formats.py",
+       20
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       14
+      ],
+      [
+       "read AGENTS.md",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.23",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.24",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.25",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.02370456,
+     "dist": [
+      [
+       "list .",
+       22
+      ],
+      [
+       "read tests/test_formats.py",
+       15
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       11
+      ],
+      [
+       "read AGENTS.md",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.29",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.00983796,
+     "dist": [
+      [
+       "list .",
+       12
+      ],
+      [
+       "read tests/test_formats.py",
+       9
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       9
+      ],
+      [
+       "read AGENTS.md",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.27",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.28",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 16,
+     "n": 30,
+     "verdict": "kept",
+     "cost": 0.02256012,
+     "dist": [
+      [
+       "list .",
+       23
+      ],
+      [
+       "read tests/test_formats.py",
+       19
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       16
+      ],
+      [
+       "read AGENTS.md",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.25",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 14,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.02381544,
+     "dist": [
+      [
+       "list .",
+       25
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       14
+      ],
+      [
+       "read tests/test_formats.py",
+       10
+      ],
+      [
+       "read AGENTS.md",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.23",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.24",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.01113948,
+     "dist": [
+      [
+       "list .",
+       12
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       8
+      ],
+      [
+       "read tests/test_formats.py",
+       8
+      ],
+      [
+       "read AGENTS.md",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.23",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.24",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.25",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.27",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.28",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 15,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.02224332,
+     "dist": [
+      [
+       "list .",
+       21
+      ],
+      [
+       "read tests/test_formats.py",
+       17
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       15
+      ],
+      [
+       "read AGENTS.md",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.23",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.24",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.25",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.29",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.02277792,
+     "dist": [
+      [
+       "list .",
+       24
+      ],
+      [
+       "read tests/test_formats.py",
+       15
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       11
+      ],
+      [
+       "read AGENTS.md",
+       8
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.23",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.24",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.27",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.28",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.29",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.02324916,
+     "dist": [
+      [
+       "list .",
+       23
+      ],
+      [
+       "read tests/test_formats.py",
+       21
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       11
+      ],
+      [
+       "read AGENTS.md",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.25",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.27",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.28",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.29",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 13,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.02220372,
+     "dist": [
+      [
+       "list .",
+       24
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       13
+      ],
+      [
+       "read tests/test_formats.py",
+       12
+      ],
+      [
+       "read AGENTS.md",
+       8
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.28",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01843732,
+     "dist": [
+      [
+       "list .",
+       26
+      ],
+      [
+       "read tests/test_formats.py",
+       15
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       11
+      ],
+      [
+       "read AGENTS.md",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.27",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 16,
+     "n": 30,
+     "verdict": "kept",
+     "cost": 0.02160972,
+     "dist": [
+      [
+       "read tests/test_formats.py",
+       22
+      ],
+      [
+       "list .",
+       20
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       16
+      ],
+      [
+       "read AGENTS.md",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312",
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "sys0.p7",
+     "sys0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 3,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.01067836,
+     "dist": [
+      [
+       "list .",
+       14
+      ],
+      [
+       "read tests/test_formats.py",
+       12
+      ],
+      [
+       "read AGENTS.md",
+       6
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_r7jb1MJZbQIA9nCthJzV0312.7",
+     "pair:call_01_ffcuqC2yMdzhIvtNypTh7198.26",
+     "sys0.p7.2"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 19,
+     "n": 30,
+     "verdict": "kept",
+     "cost": 0.0225808,
+     "dist": [
+      [
+       "read tests/test_formats.py",
+       25
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       19
+      ],
+      [
+       "list src",
+       14
+      ],
+      [
+       "list docs",
+       13
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 0.5406024800000004,
+  "replays": 790
+ }
+}

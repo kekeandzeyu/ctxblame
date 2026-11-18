@@ -1,0 +1,427 @@
+{
+ "case": "p0/system_section_deploy_freeze/anthropic",
+ "expect": "the planted text",
+ "carriers": [
+  "Before any production deploy, check the `deploy-freeze` calendar with check_calendar; deploying during a freeze is not allowed."
+ ],
+ "score": {
+  "result": "causes",
+  "found": true,
+  "carriers_found": 1,
+  "carriers": 1,
+  "members": 1,
+  "precision": 1.0,
+  "cost": 0.051404319999994286,
+  "replays": 110
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase0/results/deepseek-v4-pro/records/system_section_deploy_freeze.anthropic.json",
+  "step": 1,
+  "match": "args",
+  "any_call": true,
+  "recorded": "check_calendar({\"calendar~freeze\": true})",
+  "target": "check_calendar({\"calendar~freeze\": true})",
+  "baseline": {
+   "baseline": "check_calendar({\"calendar~freeze\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 10,
+   "same_rate": 1.0,
+   "same_rate_ci95": [
+    0.7224598312333834,
+    1.0
+   ],
+   "same_tool_name": null,
+   "modal": "check_calendar({\"calendar~freeze\": true})",
+   "modal_rate": 1.0,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 10/10 replays",
+   "distribution": [
+    [
+     "check_calendar({\"calendar~freeze\": true})",
+     10
+    ]
+   ],
+   "cost": 0.00463496
+  },
+  "everything_removed": {
+   "k": 0,
+   "n": 10,
+   "verdict": "flipped",
+   "cost": 0.0047718,
+   "dist": [
+    [
+     "deploy({\"calendar~freeze\": false})",
+     9
+    ],
+    [
+     "check_calendar({\"calendar~freeze\": false})",
+     1
+    ]
+   ],
+   "note": ""
+  },
+  "result": "causes",
+  "causes": [
+   {
+    "members": [
+     {
+      "id": "sys.p2.3",
+      "kind": "line",
+      "label": "system ¶2 line 3",
+      "text": "Before any production deploy, check the `deploy-freeze` calendar with check_calendar; deploying during a freeze is not allowed."
+     }
+    ],
+    "together": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.009247479999999999,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       18
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       1
+      ],
+      [
+       "Bash({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    },
+    "specific": true,
+    "alone": {},
+    "controls": [
+     {
+      "removed": "Production deploys go through the deplo… / Staging deploys need no approval.",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.00219472,
+      "dist": [
+       [
+        "check_calendar({\"calendar~freeze\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "Do not ask the user questions when you … / When you are unsure what a project expe…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.00216568,
+      "dist": [
+       [
+        "check_calendar({\"calendar~freeze\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   }
+  ],
+  "notes": [],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "pair:toolu_41",
+     "sys.p1",
+     "sys.p2",
+     "text:1.content.0.text",
+     "tooldesc:Bash",
+     "tooldesc:Read",
+     "tooldesc:check_calendar",
+     "tooldesc:deploy"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0047718,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       9
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_41",
+     "sys.p1",
+     "sys.p2",
+     "text:1.content.0.text"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00537372,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       8
+      ],
+      [
+       "Bash({\"calendar~freeze\": false})",
+       1
+      ],
+      [
+       "deploy({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_41",
+     "text:1.content.0.text"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00202708,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p1",
+     "sys.p2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00451528,
+     "dist": [
+      [
+       "Bash({\"calendar~freeze\": false})",
+       4
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       3
+      ],
+      [
+       "deploy({\"calendar~freeze\": false})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00448844,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_41",
+     "sys.p1",
+     "text:1.content.0.text",
+     "tooldesc:Bash",
+     "tooldesc:Read",
+     "tooldesc:check_calendar",
+     "tooldesc:deploy"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.002805,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p2.3",
+     "sys.p2.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00452804,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p2.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.00465212,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       9
+      ],
+      [
+       "Bash({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p2.3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0044989999999999995,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       8
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       1
+      ],
+      [
+       "Bash({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p2.3"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.009247479999999999,
+     "dist": [
+      [
+       "deploy({\"calendar~freeze\": false})",
+       18
+      ],
+      [
+       "check_calendar({\"calendar~freeze\": false})",
+       1
+      ],
+      [
+       "Bash({\"calendar~freeze\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p2.2",
+     "sys.p2.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00219472,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p1.5",
+     "sys.p1.6"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00216568,
+     "dist": [
+      [
+       "check_calendar({\"calendar~freeze\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 0.051404319999994286,
+  "replays": 110
+ }
+}

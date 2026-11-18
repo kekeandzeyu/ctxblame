@@ -1,0 +1,3066 @@
+{
+ "case": "p1/pytest/openai/step5",
+ "expect": "rule + example + earlier pytest call, redundant",
+ "carriers": [
+  "- Run the test suite with `python -m pytest -q`. Do not use `uv run`; the\n  sandbox has no network.",
+  "e.g. `python -m pytest -q`",
+  "pair:call_00_9JfegPv2xwapbjQmz0nb3169"
+ ],
+ "score": {
+  "result": "causes",
+  "found": true,
+  "carriers_found": 3,
+  "carriers": 3,
+  "members": 5,
+  "precision": 0.6,
+  "cost": 2.416978960000021,
+  "replays": 1100
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase1/results/traces/openai-1.jsonl",
+  "step": 5,
+  "match": "args",
+  "any_call": true,
+  "recorded": "bash({\"command~^python -m pytest\": true})",
+  "target": "bash({\"command~^python -m pytest\": true})",
+  "baseline": {
+   "baseline": "bash({\"command~^python -m pytest\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 10,
+   "same_rate": 1.0,
+   "same_rate_ci95": [
+    0.7224598312333834,
+    1.0
+   ],
+   "same_tool_name": null,
+   "modal": "bash({\"command~^python -m pytest\": true})",
+   "modal_rate": 1.0,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 10/10 replays",
+   "distribution": [
+    [
+     "bash({\"command~^python -m pytest\": true})",
+     10
+    ]
+   ],
+   "cost": 0.006639159999999999
+  },
+  "everything_removed": {
+   "k": 1,
+   "n": 10,
+   "verdict": "flipped",
+   "cost": 0.004509559999999999,
+   "dist": [
+    [
+     "bash({\"command~^python -m pytest\": false})",
+     6
+    ],
+    [
+     "read_file({\"command~^python -m pytest\": false})",
+     4
+    ],
+    [
+     "list_dir({\"command~^python -m pytest\": false})",
+     4
+    ],
+    [
+     "bash({\"command~^python -m pytest\": true})",
+     1
+    ]
+   ],
+   "note": ""
+  },
+  "result": "causes",
+  "causes": [
+   {
+    "members": [
+     {
+      "id": "pair:call_00_5MmP4GXRtlpnP4DaHIWT5663",
+      "kind": "tool call",
+      "label": "turn 4 edit_file({\"path\": \"src/ctxblame/formats.py\", \"old_string\":…) + result",
+      "text": "edited src/ctxblame/formats.py"
+     }
+    ],
+    "together": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.03409076,
+     "dist": [
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "grep({\"command~^python -m pytest\": false})",
+       8
+      ],
+      [
+       "edit_file({\"command~^python -m pytest\": false})",
+       6
+      ]
+     ],
+     "note": ""
+    },
+    "specific": true,
+    "alone": {},
+    "controls": [
+     {
+      "removed": "override your general habits.",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0033083599999999998,
+      "dist": [
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "20 OPENAI_STREAM = \"\".join([",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.00322256,
+      "dist": [
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   },
+   {
+    "members": [
+     {
+      "id": "tooldesc:bash.2",
+      "kind": "line",
+      "label": "tool bash description 2",
+      "text": "the command line, e.g. `python -m pytest -q`"
+     },
+     {
+      "id": "tooldesc:read_file.4",
+      "kind": "line",
+      "label": "tool read_file description 4",
+      "text": "maximum number of lines"
+     },
+     {
+      "id": "sys@msg0.p7.4",
+      "kind": "line",
+      "label": "system ¶7 line 4",
+      "text": "- Run the test suite with `python -m pytest -q`."
+     },
+     {
+      "id": "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+      "kind": "tool call",
+      "label": "turn 1 bash({\"command\": \"python -m pytest -q\", \"description\":…) + result",
+      "text": "............F...............................................             [100%]\n=================================== FAILURES ===================================\n___________________ test_openai_stream_assembly_and_decision ___________________\n\n    def test_openai_stream_assembly_and_decision():\n        resp = assemble_openai_chunks(parse_sse(OPENAI_STREAM))\n        assert resp[\"_stream_complete\"]\n        msg = resp[\"choices\"][0][\"message\"]\n        assert msg[\"reasoning_content\"] == \"user wants a listing\"\n        assert msg[\"tool_calls\"][0][\"function\"] == {\"name\": \"Bash\", \"arguments\": '{\"command\": \"ls  -la \"}'}\n        d = extract_decision(OPENAI, resp)\n        assert d.stop == \"tool_calls\"\n        # whitespace differences do not count as a different decision\n        assert d.key() == 'Bash({\"command\": \"ls -la\"})'\n        assert d.key(name_only=True) == \"Bash\"\n>       assert extract_usage(OPENAI, resp) == Usage(36, 64, 0, 20)\nE       AssertionError: assert Usage(input_u...=0, output=20) == Usage(input_u...=0, output=20)\nE         \nE         Omitting 3 identical items, use -vv to show\nE         Differing attributes:\nE         ['input_uncached']\nE         \nE         Drill down into differing attribute input_uncached:\nE           input_uncached: 100 != 36\n\ntests/test_formats.py:52: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_formats.py::test_openai_stream_assembly_and_decision - Asse...\n1 failed, 59 passed in 1.60s\n\n[exit code 1]"
+     }
+    ],
+    "together": {
+     "k": 2,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.0428428,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       13
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       2
+      ]
+     ],
+     "note": ""
+    },
+    "specific": true,
+    "alone": {
+     "tooldesc:bash.2": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.038334120000000006,
+      "dist": [
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     "tooldesc:read_file.4": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.03759536,
+      "dist": [
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     "sys@msg0.p7.4": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.03508604,
+      "dist": [
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0028674800000000004,
+      "dist": [
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     }
+    },
+    "controls": [
+     {
+      "removed": "74 def normalize(v): / 75 \"\"\"Ignore formatting noise: surround… / 76 if isinstance(v, str): / 77 s = re.sub(r\"\\s+\", \" \", v.strip()) / 78 return s[:-1] if len(s) > 1 and s.en… / 79 if isinstance(v, dict): / 80 return {k: normalize(x) for k, x in … / 81 if isinstance(v, list): / 82 return [normalize(x) for x in v] / 83 return v / 84 / 85 / 86 def _parse_args(s) -> dict | str: / 87 if isinstance(s, dict): / 88 return s / 89 try: / 90 v = json.loads(s) if s else {} / 91 return v if isinstance(v, dict) else… / 92 except (json.JSONDecodeError, TypeEr… / 93 return s / 94 / 95 / 96 def extract_decision(fmt: str, respo… / 97 if fmt == ANTHROPIC: / 98 calls, texts = [], [] / 99 for b in response.get(\"content\") or … / 100 if b.get(\"type\") == \"tool_use\": / 101 calls.append(ToolCall(b.get(\"name\",… / 102 elif b.get(\"type\") == \"text\": / 103 texts.append(b.get(\"text\", \"\")) / 104 return Decision(calls, \"\".join(text…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.00987712,
+      "dist": [
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "61 if isinstance(args, dict) and key_ar… / 62 sel = {} / 63 for spec in key_args: / 64 if \"~\" in spec: # \"arg~regex\": does … / 65 k, rx = spec.split(\"~\", 1) / 66 v = args.get(k) / 67 sel[spec] = v is not None and re.sea… / 68 else: / 69 sel[spec] = args.get(spec) / 70 args = sel / 71 return f\"{c.name}({json.dumps(normal… / 72 / 73 / 74 def normalize(v): / 75 \"\"\"Ignore formatting noise: surround… / 76 if isinstance(v, str): / 77 s = re.sub(r\"\\s+\", \" \", v.strip()) / 78 return s[:-1] if len(s) > 1 and s.en… / 79 if isinstance(v, dict): / 80 return {k: normalize(x) for k, x in … / 81 if isinstance(v, list): / 82 return [normalize(x) for x in v] / 83 return v / 84 / 85 / 86 def _parse_args(s) -> dict | str: / 87 if isinstance(s, dict): / 88 return s / 89 try: / 90 v = json.loads(s) if s else {} / 91 return v if isinstance(v, dict) else…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.011527560000000001,
+      "dist": [
+       [
+        "bash({\"command~^python -m pytest\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   }
+  ],
+  "notes": [
+   "reasoning: not removable (the provider requires earlier reasoning to be passed back); it is part of the context that cannot be tested"
+  ],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "thinking:msg[11]",
+     "thinking:msg[2]",
+     "thinking:msg[5]",
+     "thinking:msg[9]"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 0,
+     "verdict": "rejected",
+     "cost": 0.0,
+     "dist": [],
+     "note": "HTTP 400: {\"error\":{\"message\":\"The `reasoning_content` in the thinking mode must be passed back to the API. (request_id: 2075f24f-7370-4449-8451-487569666cbf)\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":\"invalid_request_error\"}}"
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_5MmP4GXRtlpnP4DaHIWT5663",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 1,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.004509559999999999,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       6
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       4
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       4
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_5MmP4GXRtlpnP4DaHIWT5663",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 3,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.00898392,
+     "dist": [
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       13
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       6
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       5
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_5MmP4GXRtlpnP4DaHIWT5663",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00724592,
+     "dist": [
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       10
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       3
+      ],
+      [
+       "grep({\"command~^python -m pytest\": false})",
+       3
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_5MmP4GXRtlpnP4DaHIWT5663",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00627572,
+     "dist": [
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_5MmP4GXRtlpnP4DaHIWT5663"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.01636624,
+     "dist": [
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       5
+      ],
+      [
+       "grep({\"command~^python -m pytest\": false})",
+       4
+      ],
+      [
+       "edit_file({\"command~^python -m pytest\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 3,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.00710688,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       11
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       3
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.0041382,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0027104,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0021142,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.00824472,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00277288,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00325908,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.00909084,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       8
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0022088,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.0063742799999999995,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       8
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.00467676,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.00468072,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ],
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0027830000000000003,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.00849816,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       11
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00316184,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0029207200000000003,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00298364,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:bash",
+     "tooldesc:list_dir",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0034848,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 1,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00669724,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0028842,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 7,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.01699324,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       18
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 14,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01901328,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       16
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       14
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0030755999999999995,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 10,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01704648,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       19
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       10
+      ],
+      [
+       "list_dir({\"command~^python -m pytest\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:list_dir",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.03953312,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       11
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 10,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.04013108,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       10
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.02957856,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03120128,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00350724,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p3",
+     "sys@msg0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.040577680000000005,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p1",
+     "sys@msg0.p2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.038577440000000005,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:edit_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03744356,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:grep",
+     "tooldesc:list_dir"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03735116,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:bash",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.003612840000000001,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 10,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.04755388,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       20
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 17,
+     "n": 30,
+     "verdict": "kept",
+     "cost": 0.0475024,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       17
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       13
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.036750120000000004,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03453516,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 4,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.042927280000000005,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       16
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 30,
+     "verdict": "flipped",
+     "cost": 0.050383080000000004,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       22
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       8
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.04713456,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       19
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       11
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.038126440000000004,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03343384,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.05106024,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       19
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       11
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 30,
+     "verdict": "flipped",
+     "cost": 0.0492162,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       22
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       8
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 3,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.04080296,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       12
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0028674800000000004,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.003113,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00349404,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.041198080000000005,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.035934360000000005,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:edit_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0366916,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0031235599999999996,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:bash"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0030021199999999996,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.035587640000000004,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 7,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.04902964,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       18
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p3",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03744136,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p3",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03758392,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 7,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.0467566,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       18
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03629384,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03483084,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 1,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.036637920000000004,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03641792,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03407492,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 7,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.01652552,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       18
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       7
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03648656,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "tooldesc:bash",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03416732,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 10,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.0161568,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       20
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.04121128,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       11
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.25",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.26",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.27",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.28",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.29",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.30",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.31",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.32",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.33",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.34",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.35",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.36",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.37",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.38",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.39",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.40",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.41",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.42",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.43",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.44",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.45",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.46",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.47",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.48",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.49",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.50",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.51",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.52",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.53",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.54",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.55",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.56",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.57",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.58",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.59",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.60",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.61",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.62",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.63",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.64",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.65",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.66",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.67",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.68",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.69"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0116644,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.43",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.44",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.45",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.46",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.47",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.48",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.49",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.50",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.51",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.52",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.53",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.54",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.55",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.56",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.57",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.58",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.59",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.60",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.61",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.62",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.63",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.64",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.65",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.66",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.67",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.68",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.69",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.70",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.71",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.72",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.73",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.74",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.75",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.76",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.77",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.78",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.79",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.80",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.81",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.82"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.01157596,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851",
+     "pair:call_00_KYBFZaiyRs2cWNl6ucxY5254",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "pair:call_01_SN2dcYZq4TrWYBlD5xdt8253",
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p8",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.010556040000000001,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_5MmP4GXRtlpnP4DaHIWT5663"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.03409076,
+     "dist": [
+      [
+       "read_file({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "grep({\"command~^python -m pytest\": false})",
+       8
+      ],
+      [
+       "edit_file({\"command~^python -m pytest\": false})",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p2.6"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0033083599999999998,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_02_J0kRpghPV3vwwdbQeIHm0190.20"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00322256,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash.3",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.04098952,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       11
+      ],
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash.1",
+     "tooldesc:bash.2",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 30,
+     "verdict": "flipped",
+     "cost": 0.05251752,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       21
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       9
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash.2",
+     "tooldesc:read_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 2,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.040823200000000004,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       13
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:bash.2",
+     "tooldesc:read_file.3",
+     "tooldesc:read_file.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 12,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.05246208,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       18
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       12
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:bash.2",
+     "tooldesc:read_file.1",
+     "tooldesc:read_file.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.05224032,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       19
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       11
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7",
+     "tooldesc:bash",
+     "tooldesc:bash.2",
+     "tooldesc:read_file.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 1,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.03714084,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7.6",
+     "sys@msg0.p7.7",
+     "sys@msg0.p7.8",
+     "sys@msg0.p7.9",
+     "tooldesc:bash",
+     "tooldesc:bash.2",
+     "tooldesc:read_file",
+     "tooldesc:read_file.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03719628,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7.1",
+     "sys@msg0.p7.2",
+     "sys@msg0.p7.3",
+     "sys@msg0.p7.4",
+     "sys@msg0.p7.5",
+     "tooldesc:bash",
+     "tooldesc:bash.2",
+     "tooldesc:read_file",
+     "tooldesc:read_file.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 1,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.03979404,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7.4",
+     "sys@msg0.p7.5",
+     "tooldesc:bash",
+     "tooldesc:bash.2",
+     "tooldesc:read_file",
+     "tooldesc:read_file.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 3,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.04311384,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       12
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7.5",
+     "tooldesc:bash",
+     "tooldesc:bash.2",
+     "tooldesc:read_file",
+     "tooldesc:read_file.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0373692,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7.4",
+     "tooldesc:bash",
+     "tooldesc:bash.2",
+     "tooldesc:read_file",
+     "tooldesc:read_file.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 1,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.04033656,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       9
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.1",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.10",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.11",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.12",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.13",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.14",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.15",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.16",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.17",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.18",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.19",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.2",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.20",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.21",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.22",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.23",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.24",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.25",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.26",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.27",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.28",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.29",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.3",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.4",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.5",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.6",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.7",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.8",
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.9",
+     "sys@msg0.p7",
+     "sys@msg0.p7.4",
+     "tooldesc:bash",
+     "tooldesc:bash.2",
+     "tooldesc:read_file",
+     "tooldesc:read_file.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.033173799999999996,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "sys@msg0.p7.4",
+     "tooldesc:bash.2",
+     "tooldesc:read_file.4"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 2,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.0428428,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": false})",
+       13
+      ],
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:bash.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.038334120000000006,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "tooldesc:read_file.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03759536,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.03508604,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.100",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.101",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.102",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.103",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.104",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.105",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.106",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.76",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.77",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.78",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.79",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.80",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.81",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.82",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.83",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.84",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.85",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.86",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.87",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.88",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.89",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.90",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.91",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.92",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.93",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.94",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.95",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.96",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.97",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.98",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.99"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00987712,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.63",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.64",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.65",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.66",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.67",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.68",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.69",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.70",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.71",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.72",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.73",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.74",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.75",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.76",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.77",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.78",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.79",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.80",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.81",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.82",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.83",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.84",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.85",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.86",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.87",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.88",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.89",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.90",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.91",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.92",
+     "pair:call_00_CPftmV3nwvya3o59qQWu3851.93"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.011527560000000001,
+     "dist": [
+      [
+       "bash({\"command~^python -m pytest\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 2.416978960000021,
+  "replays": 1100
+ }
+}

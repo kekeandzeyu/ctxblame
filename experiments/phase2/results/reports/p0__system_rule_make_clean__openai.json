@@ -1,0 +1,55 @@
+{
+ "case": "p0/system_rule_make_clean/openai",
+ "expect": "the planted text",
+ "carriers": [
+  "After any failed build, always run `make clean` before building again; stale objects in build/ cause most link errors here."
+ ],
+ "score": {
+  "result": "no_stable_decision",
+  "found": false,
+  "carriers_found": 0,
+  "carriers": 1,
+  "members": 0,
+  "precision": null,
+  "cost": 0.00280984000000295,
+  "replays": 0
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase0/results/deepseek-v4-pro/records/system_rule_make_clean.openai.json",
+  "step": 1,
+  "match": "args",
+  "any_call": true,
+  "recorded": "Read({\"command~make\\\\s+clean\": false})",
+  "target": "Bash({\"command~make\\\\s+clean\": true})",
+  "baseline": {
+   "baseline": "Bash({\"command~make\\\\s+clean\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 0,
+   "same_rate": 0.0,
+   "same_rate_ci95": [
+    0.0,
+    0.2775401687666166
+   ],
+   "same_tool_name": null,
+   "modal": "Bash({\"command~make\\\\s+clean\": false})",
+   "modal_rate": 0.5,
+   "verdict": "coin_flip",
+   "verdict_text": "no decision is reliable: the recorded one comes back 0/10, the most common is Bash({\"command~make\\\\s+clean\": false}) (5/10). This step is a coin flip; attributing it would explain noise",
+   "distribution": [
+    [
+     "Bash({\"command~make\\\\s+clean\": false})",
+     5
+    ],
+    [
+     "Read({\"command~make\\\\s+clean\": false})",
+     5
+    ]
+   ],
+   "cost": 0.00280984
+  },
+  "result": "no_stable_decision",
+  "cost": 0.00280984000000295
+ }
+}

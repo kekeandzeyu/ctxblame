@@ -3,6 +3,7 @@
     ctxblame record --upstream https://api.deepseek.com/anthropic   # proxy; writes traces/<id>.jsonl
     ctxblame steps traces/<id>.jsonl                               # what is in the trace
     ctxblame replay traces/<id>.jsonl --step 14 -n 10              # does step 14 reproduce?
+    ctxblame why traces/<id>.jsonl --step 14                       # which context caused it?
 """
 
 from __future__ import annotations
@@ -12,7 +13,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import proxy, replay
+from . import blame, proxy, replay
 from .match import MODES
 from .trace import describe, load_trace, matcher_for
 
@@ -54,6 +55,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("replay", help="replay one step N times (optionally with context removed)")
     replay.add_args(p)
     p.set_defaults(func=replay.run_cli)
+
+    p = sub.add_parser("why", help="find the context chunks that caused the decision at one step")
+    blame.add_args(p)
+    p.set_defaults(func=blame.run_cli)
 
     args = ap.parse_args(argv)
     return args.func(args)

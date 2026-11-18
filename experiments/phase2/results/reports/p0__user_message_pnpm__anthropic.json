@@ -1,0 +1,847 @@
+{
+ "case": "p0/user_message_pnpm/anthropic",
+ "expect": "the planted text",
+ "carriers": [
+  "We use pnpm in this repo, never npm or yarn."
+ ],
+ "score": {
+  "result": "causes",
+  "found": true,
+  "carriers_found": 1,
+  "carriers": 1,
+  "members": 1,
+  "precision": 1.0,
+  "cost": 0.09651839999997058,
+  "replays": 300
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase0/results/deepseek-v4-pro/records/user_message_pnpm.anthropic.json",
+  "step": 1,
+  "match": "args",
+  "any_call": true,
+  "recorded": "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+  "target": "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+  "baseline": {
+   "baseline": "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 8,
+   "same_rate": 0.8,
+   "same_rate_ci95": [
+    0.49015684672072335,
+    0.9433190520193067
+   ],
+   "same_tool_name": null,
+   "modal": "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+   "modal_rate": 0.8,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 8/10 replays",
+   "distribution": [
+    [
+     "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+     8
+    ],
+    [
+     "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+     2
+    ]
+   ],
+   "cost": 0.00327536
+  },
+  "everything_removed": {
+   "k": 0,
+   "n": 10,
+   "verdict": "flipped",
+   "cost": 0.00366168,
+   "dist": [
+    [
+     "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+     10
+    ]
+   ],
+   "note": ""
+  },
+  "result": "causes",
+  "causes": [
+   {
+    "members": [
+     {
+      "id": "msg[0].3",
+      "kind": "line",
+      "label": "turn 0 user message sentence 3",
+      "text": "We use pnpm in this repo, never npm or yarn."
+     }
+    ],
+    "together": {
+     "k": 2,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.0064728400000000005,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       17
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       2
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    },
+    "specific": true,
+    "alone": {},
+    "controls": [
+     {
+      "removed": "What would you like me to do?",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0015756400000000001,
+      "dist": [
+       [
+        "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "Never delete user data, never force-pus…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0015228400000000001,
+      "dist": [
+       [
+        "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   },
+   {
+    "members": [
+     {
+      "id": "pair:toolu_31",
+      "kind": "tool call",
+      "label": "turn 1 Bash({\"command\": \"ls; cat apps/web/package.json\"}) + result",
+      "text": "apps\npackages\npackage.json\nturbo.json\nREADME.md\n---\n{\n  \"name\": \"web\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"15.1.0\",\n    \"react\": \"19.0.0\"\n  }\n}"
+     },
+     {
+      "id": "msg[3].2",
+      "kind": "line",
+      "label": "turn 2 assistant text sentence 2",
+      "text": "What would you like me to do?"
+     }
+    ],
+    "together": {
+     "k": 3,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.007770400000000001,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       21
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       3
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    },
+    "specific": false,
+    "alone": {
+     "pair:toolu_31": {
+      "k": 11,
+      "n": 30,
+      "verdict": "unclear",
+      "cost": 0.01030656,
+      "dist": [
+       [
+        "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+        17
+       ],
+       [
+        "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+        11
+       ],
+       [
+        "Read({\"command~\\\\bpnpm\\\\b\": false})",
+        3
+       ]
+      ],
+      "note": ""
+     },
+     "msg[3].2": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0015756400000000001,
+      "dist": [
+       [
+        "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     }
+    },
+    "controls": [
+     {
+      "removed": "When you are unsure what a project expe… / Never delete user data, never force-pus…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.00142384,
+      "dist": [
+       [
+        "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+        5
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "We use pnpm in this repo, never npm or … / The storefront lives in apps/web and sh…",
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.00335456,
+      "dist": [
+       [
+        "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+        9
+       ],
+       [
+        "Edit({\"command~\\\\bpnpm\\\\b\": false})",
+        1
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   }
+  ],
+  "notes": [],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "msg[0]",
+     "msg[3]",
+     "pair:toolu_31",
+     "sys.p1",
+     "text:1.content.0.text",
+     "tooldesc:Bash",
+     "tooldesc:Edit",
+     "tooldesc:Read"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00366168,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[0]",
+     "msg[3]",
+     "pair:toolu_31",
+     "text:1.content.0.text"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00300124,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[3]",
+     "pair:toolu_31"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 6,
+     "n": 30,
+     "verdict": "flipped",
+     "cost": 0.00925716,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       22
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       6
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[3]"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.0029031200000000004,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       8
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_31"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01030656,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       17
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       11
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[0]",
+     "sys.p1",
+     "text:1.content.0.text",
+     "tooldesc:Bash",
+     "tooldesc:Edit",
+     "tooldesc:Read"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00262108,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       9
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[0]",
+     "sys.p1",
+     "text:1.content.0.text"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0034685199999999997,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       8
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ],
+      [
+       "Edit({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "text:1.content.0.text"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00162448,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[0]",
+     "sys.p1"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0033246400000000002,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       9
+      ],
+      [
+       "Edit({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[0]"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.00804056,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       17
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       5
+      ],
+      [
+       "Edit({\"command~\\\\bpnpm\\\\b\": false})",
+       3
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_31.10",
+     "pair:toolu_31.11",
+     "pair:toolu_31.12",
+     "pair:toolu_31.13",
+     "pair:toolu_31.14",
+     "pair:toolu_31.2",
+     "pair:toolu_31.3",
+     "pair:toolu_31.4",
+     "pair:toolu_31.5",
+     "pair:toolu_31.6",
+     "pair:toolu_31.7",
+     "pair:toolu_31.8",
+     "pair:toolu_31.9"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.00389136,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       9
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       5
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_31.10",
+     "pair:toolu_31.11",
+     "pair:toolu_31.12",
+     "pair:toolu_31.13",
+     "pair:toolu_31.14",
+     "pair:toolu_31.3",
+     "pair:toolu_31.4",
+     "pair:toolu_31.5",
+     "pair:toolu_31.6",
+     "pair:toolu_31.7",
+     "pair:toolu_31.8",
+     "pair:toolu_31.9"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 7,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.00387948,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       7
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       7
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p1",
+     "text:1.content.0.text",
+     "tooldesc:Bash",
+     "tooldesc:Edit",
+     "tooldesc:Read"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0016082,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[3]",
+     "pair:toolu_31.1",
+     "pair:toolu_31.10",
+     "pair:toolu_31.11",
+     "pair:toolu_31.12",
+     "pair:toolu_31.13",
+     "pair:toolu_31.14",
+     "pair:toolu_31.2",
+     "pair:toolu_31.3",
+     "pair:toolu_31.4",
+     "pair:toolu_31.5",
+     "pair:toolu_31.6",
+     "pair:toolu_31.7",
+     "pair:toolu_31.8",
+     "pair:toolu_31.9"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.01201332,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       21
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       9
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[3].2",
+     "pair:toolu_31"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 2,
+     "n": 15,
+     "verdict": "flipped",
+     "cost": 0.00468204,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       12
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       2
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[3].2",
+     "pair:toolu_31"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 3,
+     "n": 25,
+     "verdict": "flipped",
+     "cost": 0.007770400000000001,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       21
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       3
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[3].2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0015756400000000001,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p1.6",
+     "sys.p1.7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00142384,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[0].3",
+     "msg[0].4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00335456,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       9
+      ],
+      [
+       "Edit({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[0].4"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0015215200000000002,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[0].3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00321068,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "msg[0].3"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 2,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.0064728400000000005,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": false})",
+       17
+      ],
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       2
+      ],
+      [
+       "Read({\"command~\\\\bpnpm\\\\b\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys.p1.7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0015228400000000001,
+     "dist": [
+      [
+       "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 0.09651839999997058,
+  "replays": 300
+ }
+}

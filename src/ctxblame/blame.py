@@ -1,0 +1,693 @@
+"""Blame: find the context chunks whose removal flips a decision.
+
+1. Baseline: replay the step unchanged. If no decision is reliable, stop
+   ("coin flip"); if the recorded one is unusual, blame the usual one.
+2. Chunk the request (coarse): system paragraphs, earlier user and assistant
+   text, each tool call + result, each turn's reasoning, tool descriptions.
+   The user's task is never removed.
+3. Search: if removing every chunk keeps the decision, the context does not
+   carry it. Otherwise delta debugging finds a minimal set whose removal flips
+   it. One chunk = a cause; several = redundant carriers of one cause (only
+   removing all of them flips it). Repeat on the rest for further causes.
+4. Refine each member to the lines that matter, with the set's other members
+   held removed (so it is the only carrier).
+5. Measure each member alone, and random same-size controls.
+
+Every test is statistical: replays in batches until the rate is clearly above
+or below half the baseline rate (Wilson interval), or ``max_n`` is reached.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import copy
+import json
+import os
+import random
+import sys
+from collections import Counter
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
+from typing import Awaitable, Callable
+
+from .ablate import (AblationError, _cut, _segments, _short, _thinking_text, remove_units, text_fields,
+                     validate)
+from .formats import ANTHROPIC, extract_decision
+from .match import MODES, Matcher
+from .pricing import Ledger, resolve_model
+from .replay import (FatalReplayError, Replayer, build_headers, default_key_env, estimate_cost, summarize,
+                     wilson)
+from .trace import Step, get_step, load_trace, matcher_for
+
+# ------------------------------------------------------------------ chunks
+
+STUB = "(removed)"
+
+
+@dataclass
+class Chunk:
+    id: str
+    kind: str  # system | user | assistant | tool result | tool call | thinking | tool desc | line
+    label: str
+    text: str
+    pos: int  # rough offset in the prompt, for cache cost and ordering
+    units: tuple = ()  # unit ids for remove_units
+    spans: tuple = ()  # ((field path), start, end)
+    children: list["Chunk"] = field(default_factory=list)
+
+    @property
+    def chars(self) -> int:
+        return len(self.text)
+
+
+def _get(body: dict, path: tuple):
+    o = body
+    for p in path:
+        o = o[p]
+    return o
+
+
+def _line_chunks(parent_id: str, label: str, path: tuple, s: str, base: int, pos: int,
+                 min_chars: int = 1) -> list[Chunk]:
+    """Sentence/line children of the text s[base:base+len(sub)]."""
+    out = []
+    unit = "line" if "\n" in s.strip() else "sentence"
+    for st, en in _segments(s):
+        piece = s[st:en]
+        if len(piece.strip()) < min_chars:
+            continue
+        out.append(Chunk(f"{parent_id}.{len(out) + 1}", "line", f"{label} {unit} {len(out) + 1}",
+                         piece.strip(), pos + st, spans=((path, base + st, base + en),)))
+    return out
+
+
+def _paragraphs(s: str) -> list[tuple[int, int]]:
+    """Spans of blank-line separated paragraphs (a heading starts a new one)."""
+    spans, start = [], None
+    lines, off = s.splitlines(keepends=True), 0
+    for ln in lines:
+        blank = not ln.strip()
+        heading = ln.lstrip().startswith("#")
+        if blank:
+            if start is not None:
+                spans.append((start, off))
+                start = None
+        else:
+            if heading and start is not None:
+                spans.append((start, off))
+                start = None
+            if start is None:
+                start = off
+        off += len(ln)
+    if start is not None:
+        spans.append((start, off))
+    return spans
+
+
+def chunk_request(fmt: str, body: dict, protect: list[str] = (), tool_descs: bool = True) -> list[Chunk]:
+    """Coarse chunks (with line-level children), in prompt order. The text of
+    the task message and any text in ``protect`` are left out."""
+    msgs = body.get("messages") or []
+    fields = text_fields(fmt, body)
+    # the task = the latest user message with text of its own (in an agent's tool
+    # loop that is the first one; in a chat it is the current request)
+    task_i = None
+    for p, s in fields:
+        if p[0] == "messages" and msgs[p[1]].get("role") == "user" and s.strip() and not (
+                len(p) >= 4 and msgs[p[1]]["content"][p[3]].get("type") == "tool_result"):
+            task_i = p[1]
+
+    # rough prompt positions: tools, then system, then messages
+    pos, at = {}, 0
+    order = sorted(fields, key=lambda f: (0 if f[0][0] == "tools" else 1 if f[0][0] == "system" else 2,
+                                          f[0][1] if len(f[0]) > 1 and isinstance(f[0][1], int) else 0))
+    for p, s in order:
+        pos[p] = at
+        at += len(s)
+    msg_pos = {}
+    for p, _ in order:
+        if p[0] == "messages":
+            msg_pos.setdefault(p[1], pos[p])
+    for i in range(len(msgs)):
+        msg_pos.setdefault(i, msg_pos.get(i - 1, at))
+
+    turn, turns = 0, []
+    for m in msgs:
+        if m.get("role") == "assistant":
+            turn += 1
+        turns.append(turn)
+
+    def protected(s: str) -> bool:
+        return any(p and p in s for p in protect)
+
+    out: list[Chunk] = []
+    # tool descriptions
+    if tool_descs:
+        for ti, t in enumerate(body.get("tools") or []):
+            name = t.get("name") or (t.get("function") or {}).get("name")
+            fs = [(p, s) for p, s in fields if p[:2] == ("tools", ti) and s.strip()]
+            if not fs:
+                continue
+            kids = [Chunk(f"tooldesc:{name}.{k + 1}", "line", f"tool {name} description {k + 1}", s.strip(),
+                          pos[p], spans=((p, 0, len(s)),)) for k, (p, s) in enumerate(fs)]
+            out.append(Chunk(f"tooldesc:{name}", "tool desc", f"tool {name}: descriptions",
+                             "\n".join(s for _, s in fs), pos[fs[0][0]], spans=tuple(k.spans[0] for k in kids),
+                             children=kids if len(kids) > 1 else []))
+    # system paragraphs (Anthropic system blocks, OpenAI system messages)
+    for p, s in fields:
+        is_sys = p[0] == "system" or (p[0] == "messages" and msgs[p[1]].get("role") in ("system", "developer"))
+        if not is_sys:
+            continue
+        tag = f"sys{p[1] if len(p) > 1 and p[0] == 'system' else ''}" if p[0] == "system" else f"sys@msg{p[1]}"
+        for k, (st, en) in enumerate(_paragraphs(s), 1):
+            text = s[st:en]
+            if protected(text):
+                continue
+            cid = f"{tag}.p{k}"
+            label = f"system ¶{k}"
+            kids = _line_chunks(cid, label, p, text, st, pos[p])
+            out.append(Chunk(cid, "system", label, text.strip(), pos[p] + st, spans=((p, st, en),),
+                             children=kids if len(kids) > 1 else []))
+    # messages
+    pair_fields: dict[str, list[tuple[tuple, str]]] = {}
+    for p, s in fields:
+        if p[0] != "messages":
+            continue
+        m = msgs[p[1]]
+        if fmt == ANTHROPIC and len(p) >= 4 and m["content"][p[3]].get("type") == "tool_result":
+            pair_fields.setdefault(m["content"][p[3]]["tool_use_id"], []).append((p, s))
+        elif fmt != ANTHROPIC and m.get("role") == "tool":
+            pair_fields.setdefault(m["tool_call_id"], []).append((p, s))
+
+    for i, m in enumerate(msgs):
+        role = m.get("role")
+        if i == task_i or role in ("system", "developer"):
+            continue
+        t = turns[i]
+        # plain text of user / assistant messages
+        for p, s in fields:
+            if p[0] != "messages" or p[1] != i or not s.strip() or protected(s):
+                continue
+            if role == "tool" or (len(p) >= 4 and m["content"][p[3]].get("type") == "tool_result"):
+                continue
+            if role not in ("user", "assistant"):
+                continue
+            only_text = isinstance(m.get("content"), str) and not m.get("tool_calls") or (
+                isinstance(m.get("content"), list) and all(b.get("type") == "text" for b in m["content"])
+                and len(m["content"]) == 1)
+            cid = f"msg[{i}]" if only_text else f"text:{'.'.join(map(str, p[1:]))}"
+            label = f"turn {t} {'user message' if role == 'user' else 'assistant text'}"
+            kids = _line_chunks(cid, label, p, s, 0, pos[p])
+            out.append(Chunk(cid, role, label, s.strip(), pos[p],
+                             units=(f"msg[{i}]",) if only_text else (),
+                             spans=() if only_text else ((p, 0, len(s)),),
+                             children=kids if len(kids) > 1 else []))
+        # reasoning
+        th = _thinking_text(fmt, m)
+        if th:
+            out.append(Chunk(f"thinking:msg[{i}]", "thinking", f"turn {t} reasoning", th, msg_pos[i],
+                             units=(f"thinking:msg[{i}]",)))
+        # tool calls with their results
+        calls = []
+        if fmt == ANTHROPIC and isinstance(m.get("content"), list):
+            calls = [(b["id"], b["name"], json.dumps(b.get("input"), ensure_ascii=False))
+                     for b in m["content"] if b.get("type") == "tool_use"]
+        elif m.get("tool_calls"):
+            calls = [(c["id"], (c.get("function") or {}).get("name"), (c.get("function") or {}).get("arguments"))
+                     for c in m["tool_calls"]]
+        for cid, name, args in calls:
+            res = pair_fields.get(cid, [])
+            label = f"turn {t} {name}({_short(str(args), 50)})"
+            if any(protected(s) for _, s in res):
+                continue
+            kids = []
+            for p, s in res:
+                kids += _line_chunks(f"pair:{cid}", label + " result", p, s, 0, pos[p])
+            for n, k in enumerate(kids, 1):
+                k.id = f"pair:{cid}.{n}"
+                k.label = f"{label} result line {n}"
+            out.append(Chunk(f"pair:{cid}", "tool call", label + " + result",
+                             "\n".join(s for _, s in res), msg_pos[i], units=(f"pair:{cid}",),
+                             children=kids if len(kids) > 1 else []))
+    out.sort(key=lambda c: c.pos)
+    return out
+
+
+def apply_chunks(fmt: str, body: dict, chunks: list[Chunk]) -> dict:
+    """The request with these chunks removed; always a valid request or AblationError."""
+    b = copy.deepcopy(body)
+    units: list[str] = []
+    by_path: dict[tuple, list[tuple[int, int]]] = {}
+    for c in chunks:
+        units += c.units
+        for p, st, en in c.spans:
+            by_path.setdefault(tuple(p), []).append((st, en))
+    for p, spans in by_path.items():
+        spans.sort()
+        merged: list[list[int]] = []
+        for st, en in spans:
+            if merged and st <= merged[-1][1]:
+                merged[-1][1] = max(merged[-1][1], en)
+            else:
+                merged.append([st, en])
+        s = _get(b, p)
+        for st, en in reversed(merged):
+            s = _cut(s, st, en)
+        o = _get(b, p[:-1])
+        o[p[-1]] = s
+    # tidy what the cuts emptied
+    if fmt == ANTHROPIC and isinstance(b.get("system"), list):
+        b["system"] = [x for x in b["system"] if not ("text" in x and not x["text"].strip())]
+        if not b["system"]:
+            del b["system"]
+    elif fmt == ANTHROPIC and isinstance(b.get("system"), str) and not b["system"].strip():
+        del b["system"]
+    for i, m in enumerate(b.get("messages") or []):
+        c = m.get("content")
+        if isinstance(c, list):
+            c = [x for x in c if not (x.get("type") == "text" and not x.get("text", "").strip())]
+            m["content"] = c
+            if not c:
+                units.append(f"msg[{i}]")
+        elif isinstance(c, str) and not c.strip() and m.get("role") != "tool" and not m.get("tool_calls"):
+            units.append(f"msg[{i}]")
+    seen: set[str] = set()
+    units = [u for u in units if not (u in seen or seen.add(u))]
+    # the first user message cannot go (Anthropic requires the conversation to
+    # start with one); keep it as a stub instead
+    msgs = b.get("messages") or []
+    first = next((i for i, m in enumerate(msgs) if m.get("role") == "user"), None)
+    if first is not None and f"msg[{first}]" in units and not any(
+            x.get("type") == "tool_result" for x in msgs[first].get("content") or [] if isinstance(x, dict)):
+        units.remove(f"msg[{first}]")
+        msgs[first] = {**msgs[first], "content": STUB}
+    b = remove_units(fmt, b, units) if units else b
+    problems = validate(fmt, b)
+    if problems:
+        raise AblationError("; ".join(problems))
+    return b
+
+
+# ------------------------------------------------------------------ tests
+
+
+@dataclass
+class Outcome:
+    k: int
+    n: int
+    verdict: str  # flipped | kept | unclear | rejected | error
+    cost: float = 0.0
+    dist: list = field(default_factory=list)
+    note: str = ""
+
+    @property
+    def rate(self) -> float | None:
+        return self.k / self.n if self.n else None
+
+    @property
+    def flipped(self) -> bool:
+        return self.verdict == "flipped"
+
+    def __str__(self) -> str:
+        return f"{self.k}/{self.n}" if self.verdict not in ("rejected", "error") else self.verdict
+
+
+class BudgetStop(Exception):
+    pass
+
+
+Test = Callable[[frozenset], Awaitable[Outcome]]
+
+
+def decide(k: int, n: int, threshold: float, max_n: int, min_flip_n: int = 1) -> str:
+    """flipped / kept / unclear, or "more" (replay more). A flip needs at least
+    ``min_flip_n`` replays: false flips mislead the search more than false keeps."""
+    lo, hi = wilson(k, n)
+    if hi < threshold and n >= min_flip_n:
+        return "flipped"
+    if lo > threshold:
+        return "kept"
+    if n >= max_n:  # undecided: never call it a flip (keeps the search conservative)
+        return "flipped" if hi < threshold else "kept" if k / n > threshold else "unclear"
+    return "more"
+
+
+class Tester:
+    """Runs one removal test against the API: batches of replays until decided."""
+
+    def __init__(self, step: Step, base_url: str, api_key: str, matcher: Matcher, target: str,
+                 chunks: dict[str, Chunk], ledger: Ledger, baseline_rate: float,
+                 batch: int = 5, max_n: int = 15, concurrency: int = 8) -> None:
+        self.step, self.base, self.key = step, base_url, api_key
+        self.matcher, self.target, self.chunks, self.ledger = matcher, target, chunks, ledger
+        self.threshold = baseline_rate / 2
+        self.batch, self.max_n, self.conc = batch, max_n, concurrency
+        self.est = estimate_cost(step, base_url)
+        self.cache: dict[frozenset, Outcome] = {}
+        self.samples: dict[frozenset, list] = {}
+        self.log: list[dict] = []
+        self.replays = 0
+
+    def replayer(self) -> Replayer:
+        rec = self.step.record["request"]
+        return Replayer(self.step.fmt, self.base + rec["path"], build_headers(self.step.fmt, rec.get("headers"),
+                                                                              self.key),
+                        self.ledger, self.base, self.est, self.conc)
+
+    async def __call__(self, removed: frozenset, extra: list[Chunk] = (), fresh: bool = False) -> Outcome:
+        """``fresh``: confirm a finding with at least two more batches, deciding on
+        all replays of this removal together (with twice the usual cap)."""
+        key = removed | frozenset(c.id for c in extra)
+        if key in self.cache and not fresh:
+            return self.cache[key]
+        try:
+            body = apply_chunks(self.step.fmt, self.step.body, [self.chunks[i] for i in removed] + list(extra))
+        except AblationError as e:
+            out = Outcome(0, 0, "error", note=str(e))
+            self.cache[key] = out
+            return out
+        old = self.samples.get(key, []) if fresh else []
+        samples, new, out = list(old), 0, None
+        min_new = 2 * self.batch if fresh else 0
+        max_n = self.max_n * (2 if fresh else 1)
+        extended = fresh
+        rp = self.replayer()
+        while True:
+            if self.ledger.remaining() < self.est * self.batch:
+                raise BudgetStop(f"budget left ${self.ledger.remaining():.3f}")
+            try:
+                got = await rp.run(body, self.batch, self.matcher)
+            except FatalReplayError as e:
+                out = Outcome(0, 0, "rejected", note=str(e)[:300])
+                break
+            samples += got
+            new += len(got)
+            ok = [s for s in samples if s.ok]
+            k = sum(self.matcher.same(None, self.target, s.key, s.keys or [s.key]) for s in ok)
+            v = decide(k, len(ok), self.threshold, max_n, 2 * self.batch) if ok else "more"
+            if v == "unclear" and not extended:  # borderline: one extension to twice the replays
+                max_n, extended = max_n * 2, True
+                continue
+            if new >= min_new and (v != "more" or new >= max_n * 2):
+                dist = Counter(x for s in ok for x in set(s.keys or [s.key])).most_common(4)
+                out = Outcome(k, len(ok), v if ok else "error", sum(s.cost for s in samples), dist)
+                break
+        self.replays += new
+        self.samples[key] = samples
+        self.cache[key] = out
+        self.log.append({"removed": sorted(key), "fresh": fresh, "outcome": asdict(out)})
+        return out
+
+
+# ------------------------------------------------------------------ search
+
+
+async def ddmin(items: list[str], test: Callable[[frozenset], Awaitable[Outcome]],
+                base: frozenset = frozenset()) -> list[str]:
+    """Minimal subset S of items with test(base | S) flipped, assuming
+    test(base | items) is flipped. Later parts are tried first (cheaper:
+    the cached prompt prefix survives)."""
+    n = 2
+    while len(items) >= 2:
+        size = -(-len(items) // n)
+        parts = [items[i:i + size] for i in range(0, len(items), size)]
+        found = False
+        for p in reversed(parts):
+            if (await test(base | frozenset(p))).flipped:
+                items, n, found = p, 2, True
+                break
+        if not found and len(parts) > 2:
+            for p in reversed(parts):
+                comp = [x for x in items if x not in p]
+                if (await test(base | frozenset(comp))).flipped:
+                    items, n, found = comp, max(n - 1, 2), True
+                    break
+        if not found:
+            if n >= len(items):
+                break
+            n = min(len(items), n * 2)
+    return items
+
+
+@dataclass
+class Cause:
+    members: list[str]  # chunk ids (refined to lines where that helped)
+    together: Outcome | None = None  # all members removed
+    alone: dict[str, Outcome] = field(default_factory=dict)
+    controls: list[tuple[str, Outcome]] = field(default_factory=list)
+
+    @property
+    def specific(self) -> bool | None:
+        """Do same-size random removals leave the decision alone? (None: no controls)"""
+        if not self.controls:
+            return None
+        return sum(o.verdict == "kept" for _, o in self.controls) > len(self.controls) / 2
+
+
+async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = True,
+                 n_controls: int = 2, rng: random.Random | None = None,
+                 control_pool: list[Chunk] = (), max_members: int = 5,
+                 notes: list[str] | None = None) -> tuple[Outcome, list[Cause]]:
+    """Returns (outcome with every chunk removed, causes); explanations of
+    why the search stopped are appended to ``notes``."""
+    notes = notes if notes is not None else []
+    rng = rng or random.Random(0)
+    by_id = {c.id: c for c in coarse}
+    for c in coarse:
+        for k in c.children:
+            by_id[k.id] = k
+    remaining = [c.id for c in coarse]
+    everything = await test(frozenset(remaining))
+    causes: list[Cause] = []
+    if not everything.flipped:
+        return everything, causes
+    while remaining and len(causes) < max_causes:
+        if causes and not (await test(frozenset(remaining))).flipped:
+            break
+        s = await ddmin(remaining, test)
+        if not (await test(frozenset(s))).flipped:
+            break
+        if causes:  # a further cause must be small and specific, not "remove lots of anything"
+            size = sum(by_id[c].chars for c in s)
+            gate = [await test(frozenset(), extra=ctl)
+                    for ctl in pick_controls(control_pool, size, set(s), 2, rng)]
+            if len(s) > max_members or sum(o.verdict == "kept" for o in gate) < len(gate) / 2 or not gate:
+                notes.append(f"no further specific cause: removing the rest of the context flips the "
+                             f"decision only in bulk ({len(s)} chunks, random same-size removals: "
+                             f"{', '.join(map(str, gate)) or 'none possible'})")
+                break
+        elif len(s) > max_members:
+            notes.append(f"diffuse: the smallest removal that flips the decision has {len(s)} chunks")
+            break
+        remaining = [x for x in remaining if x not in s]
+        causes.append(Cause(list(s)))
+
+    for cause in causes:
+        if refine:
+            refined = []
+            for cid in cause.members:
+                others = frozenset(x for x in cause.members if x != cid) | frozenset(refined)
+                kids = [k.id for k in by_id[cid].children]
+                # removing all lines of a text chunk is removing the chunk (known to flip);
+                # a tool pair keeps its call, so check that the result alone carries it
+                whole_text = not by_id[cid].units or by_id[cid].id.startswith("msg[")
+                if kids and (whole_text or (await test(others | frozenset(kids))).flipped):
+                    refined += await ddmin(kids, test, others)
+                else:
+                    refined.append(cid)
+            cause.members = refined
+        cause.together = await test(frozenset(cause.members), fresh=True)
+        if not cause.together.flipped:
+            notes.append(f"dropped an unconfirmed finding ({', '.join(cause.members)}): {cause.together} "
+                         "after more replays")
+            continue
+        if len(cause.members) > 1:
+            for cid in cause.members:
+                cause.alone[cid] = await test(frozenset([cid]))
+        size = sum(by_id[c].chars for c in cause.members)
+        for ctl in pick_controls(control_pool, size, set(cause.members), n_controls, rng):
+            cause.controls.append((" / ".join(_short(c.text, 40) for c in ctl),
+                                   await test(frozenset(), extra=ctl)))
+    causes = [c for c in causes if c.together and c.together.flipped]
+    causes.sort(key=lambda c: c.specific is False)  # specific causes first
+    return everything, causes
+
+
+def pick_controls(pool: list[Chunk], size: int, avoid: set[str], n: int, rng: random.Random) -> list[list[Chunk]]:
+    """n random runs of consecutive lines (same field) of about ``size`` chars."""
+    pool = [c for c in pool if c.id not in avoid and not any(c.id.startswith(a + ".") for a in avoid)
+            and not any(a.startswith(c.id + ".") for a in avoid)]
+    out, tries = [], 0
+    while len(out) < n and tries < 200 and pool:
+        tries += 1
+        i = rng.randrange(len(pool))
+        run, total = [], 0
+        for c in pool[i:]:
+            if run and c.spans[0][0] != run[0].spans[0][0]:
+                break
+            run.append(c)
+            total += c.chars
+            if total >= size * 0.7:
+                break
+        if size * 0.5 <= total <= size * 1.6 and [c.id for c in run] not in [[x.id for x in r] for r in out]:
+            out.append(run)
+    return out
+
+
+# ------------------------------------------------------------------ cli
+
+
+def add_args(ap) -> None:
+    ap.add_argument("trace", type=Path)
+    ap.add_argument("--step", type=int, default=None)
+    ap.add_argument("-n", type=int, default=10, help="baseline replays (default 10)")
+    ap.add_argument("--batch", type=int, default=5, help="replays per batch in each test")
+    ap.add_argument("--max-n", type=int, default=15, help="most replays per test")
+    ap.add_argument("--match", choices=MODES, default=None)
+    ap.add_argument("--key-arg", action="append", default=[])
+    ap.add_argument("--first-call", action="store_true",
+                    help="compare only the first tool call (default: any of the parallel calls)")
+    ap.add_argument("--target", default=None, help="decision to explain (default: the recorded one, or "
+                    "the usual one if the recorded one is atypical)")
+    ap.add_argument("--protect", action="append", default=[], help="text never to remove")
+    ap.add_argument("--no-tool-descs", action="store_true", help="do not consider tool descriptions")
+    ap.add_argument("--max-causes", type=int, default=3)
+    ap.add_argument("--controls", type=int, default=2)
+    ap.add_argument("--no-refine", action="store_true")
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--base-url", default=None)
+    ap.add_argument("--api-key-env", default=None)
+    ap.add_argument("--concurrency", type=int, default=8)
+    ap.add_argument("--budget", type=float, default=5.0, help="hard cap on total spend in the ledger (USD)")
+    ap.add_argument("--ledger", type=Path, default=Path(".ctxblame/spend.jsonl"))
+    ap.add_argument("--out", type=Path, default=Path("runs"))
+    ap.add_argument("--json", action="store_true", help="print the JSON report instead of text")
+
+
+async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
+    fmt = step.fmt
+    mode = args.match or ("args" if args.key_arg else "intent")
+    matcher = matcher_for(step, mode, args.key_arg or None, any_call=not args.first_call)
+    ledger = Ledger(args.ledger, args.budget)
+    start = ledger.total
+    recorded = matcher.key(extract_decision(fmt, step.response))
+    report: dict = {"trace": str(args.trace), "step": step.step, "match": mode, "any_call": not args.first_call,
+                    "recorded": recorded}
+
+    def say(s=""):
+        if not args.json:
+            print(s, file=out or sys.stdout, flush=True)
+
+    # 1. baseline
+    probe = Tester(step, base, api_key, matcher, recorded, {}, ledger, 1.0, args.n, args.n, args.concurrency)
+    rp = probe.replayer()
+    samples = await rp.run(step.body, args.n, matcher)
+    target = args.target or recorded
+    summ = summarize(samples, target, matcher)
+    if not args.target and summ["verdict"] == "atypical":
+        target = summ["modal"]
+        summ = summarize(samples, target, matcher)
+    report.update(target=target, baseline=summ)
+    b_rate = summ["same_rate"] or 0.0
+    say(f"Decision:  {target}" + ("   (the recorded call was atypical; explaining the usual one)"
+                                   if target != recorded and not args.target else ""))
+    say(f"Baseline:  {summ['same_decision']}/{summ['n_ok']} replays ({summ['verdict'].replace('_', ' ')})")
+    if summ["verdict"] in ("coin_flip", "too_few") or b_rate < 0.5:
+        say(f"Stop: {summ['verdict_text']}")
+        report.update(result="no_stable_decision", cost=ledger.total - start)
+        return report
+
+    # 2. chunks; can reasoning be removed at all?
+    coarse = chunk_request(fmt, step.body, args.protect, not args.no_tool_descs)
+    by_id = {c.id: c for c in coarse}
+    for c in coarse:
+        for k in c.children:
+            by_id[k.id] = k
+    test = Tester(step, base, api_key, matcher, target, by_id, ledger, b_rate, args.batch, args.max_n,
+                  args.concurrency)
+    notes = []
+    think = [c.id for c in coarse if c.kind == "thinking"]
+    if think:
+        o = await test(frozenset(think))
+        if o.verdict == "rejected":
+            coarse = [c for c in coarse if c.kind != "thinking"]
+            notes.append("reasoning: not removable (the provider requires earlier reasoning to be passed "
+                         "back); it is part of the context that cannot be tested")
+    say(f"Chunks:    {len(coarse)} ({', '.join(f'{v} {k}' for k, v in Counter(c.kind for c in coarse).items())})")
+
+    # 3-5. search
+    pool = [k for c in coarse for k in (c.children or [c]) if c.kind != "thinking" and k.spans]
+    try:
+        everything, causes = await search(coarse, test, args.max_causes, not args.no_refine, args.controls,
+                                          random.Random(args.seed), pool, notes=notes)
+        stopped = None
+    except BudgetStop as e:
+        everything, causes, stopped = None, [], str(e)
+    report["everything_removed"] = asdict(everything) if everything else None
+    if everything is not None:
+        say(f"Everything but the task removed: {everything}" +
+            ("  -> the decision comes from the context" if everything.flipped else
+             "  -> the context does not carry it (the task and the model's habits do)"))
+    for n, c in enumerate(causes, 1):
+        together = c.together
+        what = "Cause" if c.specific is not False else "Context it needs (not specific)"
+        if len(c.members) == 1:
+            say(f"\n{what} {n} (removing it flips the decision: {together}):")
+        else:
+            say(f"\n{what} {n} (redundant: only removing all of these flips it: {together}):")
+        for cid in c.members:
+            ch = by_id[cid]
+            alone = f"   alone: {c.alone[cid]}" if cid in c.alone else ""
+            say(f"  - {ch.label}: {_short(ch.text, 90)!r}{alone}")
+        if c.controls:
+            say("  controls (random same-size removals): " + ", ".join(str(o) for _, o in c.controls)
+                + ("" if c.specific else "  -> NOT specific: random removals flip it too"))
+    if not causes and everything is not None and everything.flipped and any("reasoning" in n for n in notes):
+        notes.append("removing all removable context flips the decision, but no small set does: the "
+                     "reasoning that cannot be removed probably carries it too")
+    for note in notes:
+        say(f"\nNote: {note}")
+    if stopped:
+        say(f"\nStopped early: {stopped}")
+    cost = ledger.total - start
+    say(f"\nTests: {len(test.log)}, replays: {test.replays + len(samples)}, cost ${cost:.4f} "
+        f"(ledger ${ledger.total:.4f} of ${args.budget:.2f})")
+    report.update(result="causes" if causes else ("not_in_context" if everything and not everything.flipped
+                                                  else "none_found"),
+                  causes=[{"members": [{"id": m, "kind": by_id[m].kind, "label": by_id[m].label,
+                                        "text": by_id[m].text} for m in c.members],
+                           "together": asdict(c.together) if c.together else None,
+                           "specific": c.specific,
+                           "alone": {k: asdict(v) for k, v in c.alone.items()},
+                           "controls": [{"removed": t, **asdict(o)} for t, o in c.controls]} for c in causes],
+                  notes=notes, stopped=stopped, tests=test.log, cost=cost,
+                  replays=test.replays + len(samples))
+    return report
+
+
+def run_cli(args) -> int:
+    try:
+        step = get_step(load_trace(args.trace), args.step)
+    except (LookupError, ValueError, OSError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 5
+    base = (args.base_url or step.record["upstream"]).rstrip("/")
+    key_env = args.api_key_env or default_key_env(step.fmt, base)
+    api_key = os.environ.get(key_env)
+    if not api_key:
+        print(f"error: set {key_env} in the environment", file=sys.stderr)
+        return 2
+    resolve_model(step.body.get("model", ""), base)
+    try:
+        report = asyncio.run(why(step, args, api_key, base))
+    except FatalReplayError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 4
+    args.out.mkdir(parents=True, exist_ok=True)
+    path = args.out / f"{args.trace.stem}.step{step.step}.why.json"
+    path.write_text(json.dumps(report, indent=1, ensure_ascii=False, default=str))
+    if args.json:
+        print(json.dumps(report, indent=1, ensure_ascii=False, default=str))
+    else:
+        print(f"Saved: {path}")
+    return 0

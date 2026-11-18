@@ -1,0 +1,513 @@
+{
+ "case": "p0/tool_pair_readme_tests/openai",
+ "expect": "the planted text",
+ "carriers": [
+  "pair:toolu_12"
+ ],
+ "score": {
+  "result": "causes",
+  "found": true,
+  "carriers_found": 1,
+  "carriers": 1,
+  "members": 1,
+  "precision": 1.0,
+  "cost": 0.07130068000000733,
+  "replays": 180
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase0/results/deepseek-v4-pro/records/tool_pair_readme_tests.openai.json",
+  "step": 1,
+  "match": "args",
+  "any_call": true,
+  "recorded": "Bash({\"command~run_tests\\\\.sh\": false})",
+  "target": "Bash({\"command~run_tests\\\\.sh\": true})",
+  "baseline": {
+   "baseline": "Bash({\"command~run_tests\\\\.sh\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 8,
+   "same_rate": 0.8,
+   "same_rate_ci95": [
+    0.49015684672072335,
+    0.9433190520193067
+   ],
+   "same_tool_name": null,
+   "modal": "Bash({\"command~run_tests\\\\.sh\": true})",
+   "modal_rate": 0.8,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 8/10 replays",
+   "distribution": [
+    [
+     "Bash({\"command~run_tests\\\\.sh\": true})",
+     8
+    ],
+    [
+     "Bash({\"command~run_tests\\\\.sh\": false})",
+     2
+    ]
+   ],
+   "cost": 0.0031033199999999997
+  },
+  "everything_removed": {
+   "k": 0,
+   "n": 10,
+   "verdict": "flipped",
+   "cost": 0.00471284,
+   "dist": [
+    [
+     "Bash({\"command~run_tests\\\\.sh\": false})",
+     10
+    ]
+   ],
+   "note": ""
+  },
+  "result": "causes",
+  "causes": [
+   {
+    "members": [
+     {
+      "id": "pair:toolu_12.5",
+      "kind": "line",
+      "label": "turn 2 Read({\"path\": \"README.md\"}) result line 5",
+      "text": "Run `./scripts/run_tests.sh --fast` instead."
+     }
+    ],
+    "together": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.009491679999999999,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       16
+      ],
+      [
+       "Read({\"command~run_tests\\\\.sh\": false})",
+       6
+      ]
+     ],
+     "note": ""
+    },
+    "specific": true,
+    "alone": {},
+    "controls": [
+     {
+      "removed": "pyproject.toml / scripts/ / src/ / tests/",
+      "k": 8,
+      "n": 10,
+      "verdict": "kept",
+      "cost": 0.00542256,
+      "dist": [
+       [
+        "Bash({\"command~run_tests\\\\.sh\": true})",
+        8
+       ],
+       [
+        "Bash({\"command~run_tests\\\\.sh\": false})",
+        2
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "M src/ledgerline/accounts.py / ?? / notes.txt",
+      "k": 8,
+      "n": 10,
+      "verdict": "kept",
+      "cost": 0.0039063200000000005,
+      "dist": [
+       [
+        "Bash({\"command~run_tests\\\\.sh\": true})",
+        8
+       ],
+       [
+        "Read({\"command~run_tests\\\\.sh\": false})",
+        1
+       ],
+       [
+        "Bash({\"command~run_tests\\\\.sh\": false})",
+        1
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   }
+  ],
+  "notes": [],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "pair:toolu_11",
+     "pair:toolu_12",
+     "pair:toolu_13",
+     "sys@msg0.p1",
+     "text:2.content",
+     "text:6.content",
+     "tooldesc:Bash",
+     "tooldesc:Edit",
+     "tooldesc:Read"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00471284,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_11",
+     "pair:toolu_12",
+     "pair:toolu_13",
+     "text:6.content"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00223432,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_13",
+     "text:6.content"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.0037910400000000003,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": true})",
+       8
+      ],
+      [
+       "Read({\"command~run_tests\\\\.sh\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_11",
+     "pair:toolu_12"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0047726800000000005,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_12"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0026325199999999997,
+     "dist": [
+      [
+       "Read({\"command~run_tests\\\\.sh\": false})",
+       5
+      ],
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_11",
+     "pair:toolu_13",
+     "sys@msg0.p1",
+     "text:2.content",
+     "text:6.content",
+     "tooldesc:Bash",
+     "tooldesc:Edit",
+     "tooldesc:Read"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00269764,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": true})",
+       5
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_12.1",
+     "pair:toolu_12.2",
+     "pair:toolu_12.3",
+     "pair:toolu_12.4",
+     "pair:toolu_12.5",
+     "pair:toolu_12.6",
+     "pair:toolu_12.7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.004383720000000001,
+     "dist": [
+      [
+       "Read({\"command~run_tests\\\\.sh\": false})",
+       6
+      ],
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_12.5",
+     "pair:toolu_12.6",
+     "pair:toolu_12.7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0050533999999999996,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       8
+      ],
+      [
+       "Read({\"command~run_tests\\\\.sh\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_12.7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.00535084,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": true})",
+       9
+      ],
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_12.5",
+     "pair:toolu_12.6"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00396176,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       10
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_12.6"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 12,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.009786040000000001,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       13
+      ],
+      [
+       "Bash({\"command~run_tests\\\\.sh\": true})",
+       12
+      ],
+      [
+       "Read({\"command~run_tests\\\\.sh\": false})",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_12.5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00514184,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       8
+      ],
+      [
+       "Read({\"command~run_tests\\\\.sh\": false})",
+       4
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_12.5"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.009491679999999999,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       16
+      ],
+      [
+       "Read({\"command~run_tests\\\\.sh\": false})",
+       6
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_11.2",
+     "pair:toolu_11.3",
+     "pair:toolu_11.4",
+     "pair:toolu_11.5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.00542256,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": true})",
+       8
+      ],
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:toolu_13.1",
+     "pair:toolu_13.2",
+     "pair:toolu_13.3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 8,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.0039063200000000005,
+     "dist": [
+      [
+       "Bash({\"command~run_tests\\\\.sh\": true})",
+       8
+      ],
+      [
+       "Read({\"command~run_tests\\\\.sh\": false})",
+       1
+      ],
+      [
+       "Bash({\"command~run_tests\\\\.sh\": false})",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 0.07130068000000733,
+  "replays": 180
+ }
+}

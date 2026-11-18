@@ -1,0 +1,63 @@
+{
+ "case": "p0/tool_pair_readme_tests/anthropic",
+ "expect": "the planted text",
+ "carriers": [
+  "pair:toolu_12"
+ ],
+ "score": {
+  "result": "no_stable_decision",
+  "found": false,
+  "carriers_found": 0,
+  "carriers": 1,
+  "members": 0,
+  "precision": null,
+  "cost": 0.0028894800000021093,
+  "replays": 0
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase0/results/deepseek-v4-pro/records/tool_pair_readme_tests.anthropic.json",
+  "step": 1,
+  "match": "args",
+  "any_call": true,
+  "recorded": "Read({\"command~run_tests\\\\.sh\": false})",
+  "target": "Bash({\"command~run_tests\\\\.sh\": true})",
+  "baseline": {
+   "baseline": "Bash({\"command~run_tests\\\\.sh\": true})",
+   "match": "args (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 4,
+   "same_rate": 0.4,
+   "same_rate_ci95": [
+    0.16817758120350967,
+    0.6873304525498135
+   ],
+   "same_tool_name": null,
+   "modal": "Bash({\"command~run_tests\\\\.sh\": true})",
+   "modal_rate": 0.4,
+   "verdict": "coin_flip",
+   "verdict_text": "no decision is reliable: the recorded one comes back 4/10, the most common is Bash({\"command~run_tests\\\\.sh\": true}) (4/10). This step is a coin flip; attributing it would explain noise",
+   "distribution": [
+    [
+     "Bash({\"command~run_tests\\\\.sh\": true})",
+     4
+    ],
+    [
+     "Bash({\"command~run_tests\\\\.sh\": false})",
+     4
+    ],
+    [
+     "Read({\"command~run_tests\\\\.sh\": false})",
+     1
+    ],
+    [
+     "<no tool call>",
+     1
+    ]
+   ],
+   "cost": 0.0028894800000000003
+  },
+  "result": "no_stable_decision",
+  "cost": 0.0028894800000021093
+ }
+}

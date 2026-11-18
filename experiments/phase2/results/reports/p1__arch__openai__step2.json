@@ -1,0 +1,796 @@
+{
+ "case": "p1/arch/openai/step2",
+ "expect": "the rule line",
+ "carriers": [
+  "- Before editing anything under src/, read docs/ARCHITECTURE.md; it explains\n  which module owns which wire format."
+ ],
+ "score": {
+  "result": "causes",
+  "found": true,
+  "carriers_found": 1,
+  "carriers": 1,
+  "members": 1,
+  "precision": 1.0,
+  "cost": 0.13426776000000196,
+  "replays": 190
+ },
+ "report": {
+  "trace": "/root/work/ctxblame/experiments/phase1/results/traces/openai-1.jsonl",
+  "step": 2,
+  "match": "intent",
+  "any_call": true,
+  "recorded": "list src",
+  "target": "read docs/ARCHITECTURE.md",
+  "baseline": {
+   "baseline": "read docs/ARCHITECTURE.md",
+   "match": "intent (any call)",
+   "n_ok": 10,
+   "n_error": 0,
+   "same_decision": 10,
+   "same_rate": 1.0,
+   "same_rate_ci95": [
+    0.7224598312333834,
+    1.0
+   ],
+   "same_tool_name": null,
+   "modal": "read docs/ARCHITECTURE.md",
+   "modal_rate": 1.0,
+   "verdict": "stable",
+   "verdict_text": "the recorded decision comes back in 10/10 replays",
+   "distribution": [
+    [
+     "read docs/ARCHITECTURE.md",
+     10
+    ],
+    [
+     "list src",
+     7
+    ],
+    [
+     "read tests/test_formats.py",
+     6
+    ],
+    [
+     "list tests",
+     4
+    ]
+   ],
+   "cost": 0.00665192
+  },
+  "everything_removed": {
+   "k": 0,
+   "n": 10,
+   "verdict": "flipped",
+   "cost": 0.0044659999999999995,
+   "dist": [
+    [
+     "list .",
+     6
+    ],
+    [
+     "run pwd",
+     4
+    ],
+    [
+     "run pytest",
+     3
+    ]
+   ],
+   "note": ""
+  },
+  "result": "causes",
+  "causes": [
+   {
+    "members": [
+     {
+      "id": "sys@msg0.p7.2",
+      "kind": "line",
+      "label": "system ¶7 line 2",
+      "text": "- Before editing anything under src/, read docs/ARCHITECTURE.md; it explains"
+     }
+    ],
+    "together": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.01660076,
+     "dist": [
+      [
+       "list src",
+       14
+      ],
+      [
+       "read tests/test_formats.py",
+       10
+      ],
+      [
+       "list tests",
+       3
+      ],
+      [
+       "search OPENAI_STREAM",
+       2
+      ]
+     ],
+     "note": ""
+    },
+    "specific": true,
+    "alone": {},
+    "controls": [
+     {
+      "removed": "- Python 3.12, type hints on public fun…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.00520256,
+      "dist": [
+       [
+        "read docs/ARCHITECTURE.md",
+        5
+       ],
+       [
+        "search OPENAI_STREAM",
+        2
+       ],
+       [
+        "search extract_usage",
+        2
+       ],
+       [
+        "search extract_usage|Usage|usage",
+        1
+       ]
+      ],
+      "note": ""
+     },
+     {
+      "removed": "=================================== FAI…",
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0035543199999999997,
+      "dist": [
+       [
+        "read docs/ARCHITECTURE.md",
+        5
+       ],
+       [
+        "read tests/test_formats.py",
+        4
+       ],
+       [
+        "list src",
+        2
+       ],
+       [
+        "search extract_usage|assemble_openai_chunks|class Usage|OPENAI_STREAM",
+        1
+       ]
+      ],
+      "note": ""
+     }
+    ]
+   }
+  ],
+  "notes": [
+   "reasoning: not removable (the provider requires earlier reasoning to be passed back); it is part of the context that cannot be tested"
+  ],
+  "stopped": null,
+  "tests": [
+   {
+    "removed": [
+     "thinking:msg[2]"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 0,
+     "verdict": "rejected",
+     "cost": 0.0,
+     "dist": [],
+     "note": "HTTP 400: {\"error\":{\"message\":\"The `reasoning_content` in the thinking mode must be passed back to the API. (request_id: a6ae8fb2-01ad-4476-a972-42171cf2de6f)\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":\"invalid_request_error\"}}"
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0044659999999999995,
+     "dist": [
+      [
+       "list .",
+       6
+      ],
+      [
+       "run pwd",
+       4
+      ],
+      [
+       "run pytest",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0043564400000000005,
+     "dist": [
+      [
+       "list .",
+       8
+      ],
+      [
+       "read AGENTS.md",
+       4
+      ],
+      [
+       "run pwd",
+       2
+      ],
+      [
+       "search .*",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00607904,
+     "dist": [
+      [
+       "list .",
+       9
+      ],
+      [
+       "read tests/test_formats.py",
+       4
+      ],
+      [
+       "run pytest",
+       3
+      ],
+      [
+       "run pwd",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 12,
+     "n": 30,
+     "verdict": "unclear",
+     "cost": 0.0223344,
+     "dist": [
+      [
+       "list .",
+       29
+      ],
+      [
+       "run pytest",
+       22
+      ],
+      [
+       "read docs/ARCHITECTURE.md",
+       12
+      ],
+      [
+       "read tests/test_formats.py",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7",
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.0061995999999999996,
+     "dist": [
+      [
+       "read tests/test_formats.py",
+       9
+      ],
+      [
+       "list src",
+       4
+      ],
+      [
+       "search extract_usage|Usage|input_uncached",
+       2
+      ],
+      [
+       "search def extract_usage",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p8"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0036014000000000003,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ],
+      [
+       "read tests/test_formats.py",
+       4
+      ],
+      [
+       "list src",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00629596,
+     "dist": [
+      [
+       "read tests/test_formats.py",
+       9
+      ],
+      [
+       "list src",
+       8
+      ],
+      [
+       "search def extract_usage|class Usage|input_uncached|OPENAI_STREAM|def assemble_openai_chunks|def extract_decision",
+       1
+      ],
+      [
+       "search \"class",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169",
+     "pair:call_01_2NfaDXS45RAT8599izqN0942",
+     "sys@msg0.p1",
+     "sys@msg0.p2",
+     "sys@msg0.p3",
+     "sys@msg0.p4",
+     "sys@msg0.p5",
+     "sys@msg0.p6",
+     "sys@msg0.p8",
+     "tooldesc:bash",
+     "tooldesc:edit_file",
+     "tooldesc:grep",
+     "tooldesc:list_dir",
+     "tooldesc:read_file",
+     "tooldesc:write_file"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 11,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.0085338,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       11
+      ],
+      [
+       "run pytest",
+       8
+      ],
+      [
+       "run pwd",
+       7
+      ],
+      [
+       "list .",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.6",
+     "sys@msg0.p7.7",
+     "sys@msg0.p7.8",
+     "sys@msg0.p7.9"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00394064,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ],
+      [
+       "read tests/test_formats.py",
+       5
+      ],
+      [
+       "list src",
+       3
+      ],
+      [
+       "search \"extract_usage\\",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.1",
+     "sys@msg0.p7.2",
+     "sys@msg0.p7.3",
+     "sys@msg0.p7.4",
+     "sys@msg0.p7.5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00798952,
+     "dist": [
+      [
+       "list src",
+       9
+      ],
+      [
+       "read tests/test_formats.py",
+       5
+      ],
+      [
+       "search extract_usage|assemble_openai_chunks|OPENAI_STREAM",
+       3
+      ],
+      [
+       "search class Usage",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.4",
+     "sys@msg0.p7.5"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 9,
+     "n": 10,
+     "verdict": "kept",
+     "cost": 0.007602759999999999,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       9
+      ],
+      [
+       "read tests/test_formats.py",
+       7
+      ],
+      [
+       "list src",
+       3
+      ],
+      [
+       "list docs",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.1",
+     "sys@msg0.p7.2",
+     "sys@msg0.p7.3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00881452,
+     "dist": [
+      [
+       "list src",
+       5
+      ],
+      [
+       "search extract_usage",
+       3
+      ],
+      [
+       "read tests/test_formats.py",
+       2
+      ],
+      [
+       "search extract_usage|input_uncached|Usage",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0034500399999999997,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ],
+      [
+       "read tests/test_formats.py",
+       5
+      ],
+      [
+       "list src",
+       3
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.1",
+     "sys@msg0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00859408,
+     "dist": [
+      [
+       "list src",
+       6
+      ],
+      [
+       "read tests/test_formats.py",
+       5
+      ],
+      [
+       "search def extract_usage|class Usage|input_uncached|OPENAI_STREAM",
+       2
+      ],
+      [
+       "search extract_usage",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 0,
+     "n": 10,
+     "verdict": "flipped",
+     "cost": 0.00796972,
+     "dist": [
+      [
+       "read tests/test_formats.py",
+       6
+      ],
+      [
+       "list src",
+       6
+      ],
+      [
+       "search OPENAI_STREAM",
+       2
+      ],
+      [
+       "search extract_usage\\",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p7.2"
+    ],
+    "fresh": true,
+    "outcome": {
+     "k": 0,
+     "n": 20,
+     "verdict": "flipped",
+     "cost": 0.01660076,
+     "dist": [
+      [
+       "list src",
+       14
+      ],
+      [
+       "read tests/test_formats.py",
+       10
+      ],
+      [
+       "list tests",
+       3
+      ],
+      [
+       "search OPENAI_STREAM",
+       2
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "sys@msg0.p8.2"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.00520256,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ],
+      [
+       "search OPENAI_STREAM",
+       2
+      ],
+      [
+       "search extract_usage",
+       2
+      ],
+      [
+       "search extract_usage|Usage|usage",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   },
+   {
+    "removed": [
+     "pair:call_00_9JfegPv2xwapbjQmz0nb3169.3"
+    ],
+    "fresh": false,
+    "outcome": {
+     "k": 5,
+     "n": 5,
+     "verdict": "kept",
+     "cost": 0.0035543199999999997,
+     "dist": [
+      [
+       "read docs/ARCHITECTURE.md",
+       5
+      ],
+      [
+       "read tests/test_formats.py",
+       4
+      ],
+      [
+       "list src",
+       2
+      ],
+      [
+       "search extract_usage|assemble_openai_chunks|class Usage|OPENAI_STREAM",
+       1
+      ]
+     ],
+     "note": ""
+    }
+   }
+  ],
+  "cost": 0.13426776000000196,
+  "replays": 190
+ }
+}
