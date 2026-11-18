@@ -5,8 +5,16 @@ Removable units:
   msg[i]               one message (OpenAI system messages are messages too)
   pair:<id>            a tool call together with its result
   tool:<name>          a tool definition
+  thinking:msg[i]      the reasoning of one assistant message (thinking blocks,
+                       or OpenAI-format ``reasoning_content``); ``thinking`` = all
 plus exact text spans (``remove_text``) and a random same-size span of
 whole sentences/lines (``remove_random_span``) as a control.
+
+Removing reasoning also gives the tool calls of those messages fresh ids
+(and their results). Some providers (seen with DeepSeek) keep earlier
+reasoning server-side and silently restore it when they see their own call
+ids, so without this the "removed" reasoning still reaches the model. With
+fresh ids such a provider refuses the request instead, which is honest.
 
 Rule: a tool call and its result are never separated. Removing either one
 (directly or by removing the message holding it) removes both. Messages left
@@ -17,6 +25,7 @@ request stays valid.
 from __future__ import annotations
 
 import copy
+import json
 import random
 import re
 from dataclasses import dataclass
@@ -88,6 +97,9 @@ def list_units(fmt: str, body: dict) -> list[Unit]:
     pairs: dict[str, Unit] = {}
     for i, m in enumerate(body.get("messages") or []):
         text = _text_of(m.get("content"))
+        if not text and m.get("tool_calls"):  # OpenAI: show what the turn called
+            text = " ".join(f"{(c.get('function') or {}).get('name')}"
+                            f"({(c.get('function') or {}).get('arguments')})" for c in m["tool_calls"])
         units.append(Unit(f"msg[{i}]", m.get("role", "?"), _short(text), len(text)))
         if fmt == ANTHROPIC:
             for b in m.get("content") if isinstance(m.get("content"), list) else []:
@@ -104,16 +116,44 @@ def list_units(fmt: str, body: dict) -> list[Unit]:
             if m.get("role") == "tool" and m.get("tool_call_id") in pairs:
                 pairs[m["tool_call_id"]].chars = len(_text_of(m.get("content")))
     units.extend(pairs.values())
+    thinking = [(i, _thinking_text(fmt, m)) for i, m in enumerate(body.get("messages") or [])]
+    thinking = [(i, s) for i, s in thinking if s]
+    if thinking:
+        units.append(Unit("thinking", "thinking", f"all reasoning ({len(thinking)} messages)",
+                          sum(len(s) for _, s in thinking)))
+        units += [Unit(f"thinking:msg[{i}]", "thinking", _short(s), len(s)) for i, s in thinking]
     for t in body.get("tools") or []:
         name = t.get("name") or (t.get("function") or {}).get("name")
-        units.append(Unit(f"tool:{name}", "tool def", _short(str(t.get("description") or
-                                                                 (t.get("function") or {}).get("description", ""))), 0))
+        units.append(Unit(f"tool:{name}", "tool def", _short(_tool_description(t)), len(json.dumps(t))))
     return units
+
+
+def _tool_description(t: dict) -> str:
+    return str(t.get("description") or (t.get("function") or {}).get("description") or "")
+
+
+def _thinking_text(fmt: str, m: dict) -> str:
+    if m.get("role") != "assistant":
+        return ""
+    if fmt == ANTHROPIC:
+        c = m.get("content")
+        return "\n".join(b.get("thinking", "") for b in c if isinstance(b, dict) and b.get("type") == "thinking") \
+            if isinstance(c, list) else ""
+    return m.get("reasoning_content") or ""
+
+
+def _drop_thinking(fmt: str, m: dict) -> dict:
+    if fmt == ANTHROPIC:
+        c = m.get("content")
+        if isinstance(c, list):
+            m = {**m, "content": [b for b in c if b.get("type") not in ("thinking", "redacted_thinking")]}
+        return m
+    return {k: v for k, v in m.items() if k != "reasoning_content"}
 
 
 # ------------------------------------------------------------------ removal
 
-_UNIT = re.compile(r"^(system|system\[(\d+)\]|msg\[(\d+)\]|pair:(.+)|tool:(.+))$")
+_UNIT = re.compile(r"^(system|system\[(\d+)\]|msg\[(\d+)\]|pair:(.+)|tool:(.+)|thinking(?::msg\[(\d+)\])?)$")
 
 
 def remove_units(fmt: str, body: dict, unit_ids: list[str]) -> dict:
@@ -122,6 +162,7 @@ def remove_units(fmt: str, body: dict, unit_ids: list[str]) -> dict:
     drop_msgs: set[int] = set()
     tool_ids: set[str] = set()
     drop_tools: set[str] = set()
+    drop_thinking: set[int] = set()
     for uid in unit_ids:
         m = _UNIT.match(uid)
         if not m:
@@ -141,6 +182,14 @@ def remove_units(fmt: str, body: dict, unit_ids: list[str]) -> dict:
                 raise AblationError(f"no {uid}")
             drop_msgs.add(i)
             tool_ids |= _tool_ids(fmt, msgs[i])
+        elif uid.startswith("thinking"):
+            if m.group(6) is None:
+                drop_thinking |= {i for i, x in enumerate(msgs) if _thinking_text(fmt, x)}
+            else:
+                i = int(m.group(6))
+                if i >= len(msgs) or not _thinking_text(fmt, msgs[i]):
+                    raise AblationError(f"msg[{i}] has no reasoning to remove")
+                drop_thinking.add(i)
         elif m.group(4) is not None:
             if not any(m.group(4) in _tool_ids(fmt, x) for x in msgs):
                 raise AblationError(f"no tool call with id {m.group(4)!r}")
@@ -160,13 +209,40 @@ def remove_units(fmt: str, body: dict, unit_ids: list[str]) -> dict:
         if not b["tools"]:
             del b["tools"]
 
-    kept = [m for i, m in enumerate(msgs) if i not in drop_msgs]
+    kept = [_drop_thinking(fmt, m) if i in drop_thinking else m
+            for i, m in enumerate(msgs) if i not in drop_msgs]
+    renames = {cid: f"{'toolu' if fmt == ANTHROPIC else 'call'}_ctxb{n:04d}"
+               for n, cid in enumerate(sorted({c for i in drop_thinking if i not in drop_msgs
+                                               for c in _tool_ids(fmt, msgs[i])} - tool_ids))}
+    if renames:
+        kept = [_rename_ids(fmt, m, renames) for m in kept]
     kept = _strip_tool_ids(fmt, kept, tool_ids)
     b["messages"] = _merge_same_role(fmt, kept)
     problems = validate(fmt, b)
     if problems:
         raise AblationError("ablation left an invalid request: " + "; ".join(problems))
     return b
+
+
+def _rename_ids(fmt: str, m: dict, renames: dict[str, str]) -> dict:
+    if fmt == ANTHROPIC:
+        c = m.get("content")
+        if not isinstance(c, list):
+            return m
+        out = []
+        for b in c:
+            if b.get("type") in ("tool_use", "server_tool_use") and b.get("id") in renames:
+                b = {**b, "id": renames[b["id"]]}
+            elif b.get("type") == "tool_result" and b.get("tool_use_id") in renames:
+                b = {**b, "tool_use_id": renames[b["tool_use_id"]]}
+            out.append(b)
+        return {**m, "content": out}
+    m = dict(m)
+    if m.get("tool_calls"):
+        m["tool_calls"] = [{**c, "id": renames.get(c["id"], c["id"])} for c in m["tool_calls"]]
+    if m.get("tool_call_id") in renames:
+        m["tool_call_id"] = renames[m["tool_call_id"]]
+    return m
 
 
 def _strip_tool_ids(fmt: str, msgs: list[dict], ids: set[str]) -> list[dict]:
@@ -293,6 +369,22 @@ def text_fields(fmt: str, body: dict) -> list[tuple[tuple, str]]:
                     elif isinstance(rc, list):
                         out += [(("messages", i, "content", j, "content", k, "text"), x["text"])
                                 for k, x in enumerate(rc) if x.get("type") == "text"]
+    for i, t in enumerate(body.get("tools") or []):  # tool and parameter descriptions
+        out += _descriptions(t, ("tools", i))
+    return out
+
+
+def _descriptions(o, path: tuple) -> list[tuple[tuple, str]]:
+    out: list[tuple[tuple, str]] = []
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if k == "description" and isinstance(v, str):
+                out.append((path + (k,), v))
+            elif isinstance(v, (dict, list)):
+                out += _descriptions(v, path + (k,))
+    elif isinstance(o, list):
+        for j, v in enumerate(o):
+            out += _descriptions(v, path + (j,))
     return out
 
 

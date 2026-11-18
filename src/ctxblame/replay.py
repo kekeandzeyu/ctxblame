@@ -70,6 +70,7 @@ class Sample:
     text: str = ""
     call: dict | None = None  # first tool call, {"name", "args"}, for inspection
     calls: list | None = None  # every tool call, so results can be re-matched offline
+    keys: list | None = None  # the matcher's key for each tool call
     usage: dict | None = None
     cost: float = 0.0
     model: str | None = None
@@ -146,7 +147,7 @@ class Replayer:
             return Sample(ok=False, error=str(e)[:300], seconds=round(time.time() - t0, 2))
         d = extract_decision(self.fmt, resp)
         calls = [{"name": x.name, "args": x.args} for x in d.calls]
-        return Sample(ok=True, key=m.key(d), name=d.key(name_only=True), stop=d.stop,
+        return Sample(ok=True, key=m.key(d), keys=m.keys(d), name=d.key(name_only=True), stop=d.stop,
                       text=d.text[:200], call=calls[0] if calls else None, calls=calls,
                       usage=asdict(usage), cost=c, model=model, seconds=round(time.time() - t0, 2))
 
@@ -209,12 +210,15 @@ def summarize(samples: list[Sample], baseline: Decision | str, matcher=None) -> 
     ok = [s for s in samples if s.ok]
     bkey = baseline if isinstance(baseline, str) else m.key(baseline)
     bname = None if isinstance(baseline, str) else baseline.key(name_only=True)
-    same = sum(s.key == bkey for s in ok)
-    dist = Counter(s.key for s in ok).most_common()
+    same = sum(m.same(None, bkey, s.key, s.keys or [s.key]) for s in ok)
+    if m.any_call:  # how many replies contain each call
+        dist = Counter(k for s in ok for k in set(s.keys or [s.key])).most_common()
+    else:
+        dist = Counter(s.key for s in ok).most_common()
     code, why = verdict(bkey, dist, len(ok)) if ok else ("too_few", "no successful replays")
     return {
         "baseline": bkey,
-        "match": m.mode,
+        "match": m.mode + (" (any call)" if m.any_call else ""),
         "n_ok": len(ok),
         "n_error": len(samples) - len(ok),
         "same_decision": same,
@@ -274,6 +278,9 @@ def add_args(ap: argparse.ArgumentParser) -> None:
                          "'arg~regex' compares a regex match instead of the exact value")
     ap.add_argument("--all-calls", action="store_true",
                     help="compare every tool call in the reply, not only the first")
+    ap.add_argument("--any-call", action="store_true",
+                    help="the decision counts as the same when the target is any of the reply's "
+                         "(parallel) tool calls, not only the first")
     ap.add_argument("--target", default="recorded",
                     help="decision to measure: 'recorded' (default), 'modal' (the most common "
                          "replayed one) or an explicit key as printed under Outcomes")
@@ -319,7 +326,7 @@ def run_cli(args) -> int:
         return 2
     resolve_model(body.get("model", ""), base)  # fail early on unknown prices
     mode = args.match or ("args" if args.key_arg else "intent")
-    matcher = matcher_for(step, mode, args.key_arg or None, args.all_calls)
+    matcher = matcher_for(step, mode, args.key_arg or None, args.all_calls, args.any_call)
     recorded = extract_decision(fmt, step.response)
     est = estimate_cost(step, base)
 
@@ -342,7 +349,8 @@ def run_cli(args) -> int:
 
     target: Decision | str = recorded
     if args.target == "modal":
-        dist = Counter(s.key for s in samples if s.ok).most_common(1)
+        dist = Counter(k for s in samples if s.ok
+                       for k in (set(s.keys or [s.key]) if matcher.any_call else [s.key])).most_common(1)
         target = dist[0][0] if dist else matcher.key(recorded)
     elif args.target != "recorded":
         target = args.target

@@ -60,3 +60,13 @@ def test_verdicts():
     assert code == "atypical" and "usually does a" in text
     assert verdict("a", [("a", 5), ("b", 5)], 10)[0] == "coin_flip"
     assert verdict("a", [("a", 3)], 3)[0] == "too_few"
+
+
+def test_any_call_matches_a_parallel_call():
+    from ctxblame.formats import Decision, ToolCall
+    from ctxblame.match import Matcher
+    d = Decision([ToolCall("list_dir", {"path": "."}), ToolCall("read_file", {"path": "docs/A.md"})])
+    m = Matcher("intent", any_call=True)
+    assert m.same(d, "read docs/A.md") and m.same(d, "list .")
+    assert not Matcher("intent").same(d, "read docs/A.md")
+    assert Matcher("intent", any_call=True).keys(Decision()) == ["<no tool call>"]

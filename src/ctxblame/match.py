@@ -193,6 +193,7 @@ class Matcher:
     key_args: list[str] | None = None
     all_calls: bool = False  # compare every call in the reply, not just the first
     cwd: str | None = None
+    any_call: bool = False  # "same decision" = the target is among the reply's calls
 
     def __post_init__(self) -> None:
         if self.mode not in MODES:
@@ -204,6 +205,16 @@ class Matcher:
         calls = d.calls if self.all_calls else d.calls[:1]
         keys = [self._one(c) for c in calls]
         return " + ".join(sorted(keys)) if self.all_calls else keys[0]
+
+    def keys(self, d: Decision) -> list[str]:
+        """One key per tool call (for ``any_call`` matching)."""
+        return [self._one(c) for c in d.calls] or [NO_CALL]
+
+    def same(self, d: Decision | None, target: str, key: str | None = None,
+             keys: list[str] | None = None) -> bool:
+        if self.any_call:
+            return target in (keys if keys is not None else self.keys(d))
+        return (key if key is not None else self.key(d)) == target
 
     def _one(self, c: ToolCall) -> str:
         if self.mode == "intent":

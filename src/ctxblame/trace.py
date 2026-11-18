@@ -87,8 +87,9 @@ def request_text(fmt: str, body: dict) -> str:
     return "\n".join(parts)
 
 
-def matcher_for(step: Step, mode: str = "intent", key_args=None, all_calls: bool = False) -> Matcher:
-    return Matcher(mode, key_args, all_calls, find_cwd(request_text(step.fmt, step.body)))
+def matcher_for(step: Step, mode: str = "intent", key_args=None, all_calls: bool = False,
+                any_call: bool = False) -> Matcher:
+    return Matcher(mode, key_args, all_calls, find_cwd(request_text(step.fmt, step.body)), any_call)
 
 
 def describe(step: Step, matcher: Matcher | None = None) -> dict:

@@ -142,3 +142,61 @@ def test_random_span_respects_protect_and_size(fmt, body):
     b1, r1 = remove_random_span(fmt, body(), 20, random.Random(7))
     b2, r2 = remove_random_span(fmt, body(), 20, random.Random(7))
     assert (b1, r1) == (b2, r2)  # deterministic per seed
+
+
+def _with_thinking(fmt):
+    b = anth_body() if fmt == ANTHROPIC else oai_body()
+    if fmt == ANTHROPIC:
+        b["messages"][1]["content"].insert(0, {"type": "thinking", "thinking": "AGENTS.md says ls first.",
+                                               "signature": "sig"})
+        b["messages"][3]["content"].insert(0, {"type": "thinking", "thinking": "Read it.", "signature": "s2"})
+    else:
+        b["messages"][2]["reasoning_content"] = "AGENTS.md says ls first."
+        b["messages"][4]["reasoning_content"] = "Read it."
+    return b
+
+
+@pytest.mark.parametrize("fmt", [ANTHROPIC, OPENAI])
+def test_thinking_units_remove_reasoning_only(fmt):
+    b = _with_thinking(fmt)
+    i = 1 if fmt == ANTHROPIC else 2
+    ids = {u.id for u in list_units(fmt, b)}
+    assert {"thinking", f"thinking:msg[{i}]"} <= ids
+    out = remove_units(fmt, b, [f"thinking:msg[{i}]"])
+    assert "AGENTS.md says" not in str(out) and "Read it." in str(out)
+    assert len(out["messages"]) == len(b["messages"])  # tool calls stay
+    out = remove_units(fmt, b, ["thinking"])
+    assert "AGENTS.md says" not in str(out) and "Read it." not in str(out)
+    assert validate(fmt, out) == []
+    with pytest.raises(AblationError):
+        remove_units(fmt, b, ["thinking:msg[0]"])
+
+
+@pytest.mark.parametrize("fmt", [ANTHROPIC, OPENAI])
+def test_tool_descriptions_are_removable_text(fmt):
+    b = anth_body() if fmt == ANTHROPIC else oai_body()
+    tool = {"name": "Bash", "description": "Run a command, e.g. `make test`.", "input_schema": {}}
+    b["tools"] = [tool if fmt == ANTHROPIC else {"type": "function", "function": {
+        "name": "Bash", "description": tool["description"], "parameters": {}}}]
+    out = remove_text(fmt, b, " e.g. `make test`.")
+    assert "make test" not in str(out["tools"])
+    assert next(u for u in list_units(fmt, b) if u.id == "tool:Bash").chars > 0
+
+
+def test_parameter_descriptions_are_removable_text():
+    b = anth_body()
+    b["tools"][0]["input_schema"] = {"type": "object", "properties": {
+        "command": {"type": "string", "description": "the command, e.g. `make test`"}}}
+    out = remove_text(ANTHROPIC, b, ", e.g. `make test`")
+    assert out["tools"][0]["input_schema"]["properties"]["command"]["description"] == "the command"
+
+
+@pytest.mark.parametrize("fmt", [ANTHROPIC, OPENAI])
+def test_removing_thinking_gives_its_calls_fresh_ids(fmt):
+    b = _with_thinking(fmt)
+    i = 1 if fmt == ANTHROPIC else 2  # the message whose calls are id "A"
+    out = remove_units(fmt, b, [f"thinking:msg[{i}]"])
+    s = str(out)
+    assert "'A'" not in s and "ctxb0000" in s  # call and result both renamed
+    assert "'B'" in s  # calls of messages that keep their reasoning keep their ids
+    assert validate(fmt, out) == []

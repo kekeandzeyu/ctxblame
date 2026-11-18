@@ -13,6 +13,8 @@ wheels/
 traces/
 runs/
 .ctxblame/
+# ...except experiment traces we publish on purpose (synthetic tasks, no auth headers)
+!experiments/*/results/traces/
 
 # private planning notes, kept local only
 PLAN.md
