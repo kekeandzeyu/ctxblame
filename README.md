@@ -122,6 +122,14 @@ agent traces with thinking on. Causes are usually redundant, the agent's own
 history takes over later in a run, and DeepSeek restores removed reasoning
 server-side unless the call ids change.
 
+## Phase 2 & Roadmap
+
+See [experiments/phase2/results/results.md](experiments/phase2/results/results.md) for current end-to-end blame precision and recall, and [docs/ROADMAP.md](docs/ROADMAP.md) for the full technical audit, Phase 2 bug diagnosis (`step5`/`step7` precondition confounding and byte-0 cache invalidation), and next algorithmic milestones:
+
+- **Conditional / contrastive blame (`--given`):** score `P(target | action_family)` and auto-protect workflow preconditions so earlier state edits (e.g. `edit_file` before `pytest`) are not confounded with choice/style carriers.
+- **AND-preconditions vs. OR-carriers:** separate necessary context chunks from minimal hitting sets of redundant backups (`AGENTS.md` + tool schema examples + prior history).
+- **KV-cache-stratified search:** probe suffix tiers before prefix tiers to preserve prompt-cache hits and cut replay spend by 5–10×.
+
 ## Tests
 
 ```sh
