@@ -3,7 +3,8 @@
 Needs token log-probabilities, so it only runs where we host the model (vLLM).
 For one case:
 
-1. Render the request and the target reply (the recorded tool call) with the
+1. Render the request and the target reply (the model's most common sampled
+   tool call that makes the target decision; the recorded one as fallback) with the
    model's chat template via vLLM's ``/tokenize``; the reply tokens are the
    suffix after the generation prompt.
 2. Draw ``n_ablations`` random masks over the coarse chunks (each kept with
@@ -21,6 +22,7 @@ ctxblame's set search is built for; this baseline measures it directly.
 from __future__ import annotations
 
 import asyncio
+import json
 import random
 import time
 
@@ -92,7 +94,7 @@ async def _logprob(session: ClientSession, base: str, model: str, prompt: list[i
     return total
 
 
-async def contextcite(step, base: str, model: str, protect=(), n_ablations: int = 64, seed: int = 0,
+async def contextcite(step, base: str, model: str, protect=(), call=None, n_ablations: int = 64, seed: int = 0,
                       rel: float = 0.25, alpha: float = 0.01, extra_body: dict | None = None,
                       concurrency: int = 32) -> dict:
     t0 = time.monotonic()
@@ -101,9 +103,14 @@ async def contextcite(step, base: str, model: str, protect=(), n_ablations: int 
     if fmt != "openai":
         raise ValueError("contextcite baseline supports OpenAI-format cases only")
     chunks = [c for c in chunk_request(fmt, body, protect) if c.kind != "thinking"]
-    resp_msg = step.response["choices"][0]["message"]
-    reply_msg = {"role": "assistant", "content": resp_msg.get("content") or "",
-                 "tool_calls": resp_msg.get("tool_calls")}
+    if call is not None:  # the model's own reply that makes the target decision
+        reply_msg = {"role": "assistant", "content": "", "tool_calls": [
+            {"id": "call_cc", "type": "function",
+             "function": {"name": call.name, "arguments": json.dumps(call.args)}}]}
+    else:
+        resp_msg = step.response["choices"][0]["message"]
+        reply_msg = {"role": "assistant", "content": resp_msg.get("content") or "",
+                     "tool_calls": resp_msg.get("tool_calls")}
     rng = random.Random(seed)
     masks = [[rng.random() < 0.5 for _ in chunks] for _ in range(n_ablations)]
     masks[0] = [True] * len(chunks)  # the full context

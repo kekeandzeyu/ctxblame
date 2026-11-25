@@ -44,6 +44,57 @@ def carrier_kind(case_name: str, carrier: str) -> str | None:
     return None
 
 
+def _lcp(a: str, b: str) -> int:
+    n = min(len(a), len(b))
+    lo, hi = 0, n  # binary search on prefix equality (fast for long strings)
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if a[:mid] == b[:mid]:
+            lo = mid
+        else:
+            hi = mid - 1
+    return lo
+
+
+def simulated_cache(case, rep: dict) -> tuple[int, int] | None:
+    """(uncached chars, total chars) a per-run provider prefix cache would bill for the
+    distinct request bodies of this run, in test order (each body's first send; repeats
+    of a body are fully cached). Independent of what else shared the vLLM server."""
+    from ctxblame.ablate import AblationError
+    from ctxblame.blame import apply_chunks, chunk_request
+    tests = rep.get("tests")
+    if not tests:
+        return None
+    step = case.step
+    by_id = {}
+    for c in chunk_request(step.fmt, step.body, case.protect):
+        by_id[c.id] = c
+        for k in c.children:
+            by_id[k.id] = k
+
+    def text(body: dict) -> str:  # prompt order: tools, then system/messages
+        return json.dumps(body.get("tools"), sort_keys=True) + json.dumps(body.get("system")) + \
+            json.dumps(body.get("messages"))
+
+    sent = [text(step.body)]
+    unc, tot = len(sent[0]), len(sent[0])
+    seen = {frozenset()}
+    for t in tests:
+        key = frozenset(t["removed"])
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            b = apply_chunks(step.fmt, step.body, [by_id[i] for i in key if i in by_id])
+        except AblationError:
+            continue
+        s = text(b)
+        unc += len(s) - max(_lcp(s, p) for p in sent)
+        tot += len(s)
+        sent.append(s)
+    return unc, tot
+
+
 def mean(xs):
     xs = [x for x in xs if x is not None]
     return sum(xs) / len(xs) if xs else None
@@ -66,8 +117,8 @@ def pct(v) -> str:
 def main(argv=None) -> int:
     d = Path((argv or sys.argv[1:])[0])
     rows = []
-    for f in sorted(d.glob("seed*/benchmark.json")):
-        seed = f.parent.name
+    for f in sorted(d.glob("seed*/benchmark.json")) + sorted(d.glob("seed*/*/benchmark.json")):
+        seed = f.relative_to(d).parts[0]  # seedN/<extra methods>/benchmark.json merges into seedN
         for r in json.loads(f.read_text()):
             r["seed"] = seed
             rows.append(r)
@@ -94,12 +145,22 @@ def main(argv=None) -> int:
         if r["score"]["recall"] is not None:
             k_hits[r["method"]][len(case.carriers)].append(r["score"]["recall"])
 
+    sim = {}
+    for r in rows:
+        case = cases.get(r["case"])
+        if case is not None and (r["method"].startswith("ctxblame") or r["method"] == "loo"):
+            v = simulated_cache(case, r["report"]) if case is not None else None
+            if v:
+                sim[(r["case"], r["seed"], r["method"])] = v
+
     out = [f"# Phase 3 benchmark summary: `{d.name}`", "",
            f"{len({r['case'] for r in rows})} oracle-valid cases x {len(seeds)} seed(s) ({', '.join(seeds)}). "
-           "Means over case x seed; F1 CI = 95% bootstrap over cases.", "",
+           "Means over case x seed; F1 CI = 95% bootstrap over cases. "
+           "Sim. uncached chars = what a per-run provider prefix cache would bill once per distinct "
+           "request body (live vLLM hit rates are shared across concurrent runs, so not comparable).", "",
            "| Method | Recall | Precision | F1 [95% CI] | Precond. separated | Precond. blamed as cause | "
-           "Negatives correct | Replays/case | Secs/case |",
-           "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+           "Negatives correct | Replays/case | Distinct requests/case | Sim. uncached chars/case | Secs/case |",
+           "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for m in methods:
         ms = [r for r in rows if r["method"] == m]
         sc = [r["score"] for r in ms]
@@ -117,7 +178,10 @@ def main(argv=None) -> int:
             f"{pct(mean([1.0 if s['precond_found'] and not s['precond_fp'] else 0.0 for s in pre]))} | "
             f"{pct(mean([1.0 if s['precond_fp'] else 0.0 for s in pre]))} | "
             f"{pct(mean([1.0 if s['neg_correct'] else 0.0 for s in neg]))} | "
-            f"{mean([s['replays'] for s in sc]) or 0:.0f} | {mean([s['seconds'] for s in sc]) or 0:.0f} |")
+            f"{mean([s['replays'] for s in sc]) or 0:.0f} | "
+            f"{mean([len({frozenset(t['removed']) for t in r['report'].get('tests') or []}) for r in ms]) or 0:.0f} | "
+            f"{mean([sim[(r['case'], r['seed'], m)][0] for r in ms if (r['case'], r['seed'], m) in sim]) or 0:,.0f} | "
+            f"{mean([s['seconds'] for s in sc]) or 0:.0f} |")
 
     cats = list(dict.fromkeys(r["category"] for r in rows))
     out += ["", "## F1 by case category (negatives: share correct)", "",

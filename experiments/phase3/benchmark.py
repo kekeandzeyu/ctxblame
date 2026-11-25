@@ -44,7 +44,7 @@ REPO = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 from cases import BenchCase, all_cases  # noqa: E402
 
-METHODS = ("ctxblame", "ctxblame_uncond", "loo", "self_explain", "contextcite")
+METHODS = ("ctxblame", "ctxblame_uncond", "loo", "self_explain", "contextcite", "ctxblame_flat")
 
 
 # ------------------------------------------------------------------ scoring
@@ -135,8 +135,8 @@ def _parse_blame_args(case: BenchCase, common: list[str], extra: list[str] = ())
 
 
 async def run_ctxblame(case: BenchCase, base: str, api_key: str, common: list[str],
-                       unconditional: bool = False) -> dict:
-    extra = ["--given", "none"] if unconditional else []
+                       unconditional: bool = False, flat: bool = False) -> dict:
+    extra = (["--given", "none"] if unconditional else []) + (["--no-stratify"] if flat else [])
     args = _parse_blame_args(case, common, extra)
     t0 = time.monotonic()
     rep = await blame.why(case.step, args, api_key, base)
@@ -197,11 +197,44 @@ async def run_loo(case: BenchCase, base: str, api_key: str, common: list[str]) -
         "causes": causes,
         "preconditions": [],
         "stopped": stopped,
+        "tests": test.log,
         "replays": test.replays + len(samples),
         "cost": ledger.total - start_cost,
         "seconds": round(time.monotonic() - t0, 2),
         "cache_stats": _usage_stats(samples, test.usage),
     }
+
+
+async def representative_call(case: BenchCase, base: str, api_key: str, args, n: int = 10):
+    """(target, call): the decision the benchmark explains and the model's own most common
+    tool call that makes it. Recorded calls can come from another model (the Phase 0/1
+    records are DeepSeek's) or be atypical, so baselines that need one concrete reply
+    (self-explanation's prompt, ContextCite's log-probability) use a sampled one."""
+    from collections import Counter
+    from ctxblame.formats import ToolCall
+    step = with_model_override(case.step, args.model, args.max_tokens, args.no_thinking_param, args.extra_body)
+    mode = args.match or ("args" if args.key_arg else "intent")
+    matcher = matcher_for(step, mode, args.key_arg or None, any_call=not args.first_call)
+    recorded_dec = extract_decision(step.fmt, step.response)
+    target = args.target or matcher.key(recorded_dec)
+    rec = step.record["request"]
+    rp = Replayer(step.fmt, base + rec["path"], build_headers(step.fmt, rec.get("headers"), api_key),
+                  Ledger(args.ledger, args.budget), base, estimate_cost(step, base, free=args.free),
+                  args.concurrency, free=args.free)
+    samples = await rp.run(step.body, n, matcher)
+    seen = Counter()
+    for smp in samples:
+        for c in (smp.calls or []) if smp.ok else []:
+            tc = ToolCall(c["name"], c["args"])
+            if matcher._one(tc) == target:
+                seen[json.dumps([c["name"], c["args"]], sort_keys=True)] += 1
+    if seen:
+        name, cargs = json.loads(seen.most_common(1)[0][0])
+        return target, ToolCall(name, cargs), step
+    for c in recorded_dec.calls:
+        if matcher._one(c) == target:
+            return target, c, step
+    return target, (recorded_dec.calls[0] if recorded_dec.calls else None), step
 
 
 async def run_self_explain(case: BenchCase, base: str, api_key: str, common: list[str]) -> dict:
@@ -216,8 +249,7 @@ async def run_self_explain(case: BenchCase, base: str, api_key: str, common: lis
     start_cost = ledger.total
     t0 = time.monotonic()
 
-    recorded_dec = extract_decision(fmt, step.response)
-    target = args.target or matcher.key(recorded_dec)
+    target, call, _ = await representative_call(case, base, api_key, args)
     coarse = [c for c in chunk_request(fmt, step.body, args.protect, not args.no_tool_descs)
               if c.kind != "thinking"]
     by_id = {c.id: c for c in coarse}
@@ -229,7 +261,7 @@ async def run_self_explain(case: BenchCase, base: str, api_key: str, common: lis
     prompt = (
         "You are auditing why an LLM coding agent made a specific tool call.\n"
         f"Decision made: {target}\n"
-        f"Recorded tool call: {recorded_dec.calls[0].name}({json.dumps(recorded_dec.calls[0].args)})\n\n"
+        f"Tool call: {call.name}({json.dumps(call.args)})\n\n"
         "Below are the removable context chunks from the prompt (excluding the user's final task):\n"
         f"{chunk_lines}\n\n"
         "Which chunk id(s) directly caused this specific decision (as opposed to merely being background "
@@ -445,15 +477,16 @@ async def main_async(args) -> int:
                 rep = await run_ctxblame(case, base, api_key, common, unconditional=False)
             elif meth == "ctxblame_uncond":
                 rep = await run_ctxblame(case, base, api_key, common, unconditional=True)
+            elif meth == "ctxblame_flat":
+                rep = await run_ctxblame(case, base, api_key, common, flat=True)
             elif meth == "loo":
                 rep = await run_loo(case, base, api_key, common)
             elif meth == "self_explain":
                 rep = await run_self_explain(case, base, api_key, common)
             elif meth == "contextcite":
                 from contextcite import contextcite
-                step = with_model_override(case.step, args.model, args.max_tokens, args.no_thinking_param,
-                                           args.extra_body)
-                rep = await contextcite(step, base, step.body.get("model", ""), case.protect,
+                _, call, step = await representative_call(case, base, api_key, _parse_blame_args(case, common))
+                rep = await contextcite(step, base, step.body.get("model", ""), case.protect, call=call,
                                         n_ablations=args.cc_ablations, seed=args.seed,
                                         extra_body=args.extra_body)
             else:

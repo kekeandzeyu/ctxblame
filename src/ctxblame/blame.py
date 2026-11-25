@@ -787,7 +787,7 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
                  control_pool: list[Chunk] = (), max_members: int = 5,
                  notes: list[str] | None = None,
                  preconditions: list[Cause] | None = None,
-                 max_preconditions: int = 3) -> tuple[Outcome, list[Cause]]:
+                 max_preconditions: int = 3, stratify: bool = True) -> tuple[Outcome, list[Cause]]:
     """KV-cache-stratified suffix-first search.
 
     Probes suffix tiers before prefix tiers to preserve KV prompt-cache hits,
@@ -816,7 +816,9 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
     last_probe = Outcome(0, 0, "kept")
 
     while remaining and len(causes) < max_causes:
-        tiers = partition_tiers(remaining, by_id)
+        # stratify=False (ablation): one tier, i.e. remove everything first and
+        # delta-debug over all chunks, as before the KV-cache-stratified search
+        tiers = partition_tiers(remaining, by_id) if stratify else [list(remaining)]
         probe, hit_idx = await _widen_suffix(tiers, test, frozenset(), is_hit)
         last_probe = probe
         region = tiers[hit_idx:] if hit_idx >= 0 else []
@@ -975,6 +977,8 @@ def add_args(ap) -> None:
     ap.add_argument("--max-causes", type=int, default=3)
     ap.add_argument("--controls", type=int, default=2)
     ap.add_argument("--no-refine", action="store_true")
+    ap.add_argument("--no-stratify", action="store_true",
+                    help="ablation: no KV-cache tiers (remove everything first, ddmin over all chunks)")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--base-url", default=None)
     ap.add_argument("--model", default=None, help="override the model name in the replayed request")
@@ -1093,7 +1097,8 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
     try:
         everything, causes = await search(coarse, test, args.max_causes, not args.no_refine, args.controls,
                                           random.Random(args.seed), pool, notes=notes,
-                                          preconditions=preconditions)
+                                          preconditions=preconditions,
+                                          stratify=not getattr(args, "no_stratify", False))
         stopped = None
     except BudgetStop as e:
         everything, causes, stopped = None, [], str(e)
