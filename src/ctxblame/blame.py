@@ -920,6 +920,9 @@ def add_args(ap) -> None:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--base-url", default=None)
     ap.add_argument("--model", default=None, help="override the model name in the replayed request")
+    ap.add_argument("--max-tokens", type=int, default=None, help="override max_tokens in the replayed request")
+    ap.add_argument("--no-thinking-param", action="store_true",
+                    help="strip top-level 'thinking' field from the request body (useful for vLLM / SGLang)")
     ap.add_argument("--free", action="store_true",
                     help="treat the endpoint as $0/token (skips price-table lookup; API key optional)")
     ap.add_argument("--api-key-env", default=None)
@@ -942,7 +945,8 @@ def _serialize_findings(findings: list[Cause], by_id: dict[str, Chunk]) -> list[
 
 
 async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
-    step = with_model_override(step, getattr(args, "model", None))
+    step = with_model_override(step, getattr(args, "model", None), getattr(args, "max_tokens", None),
+                               bool(getattr(args, "no_thinking_param", False)))
     free = bool(getattr(args, "free", False))
     fmt = step.fmt
     mode = args.match or ("args" if args.key_arg else "intent")
@@ -1116,7 +1120,7 @@ def run_cli(args) -> int:
     except (LookupError, ValueError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 5
-    step = with_model_override(step, args.model)
+    step = with_model_override(step, args.model, args.max_tokens, args.no_thinking_param)
     base = (args.base_url or step.record["upstream"]).rstrip("/")
     api_key, key_env = resolve_api_key(step.fmt, base, args.api_key_env, free=args.free)
     if api_key is None:

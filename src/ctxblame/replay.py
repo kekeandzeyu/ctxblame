@@ -59,11 +59,20 @@ def resolve_api_key(fmt: str, base_url: str, api_key_env: str | None = None,
     return None, key_env
 
 
-def with_model_override(step: Step, model: str | None) -> Step:
-    """Return a shallow copy of ``step`` with ``body['model']`` replaced."""
-    if not model:
+def with_model_override(step: Step, model: str | None = None, max_tokens: int | None = None,
+                        strip_thinking_param: bool = False) -> Step:
+    """Return a shallow copy of ``step`` with optional request-body overrides
+    (model name, max_tokens cap, or stripping provider-specific ``thinking``)."""
+    if not model and max_tokens is None and not strip_thinking_param:
         return step
-    req = {**step.record["request"], "body": {**step.body, "model": model}}
+    body = dict(step.body)
+    if model:
+        body["model"] = model
+    if max_tokens is not None:
+        body["max_tokens"] = max_tokens
+    if strip_thinking_param:
+        body.pop("thinking", None)
+    req = {**step.record["request"], "body": body}
     return Step(step.step, {**step.record, "request": req})
 
 
@@ -321,6 +330,9 @@ def add_args(ap: argparse.ArgumentParser) -> None:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--base-url", default=None, help="default: the upstream the record was made against")
     ap.add_argument("--model", default=None, help="override the model name in the replayed request")
+    ap.add_argument("--max-tokens", type=int, default=None, help="override max_tokens in the replayed request")
+    ap.add_argument("--no-thinking-param", action="store_true",
+                    help="strip top-level 'thinking' field from the request body (useful for vLLM / SGLang)")
     ap.add_argument("--free", action="store_true",
                     help="treat the endpoint as $0/token (skips price-table lookup; API key optional)")
     ap.add_argument("--api-key-env", default=None, help="env var holding the key (never pass the key itself)")
@@ -336,7 +348,7 @@ def run_cli(args) -> int:
     except (LookupError, ValueError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 5
-    step = with_model_override(step, args.model)
+    step = with_model_override(step, args.model, args.max_tokens, args.no_thinking_param)
     fmt, body = step.fmt, step.body
     if args.list_units:
         for u in list_units(fmt, body):
