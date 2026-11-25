@@ -1,0 +1,107 @@
+{
+ "model": "Qwen3-8B",
+ "extra_body": {
+  "chat_template_kwargs": {
+   "enable_thinking": false
+  },
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20
+ },
+ "n": 20,
+ "rows": [
+  {
+   "case": "p1/arch/step2",
+   "category": "single",
+   "target": "read docs/ARCHITECTURE.md",
+   "n_ok": 20,
+   "k": 0,
+   "given": null,
+   "k_given": null,
+   "top": [
+    [
+     "<no tool call>",
+     13
+    ],
+    [
+     "search extract_usage",
+     3
+    ],
+    [
+     "read tests/test_formats.py",
+     2
+    ],
+    [
+     "list src",
+     2
+    ]
+   ],
+   "raw": [
+    [
+     "(text) The test failure indicates an assertion error in `test_opena",
+     11
+    ],
+    [
+     "(text) The test failure indicates an issue with the `extract_usage`",
+     2
+    ],
+    [
+     "read tests/test_formats.py",
+     2
+    ],
+    [
+     "list src",
+     2
+    ]
+   ],
+   "verdict": "coin_flip",
+   "errors": []
+  },
+  {
+   "case": "p1/pytest/step1",
+   "category": "or_redundant",
+   "target": "bash({\"command~^python -m pytest\": true})",
+   "n_ok": 20,
+   "k": 20,
+   "given": "run pytest",
+   "k_given": 20,
+   "top": [
+    [
+     "bash({\"command~^python -m pytest\": true})",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "run pytest",
+     20
+    ]
+   ],
+   "verdict": "stable",
+   "errors": []
+  },
+  {
+   "case": "p1/pytest/step5",
+   "category": "precondition_or",
+   "target": "bash({\"command~^python -m pytest\": true})",
+   "n_ok": 20,
+   "k": 20,
+   "given": "run pytest",
+   "k_given": 20,
+   "top": [
+    [
+     "bash({\"command~^python -m pytest\": true})",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "run pytest",
+     20
+    ]
+   ],
+   "verdict": "stable",
+   "errors": []
+  }
+ ]
+}

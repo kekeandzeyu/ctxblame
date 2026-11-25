@@ -1,0 +1,225 @@
+{
+ "model": "Qwen3-8B",
+ "extra_body": {
+  "chat_template_kwargs": {
+   "enable_thinking": false
+  },
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20
+ },
+ "n": 20,
+ "rows": [
+  {
+   "case": "p0/tool_pair_readme_tests",
+   "category": "single",
+   "target": "Bash({\"command~run_tests\\\\.sh\": true})",
+   "n_ok": 20,
+   "k": 20,
+   "given": "Bash",
+   "k_given": 20,
+   "top": [
+    [
+     "Bash({\"command~run_tests\\\\.sh\": true})",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "run run_tests.sh",
+     19
+    ],
+    [
+     "run sh",
+     1
+    ]
+   ],
+   "verdict": "stable",
+   "errors": []
+  },
+  {
+   "case": "p0/tool_result_sentence_config",
+   "category": "single",
+   "target": "Read({\"path~server\\\\.yaml\": true})",
+   "n_ok": 20,
+   "k": 0,
+   "given": "Read",
+   "k_given": 0,
+   "top": [
+    [
+     "Edit({\"path~server\\\\.yaml\": true})",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "edit config/server.yaml",
+     20
+    ]
+   ],
+   "verdict": "atypical",
+   "errors": []
+  },
+  {
+   "case": "p0/user_message_pnpm",
+   "category": "single",
+   "target": "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+   "n_ok": 20,
+   "k": 20,
+   "given": "Bash",
+   "k_given": 20,
+   "top": [
+    [
+     "Bash({\"command~\\\\bpnpm\\\\b\": true})",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "run pnpm add",
+     20
+    ]
+   ],
+   "verdict": "stable",
+   "errors": []
+  },
+  {
+   "case": "p0/system_section_deploy_freeze",
+   "category": "single",
+   "target": "call check_calendar",
+   "n_ok": 20,
+   "k": 0,
+   "given": null,
+   "k_given": null,
+   "top": [
+    [
+     "call deploy",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "call deploy",
+     20
+    ]
+   ],
+   "verdict": "atypical",
+   "errors": []
+  },
+  {
+   "case": "p3/precond_2or_pnpm",
+   "category": "precondition_or",
+   "target": "bash({\"command~pnpm\\\\s+install.*--frozen-lockfile\": true})",
+   "n_ok": 20,
+   "k": 20,
+   "given": "bash",
+   "k_given": 20,
+   "top": [
+    [
+     "bash({\"command~pnpm\\\\s+install.*--frozen-lockfile\": true})",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "run pnpm install",
+     20
+    ]
+   ],
+   "verdict": "stable",
+   "errors": []
+  },
+  {
+   "case": "p3/precond_3or_unittest",
+   "category": "precondition_or",
+   "target": "bash({\"command~^python -m unittest\": true})",
+   "n_ok": 20,
+   "k": 20,
+   "given": "bash",
+   "k_given": 20,
+   "top": [
+    [
+     "bash({\"command~^python -m unittest\": true})",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "run unittest",
+     20
+    ]
+   ],
+   "verdict": "stable",
+   "errors": []
+  },
+  {
+   "case": "p3/tail_carrier_long_ctx",
+   "category": "tail_long_ctx",
+   "target": "bash({\"command~--dry-run\": true})",
+   "n_ok": 20,
+   "k": 20,
+   "given": "run deploy_cli",
+   "k_given": 20,
+   "top": [
+    [
+     "bash({\"command~--dry-run\": true})",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "run deploy_cli",
+     20
+    ]
+   ],
+   "verdict": "stable",
+   "errors": []
+  },
+  {
+   "case": "p3/two_carrier_ruff",
+   "category": "or_redundant",
+   "target": "bash({\"command~ruff\\\\s+check\\\\s+--fix\": true})",
+   "n_ok": 20,
+   "k": 20,
+   "given": "bash",
+   "k_given": 20,
+   "top": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\s+--fix\": true})",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "run ruff",
+     20
+    ]
+   ],
+   "verdict": "stable",
+   "errors": []
+  },
+  {
+   "case": "p3/negative_habit_only",
+   "category": "negative",
+   "target": "run git status",
+   "n_ok": 20,
+   "k": 20,
+   "given": null,
+   "k_given": null,
+   "top": [
+    [
+     "run git status",
+     20
+    ]
+   ],
+   "raw": [
+    [
+     "run git status",
+     20
+    ]
+   ],
+   "verdict": "stable",
+   "errors": []
+  }
+ ]
+}

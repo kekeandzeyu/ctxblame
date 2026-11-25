@@ -392,3 +392,41 @@ def test_ddmin_complements_keep_prefix_intact_first():
     # First 3-item complement tried should omit "p0" (keeping earliest prefix "p0" intact!)
     three_item_tests = [r for r in order if len(r) == 3]
     assert three_item_tests[0] == frozenset({"p1", "p2", "p3"})
+
+
+def test_search_finds_choice_line_inside_a_precondition_chunk():
+    # The runbook result is needed to act at all (removing it stops the action),
+    # but its line 2 alone decides the flag: report the pair as a precondition and
+    # the line as the cause.
+    kids = [C("pair:rb.1"), C("pair:rb.2"), C("pair:rb.3")]
+    chunks = [C("sys"), C("pair:early"), C("pair:rb", kids)]
+    chunks[2].units = ("pair:rb",)  # a tool pair: removing its lines keeps the call
+    t = fake_cond(
+        collapse_rule=lambda r: "pair:rb" in r or {"pair:rb.1", "pair:rb.2", "pair:rb.3"} <= r,
+        flip_rule=lambda r: "pair:rb.2" in r,
+    )
+    preconds: list[Cause] = []
+    _, causes = asyncio.run(search(chunks, t, n_controls=0, preconditions=preconds))
+    assert [p.members for p in preconds] == [["pair:rb.1", "pair:rb.2", "pair:rb.3"]]
+    assert [c.members for c in causes] == [["pair:rb.2"]]
+
+    # same, but the call itself is the precondition (its lines cannot be split off)
+    t2 = fake_cond(collapse_rule=lambda r: "pair:rb" in r, flip_rule=lambda r: "pair:rb.2" in r)
+    preconds2: list[Cause] = []
+    _, causes2 = asyncio.run(search(chunks, t2, n_controls=0, preconditions=preconds2))
+    assert [p.members for p in preconds2] == [["pair:rb"]]
+    assert [c.members for c in causes2] == [["pair:rb.2"]]
+
+
+def test_search_non_monotonic_falls_back_to_tier_windows():
+    # Removing everything falls back on the model's habit (kept), but removing the
+    # two prefix carriers while the history stays flips the decision.
+    chunks = [Chunk("tooldesc:bash", "tool desc", "bash", "x" * 100, 0),
+              Chunk("sys.p1", "system", "s1", "x" * 100, 100),
+              Chunk("sys.p2", "system", "s2", "x" * 100, 200),
+              Chunk("pair:ls", "tool call", "ls", "x" * 100, 300)]
+    t = fake(lambda r: {"tooldesc:bash", "sys.p2"} <= r and "pair:ls" not in r)
+    notes: list[str] = []
+    _, causes = asyncio.run(search(chunks, t, n_controls=0, notes=notes))
+    assert [sorted(c.members) for c in causes] == [["sys.p2", "tooldesc:bash"]]
+    assert any("non-monotonic" in n for n in notes)

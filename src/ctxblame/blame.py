@@ -683,6 +683,43 @@ async def _stratified_ddmin(tiers: list[list[str]], test, pred: Callable[[Outcom
     return s_head + s_tail
 
 
+async def _fallback_window(tiers: list[list[str]], test, base: frozenset,
+                           pred: Callable[[Outcome], bool]) -> tuple[Outcome, list[str]] | None:
+    """When no suffix window hits, the effect can still be non-monotonic: removing
+    *everything* may fall back on the model's habit while removing only some tiers
+    flips it (e.g. the carriers sit in tool schemas + system prompt, and the kept
+    history steers the model elsewhere once they are gone). Try single tiers (tail
+    first), then cumulative prefix windows; return the first window that hits."""
+    if len(tiers) < 2:
+        return None
+    windows: list[list[str]] = [t for t in reversed(tiers)]
+    windows += [[x for t in tiers[:i] for x in t] for i in range(2, len(tiers))]
+    for w in windows:
+        out = await test(base | frozenset(w))
+        if pred(out):
+            return out, w
+    return None
+
+
+async def _flipping_lines(cid: str, by_id: dict[str, Chunk], test, pred: Callable[[Outcome], bool],
+                          max_single: int = 12) -> list[str]:
+    """Lines inside chunk ``cid`` whose removal alone satisfies ``pred``. Used inside
+    a precondition: the chunk as a whole is needed for the action (removing it stops
+    the agent), but one of its lines may decide *how* the agent acts."""
+    kids = [k.id for k in by_id[cid].children]
+    if not kids:  # already a line (one member of a redundant precondition): test it alone
+        return [cid] if pred(await test(frozenset([cid]))) else []
+    if len(kids) <= max_single:
+        found = []
+        for k in kids:
+            if pred(await test(frozenset([k]))):
+                found.append(k)
+        return found
+    if pred(await test(frozenset(kids))):
+        return await ddmin(kids, test, frozenset(), pred=pred)
+    return []
+
+
 async def _prune_bundle(members: list[str], by_id: dict[str, Chunk], test,
                         pred: Callable[[Outcome], bool],
                         notes: list[str] | None = None) -> tuple[list[str], dict[str, Outcome]]:
@@ -782,13 +819,20 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
         tiers = partition_tiers(remaining, by_id)
         probe, hit_idx = await _widen_suffix(tiers, test, frozenset(), is_hit)
         last_probe = probe
+        region = tiers[hit_idx:] if hit_idx >= 0 else []
         if hit_idx < 0:
-            break
+            alt = await _fallback_window(tiers, test, frozenset(), is_hit)
+            if alt is None:
+                break
+            probe, window = alt
+            region = [window]
+            notes.append(f"non-monotonic: removing all of the context keeps the decision, but removing "
+                         f"{len(window)} chunk(s) in one tier changes it")
 
         if probe.collapsed:
             if len(raw_preconds) >= max_preconditions:
                 break
-            s = await _stratified_ddmin(tiers[hit_idx:], test, is_collapsed)
+            s = await _stratified_ddmin(region, test, is_collapsed)
             s, _ = await _prune_bundle(s, by_id, test, is_collapsed, notes)
             if not (await test(frozenset(s))).collapsed:
                 break
@@ -816,7 +860,7 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
         # Choice flip
         if first_flip is None:
             first_flip = probe
-        s = await _stratified_ddmin(tiers[hit_idx:], test, is_flipped)
+        s = await _stratified_ddmin(region, test, is_flipped)
         s, _ = await _prune_bundle(s, by_id, test, is_flipped, notes)
         if not (await test(frozenset(s))).flipped:
             break
@@ -850,6 +894,20 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
                                  await test(frozenset(), extra=ctl)))
         preconds.append(pre)
     preconds.sort(key=lambda c: c.specific is False)
+
+    # A precondition chunk is needed for the action as a whole, but one of its
+    # lines may still decide the choice (a runbook the agent must read to act at
+    # all, whose one line says which flag to use): look inside.
+    seen = {m for c in causes for m in c.members}
+    for pre in preconds:
+        for cid in pre.members:
+            if len(causes) >= max_causes:
+                break
+            lines = [x for x in await _flipping_lines(cid, by_id, test, is_flipped) if x not in seen]
+            for line in lines[:max_causes - len(causes)]:
+                causes.append(Cause([line]))
+                seen.add(line)
+                notes.append(f"choice carrier inside precondition {cid}: {line}")
 
     for cause in causes:
         if refine:

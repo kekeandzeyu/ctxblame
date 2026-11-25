@@ -1,0 +1,2668 @@
+{
+ "model": "Qwen3-8B",
+ "extra_body": {
+  "chat_template_kwargs": {
+   "enable_thinking": false
+  },
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20
+ },
+ "n": 20,
+ "suite": "gen-open",
+ "gen_n": 64,
+ "gen_seed": 0,
+ "valid": [
+  "gen-open/0-003/pnpm/history+pre",
+  "gen-open/0-014/cargo/system+tooldesc+doc+pre",
+  "gen-open/0-016/tox/neg",
+  "gen-open/0-022/cargo/tooldesc+doc+pre",
+  "gen-open/0-025/hatch/neg",
+  "gen-open/0-026/make/neg",
+  "gen-open/0-030/cargo/user+pre",
+  "gen-open/0-031/script/system+doc+pre",
+  "gen-open/0-033/hatch/user+pre",
+  "gen-open/0-035/pnpm/system+doc+history+pre",
+  "gen-open/0-036/uv/user+pre",
+  "gen-open/0-038/cargo/system+doc+user+pre/long",
+  "gen-open/0-040/tox/doc+history+pre",
+  "gen-open/0-043/pnpm/user+history+pre",
+  "gen-open/0-046/cargo/user+history+pre",
+  "gen-open/0-049/hatch/system+tooldesc",
+  "gen-open/0-053/ruff/system+user+history+pre",
+  "gen-open/0-056/tox/system+tooldesc+doc+pre",
+  "gen-open/0-057/hatch/history+pre",
+  "gen-open/0-058/make/neg",
+  "gen-open/0-060/uv/user+pre",
+  "gen-open/0-061/ruff/neg",
+  "gen-open/0-062/cargo/system+tooldesc+doc+pre",
+  "gen-open/0-063/script/neg"
+ ],
+ "rows": [
+  {
+   "case": "gen-open/0-000/tox/user/long",
+   "category": "single",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 4,
+    "k": 4,
+    "p_given": 0.2,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=4/20, P(A|E)=4/4); removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-001/hatch/doc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "Note that our tests must be run with `hatch run test:all`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "To test, use `hatch run test:all` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-002/make/system+tooldesc+doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Verify every change with `make check` (lint + type check + tests).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `make check`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Before sending a change, run `make check`; CI runs exactly the same target.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'e.g. `make check`' (0/0); carrier alone does not restore: 'Before sending a change, run `make check`; CI runs' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-003/pnpm/history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-004/uv/system+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Set up the environment with `uv sync --frozen`; never use pip install.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Environment setup: `uv sync --frozen` installs exactly what uv.lock pins.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'Environment setup: `uv sync --frozen` installs exa' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-005/ruff/system+tooldesc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Lint with `ruff check --fix src/`; flake8 and pylint are not used.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `ruff check --fix src/`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "One thing: please lint with `ruff check --fix src/` only.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0); carrier alone does not restore: 'e.g. `ruff check --fix src/`' (0/0); carrier alone does not restore: 'One thing: please lint with `ruff check --fix src/' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-006/cargo/history",
+   "category": "single",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 1,
+    "k": 1,
+    "p_given": 0.05,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=1/20, P(A|E)=1/1); removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-007/script/system+history+pre/long",
+   "category": "precondition_or",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- To validate changes, run `./scripts/ci.sh --quick` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_7_3": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-008/tox/system+tooldesc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 6,
+    "k": 0,
+    "p_given": 0.3,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run the test suite with `tox -e py312`; never call pytest directly.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `tox -e py312`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "By the way, in this project we only run tests through `tox -e py312`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-009/hatch/tooldesc",
+   "category": "single",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 4,
+    "k": 0,
+    "p_given": 0.2,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-010/make/tooldesc+user/long",
+   "category": "or_redundant",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `make check`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Also, the way we verify things here is `make check`.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'e.g. `make check`' (0/0); carrier alone does not restore: 'Also, the way we verify things here is `make check' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-011/pnpm/system+tooldesc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Install dependencies with `pnpm install --frozen-lockfile`; never use npm or yarn.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "e.g. `pnpm install --frozen-lockfile`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Quick note: we install packages with `pnpm install --frozen-lockfile` here.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0); carrier alone does not restore: '- Install dependencies with `pnpm install --frozen' (0/0); carrier alone does not restore: 'e.g. `pnpm install --frozen-lockfile`' (0/0); carrier alone does not restore: 'Quick note: we install packages with `pnpm install' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-012/uv/history",
+   "category": "single",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-013/ruff/doc+user/long",
+   "category": "or_redundant",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "One thing: please lint with `ruff check --fix src/` only.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Linting: run `ruff check --fix src/` and commit the fixes.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-014/cargo/system+tooldesc+doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run Rust tests with `cargo nextest run`, not `cargo test`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `cargo nextest run`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "We use nextest: `cargo nextest run` (plain `cargo test` misses our config).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-015/script/doc",
+   "category": "single",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=20/20, P(A|E)=0/20); removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-016/tox/neg",
+   "category": "negative",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-open/0-017/hatch/system+doc+history",
+   "category": "or_redundant",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 10,
+    "k": 0,
+    "p_given": 0.5,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Tests run only via `hatch run test:all`; do not invoke pytest or unittest yourself.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "To test, use `hatch run test:all` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_17_3": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); carrier alone does not restore: 'pair:call_17_3' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-018/make/history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-019/pnpm/user+history",
+   "category": "or_redundant",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "Quick note: we install packages with `pnpm install --frozen-lockfile` here.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "pair:call_19_2": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0); carrier alone does not restore: 'Quick note: we install packages with `pnpm install' (0/0); carrier alone does not restore: 'pair:call_19_2' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-020/uv/system+tooldesc+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Set up the environment with `uv sync --frozen`; never use pip install.": {
+     "n": 20,
+     "k_given": 10,
+     "k": 10,
+     "p_given": 0.5,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `uv sync --frozen`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Environment setup: `uv sync --frozen` installs exactly what uv.lock pins.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'e.g. `uv sync --frozen`' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-021/ruff/tooldesc",
+   "category": "single",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-022/cargo/tooldesc+doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `cargo nextest run`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "We use nextest: `cargo nextest run` (plain `cargo test` misses our config).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-023/script/system+tooldesc+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- To validate changes, run `./scripts/ci.sh --quick` from the repository root.": {
+     "n": 20,
+     "k_given": 10,
+     "k": 10,
+     "p_given": 0.5,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `./scripts/ci.sh --quick`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Validation: `./scripts/ci.sh --quick` runs the fast subset of CI locally.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'e.g. `./scripts/ci.sh --quick`' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-024/tox/history",
+   "category": "single",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 6,
+    "k": 0,
+    "p_given": 0.3,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-025/hatch/neg",
+   "category": "negative",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-open/0-026/make/neg",
+   "category": "negative",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-open/0-027/pnpm/system",
+   "category": "single",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-028/uv/system+history",
+   "category": "or_redundant",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Set up the environment with `uv sync --frozen`; never use pip install.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_28_3": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); carrier alone does not restore: 'pair:call_28_3' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-029/ruff/tooldesc+doc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `ruff check --fix src/`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "One thing: please lint with `ruff check --fix src/` only.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Linting: run `ruff check --fix src/` and commit the fixes.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-030/cargo/user+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-031/script/system+doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 15,
+    "k": 0,
+    "p_given": 0.75,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- To validate changes, run `./scripts/ci.sh --quick` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Validation: `./scripts/ci.sh --quick` runs the fast subset of CI locally.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-032/tox/system+doc+history",
+   "category": "or_redundant",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run the test suite with `tox -e py312`; never call pytest directly.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Tests: always run `tox -e py312` (it pins the interpreter and dependencies).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_32_3": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); carrier alone does not restore: 'pair:call_32_3' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-033/hatch/user+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-034/make/system+tooldesc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Verify every change with `make check` (lint + type check + tests).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `make check`": {
+     "n": 20,
+     "k_given": 3,
+     "k": 0,
+     "p_given": 0.15,
+     "p_cond": 0.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'e.g. `make check`' (0/3)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-035/pnpm/system+doc+history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Install dependencies with `pnpm install --frozen-lockfile`; never use npm or yarn.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Dependencies: `pnpm install --frozen-lockfile` (the lockfile is the source of truth).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_35_3": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-036/uv/user+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-037/ruff/doc+history",
+   "category": "or_redundant",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "Linting: run `ruff check --fix src/` and commit the fixes.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_37_3": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0); carrier alone does not restore: 'pair:call_37_3' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-038/cargo/system+doc+user+pre/long",
+   "category": "precondition_or",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run Rust tests with `cargo nextest run`, not `cargo test`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Remember that tests here run via `cargo nextest run`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "We use nextest: `cargo nextest run` (plain `cargo test` misses our config).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-039/script/tooldesc",
+   "category": "single",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-040/tox/doc+history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Tests: always run `tox -e py312` (it pins the interpreter and dependencies).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_40_3": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-041/hatch/tooldesc+doc+history",
+   "category": "or_redundant",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `hatch run test:all`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "To test, use `hatch run test:all` from the repository root.": {
+     "n": 20,
+     "k_given": 5,
+     "k": 5,
+     "p_given": 0.25,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_41_4": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0); carrier alone does not restore: 'pair:call_41_4' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-042/make/history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-043/pnpm/user+history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Quick note: we install packages with `pnpm install --frozen-lockfile` here.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_43_2": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-044/uv/system+doc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Set up the environment with `uv sync --frozen`; never use pip install.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "FYI our environments are always created with `uv sync --frozen`.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Environment setup: `uv sync --frozen` installs exactly what uv.lock pins.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0); carrier alone does not restore: 'FYI our environments are always created with `uv s' (0/0); carrier alone does not restore: 'Environment setup: `uv sync --frozen` installs exa' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-045/ruff/tooldesc",
+   "category": "single",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 5,
+    "k": 0,
+    "p_given": 0.25,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-046/cargo/user+history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Remember that tests here run via `cargo nextest run`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_46_2": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-047/script/system+tooldesc+user+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- To validate changes, run `./scripts/ci.sh --quick` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `./scripts/ci.sh --quick`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    },
+    "Our standard check is `./scripts/ci.sh --quick`, just so you know.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'e.g. `./scripts/ci.sh --quick`' (0/20)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-048/tox/user",
+   "category": "single",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-049/hatch/system+tooldesc",
+   "category": "or_redundant",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Tests run only via `hatch run test:all`; do not invoke pytest or unittest yourself.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `hatch run test:all`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-050/make/system+doc+user/long",
+   "category": "or_redundant",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Verify every change with `make check` (lint + type check + tests).": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Also, the way we verify things here is `make check`.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Before sending a change, run `make check`; CI runs exactly the same target.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0); carrier alone does not restore: '- Verify every change with `make check` (lint + ty' (0/0); carrier alone does not restore: 'Also, the way we verify things here is `make check' (0/0); carrier alone does not restore: 'Before sending a change, run `make check`; CI runs' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-051/pnpm/history",
+   "category": "single",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-052/uv/tooldesc+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `uv sync --frozen`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Environment setup: `uv sync --frozen` installs exactly what uv.lock pins.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'e.g. `uv sync --frozen`' (0/0); carrier alone does not restore: 'Environment setup: `uv sync --frozen` installs exa' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-053/ruff/system+user+history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Lint with `ruff check --fix src/`; flake8 and pylint are not used.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "One thing: please lint with `ruff check --fix src/` only.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_53_3": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-054/cargo/doc/long",
+   "category": "single",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-055/script/system+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- To validate changes, run `./scripts/ci.sh --quick` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Validation: `./scripts/ci.sh --quick` runs the fast subset of CI locally.": {
+     "n": 20,
+     "k_given": 8,
+     "k": 0,
+     "p_given": 0.4,
+     "p_cond": 0.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'Validation: `./scripts/ci.sh --quick` runs the fas' (0/8)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-open/0-056/tox/system+tooldesc+doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run the test suite with `tox -e py312`; never call pytest directly.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `tox -e py312`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Tests: always run `tox -e py312` (it pins the interpreter and dependencies).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-057/hatch/history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-058/make/neg",
+   "category": "negative",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-open/0-059/pnpm/doc+user+history",
+   "category": "or_redundant",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "Quick note: we install packages with `pnpm install --frozen-lockfile` here.": {
+     "n": 20,
+     "k_given": 12,
+     "k": 12,
+     "p_given": 0.6,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Dependencies: `pnpm install --frozen-lockfile` (the lockfile is the source of truth).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_59_3": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0); carrier alone does not restore: 'pair:call_59_3' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-060/uv/user+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-061/ruff/neg",
+   "category": "negative",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-open/0-062/cargo/system+tooldesc+doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run Rust tests with `cargo nextest run`, not `cargo test`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `cargo nextest run`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "We use nextest: `cargo nextest run` (plain `cargo test` misses our config).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-open/0-063/script/neg",
+   "category": "negative",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  }
+ ]
+}
