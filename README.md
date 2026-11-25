@@ -67,36 +67,54 @@ keeps reasoning server-side cannot restore it).
 
 ```sh
 uv run ctxblame why traces/<trace>.jsonl --step 14
+
+# Conditional / contrastive blame (auto-enabled with --key-arg; --given none to disable)
+uv run ctxblame why traces/<trace>.jsonl --step 5 --key-arg 'command~^python -m pytest'
+
+# Run against a local or Google Colab vLLM/Ollama server at $0 API cost
+uv run ctxblame why traces/<trace>.jsonl --step 5 --key-arg 'command~^python -m pytest' \
+    --base-url http://127.0.0.1:8000/v1 --model Qwen/Qwen3-8B --max-tokens 2048 --no-thinking-param --free
 ```
 
 ```
 Decision:  Bash({"command~\\bpnpm\\b": true})
 Baseline:  10/10 replays (stable)
+Given:     Bash (10/10 baseline; P(decision | given) = 10/10)
 Chunks:    8 (3 tool desc, 1 system, 1 user, 2 assistant, 1 tool call)
-Everything but the task removed: 0/10  -> the decision comes from the context
+Everything but the task removed: 0/10 (given 10/10)  -> the decision comes from the context
 
-Cause 1 (removing it flips the decision: 1/20):
+Cause 1 (removing it flips the decision: 1/20 (given 20/20)):
   - turn 0 user message sentence 3: 'We use pnpm in this repo, never npm or yarn.'
-  controls (random same-size removals): 5/5, 5/5
+  controls (random same-size removals): 5/5 (given 5/5), 5/5 (given 5/5)
 
 Tests: 16, replays: 160, cost $0.07
 ```
 
 How it works:
 
-1. **Baseline.** Replay the step unchanged. If no decision comes back
-   reliably it stops ("coin flip"); if the recorded call is unusual it
-   explains the usual one instead.
-2. **Chunks.** System-prompt paragraphs, earlier user and assistant text, each
-   tool call with its result, each turn's reasoning, tool descriptions. The
-   task (the latest user message with text) is never removed.
-3. **Search.** If removing every chunk keeps the decision, the context does
-   not carry it. Otherwise delta debugging finds a minimal set of chunks
-   whose removal flips it: one chunk is a cause; several are *redundant
-   carriers* of one cause (only removing all of them flips it, and each one
-   alone is shown). Then it looks for further, independent causes.
-4. **Refine** each member to the sentences or lines that matter, with the
-   other carriers held removed.
+1. **Baseline & Conditioning (`--given`).** Replay the step unchanged. If no
+   decision comes back reliably it stops ("coin flip"); if the recorded call is
+   unusual it explains the usual one instead. When `--key-arg` or `--given` is
+   set, blame conditions on the coarser action family `E` (e.g. `run pytest` or
+   tool `Bash`) and scores `P(decision | E)` separately from `P(E)`.
+2. **Chunks & KV-Cache Tiers.** System-prompt paragraphs, earlier user and
+   assistant text, each tool call with its result, each turn's reasoning, and
+   tool descriptions are partitioned from prefix to suffix (`Tool Schemas →
+   System Prompt → Early History → Tail History`). The task (the latest user
+   message with text) is never removed.
+3. **Suffix-First Stratified Search & Precondition Isolation.** Instead of
+   mutating byte `0` upfront, search widens from tail history toward prefix
+   tiers to preserve KV prompt-cache hits. If removing a subset collapses
+   `P(E)` (e.g. removing an earlier `edit_file` makes the agent stop running
+   tests altogether), that workflow precondition is isolated, reported under
+   `Preconditions`, and auto-protected while choice search continues on
+   `P(decision | E)`.
+4. **Hitchhiker Pruning & Refinement.** Multi-member bundles are verified via a
+   leave-one-in restoration check (`C \ {c_i}`): holding all other carriers
+   removed must prove each `c_i` alone restores the decision (pruning noisy
+   hitchhikers and distinguishing single necessary `AND` chunks from minimal
+   `OR` hitting sets). Each surviving member is refined to the lines that
+   matter.
 5. **Check.** Each finding is confirmed with more replays, and compared with
    random removals of the same size. Findings that random removals reproduce
    too are reported as *context the decision needs (not specific)*, not as
@@ -107,28 +125,57 @@ half the baseline rate (a flip needs at least 10 replays). By default a reply
 counts as the same decision when *any* of its parallel calls matches
 (`--first-call` to compare only the first). Removing reasoning gives those
 calls fresh ids; a provider that then demands the reasoning makes it
-"not removable", and the report says so. `--budget` caps the spend and the
-full log of tests is saved as JSON in `runs/`.
+"not removable", and the report says so. `--budget` caps the spend, `--free`
+(or any unknown model on `localhost`/`127.0.0.1`) runs at `$0`, and the full
+log of tests plus `cache_stats` is saved as JSON in `runs/`.
 
-## Phase 0 results
+## Run at $0 on Google Colab (vLLM)
 
-See [experiments/phase0](experiments/phase0/README.md): five planted-cause
-scenarios, both wire formats, two DeepSeek models.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kekeandzeyu/ctxblame/blob/main/notebooks/colab_vllm.ipynb)
 
-## Phase 1 results
+Open [notebooks/colab_vllm.ipynb](notebooks/colab_vllm.ipynb) on a Colab **L4**
+or **A100** GPU to serve an open tool-calling model (`Qwen/Qwen3-8B` or
+`Qwen3-14B`) via `vLLM --enable-prefix-caching` and run `ctxblame why` or the
+Phase 3 attribution benchmark at **$0 API cost**.
 
-See [experiments/phase1](experiments/phase1/README.md): planted causes in real
-agent traces with thinking on. Causes are usually redundant, the agent's own
-history takes over later in a run, and DeepSeek restores removed reasoning
-server-side unless the call ids change.
+## Experiments & Benchmarks
 
-## Phase 2 & Roadmap
+- **Phase 0** ([experiments/phase0](experiments/phase0/README.md)): five
+  planted-cause scenarios, both wire formats, two DeepSeek models.
+- **Phase 1** ([experiments/phase1](experiments/phase1/README.md)): planted
+  causes in real agent traces with thinking on. Causes are usually redundant,
+  the agent's own history takes over later in a run, and DeepSeek restores
+  removed reasoning server-side unless the call ids change.
+- **Phase 2** ([experiments/phase2/results/results.md](experiments/phase2/results/results.md)):
+  end-to-end validation of the original `ddmin` engine, exposing precondition
+  confounding (`step5`/`step7`), hitchhikers, and byte-0 cache invalidation.
+- **Phase 3** ([experiments/phase3/benchmark.py](experiments/phase3/benchmark.py)):
+  12-case attribution benchmark comparing upgraded `ctxblame` against
+  unconditional `ctxblame --given none`, single-chunk leave-one-out ablation
+  (`loo`), and LLM self-explanation (`self_explain`):
+  ```sh
+  uv run python experiments/phase3/benchmark.py --dry-run   # offline check ($0)
+  ```
 
-See [experiments/phase2/results/results.md](experiments/phase2/results/results.md) for current end-to-end blame precision and recall, and [docs/ROADMAP.md](docs/ROADMAP.md) for the full technical audit, Phase 2 bug diagnosis (`step5`/`step7` precondition confounding and byte-0 cache invalidation), and next algorithmic milestones:
+## Next Steps
 
-- **Conditional / contrastive blame (`--given`):** score `P(target | action_family)` and auto-protect workflow preconditions so earlier state edits (e.g. `edit_file` before `pytest`) are not confounded with choice/style carriers.
-- **AND-preconditions vs. OR-carriers:** separate necessary context chunks from minimal hitting sets of redundant backups (`AGENTS.md` + tool schema examples + prior history).
-- **KV-cache-stratified search:** probe suffix tiers before prefix tiers to preserve prompt-cache hits and cut replay spend by 5–10×.
+See [docs/ROADMAP.md](docs/ROADMAP.md) for the full technical audit and
+milestone details. Milestones 1–3 (`--given` conditional blame, `C \ {c_i}`
+hitchhiker pruning & AND/OR duality, KV-cache-stratified suffix-first search,
+and `$0` local/Colab vLLM support) are implemented and unit-tested. Remaining
+steps:
+
+1. **Run Phase 3 benchmark on Colab (`$0` API):** Open
+   [notebooks/colab_vllm.ipynb](notebooks/colab_vllm.ipynb), run `--only p3`
+   first (~5 min), then the full 12-case suite to generate
+   `experiments/phase3/results/benchmark.md` and live vLLM prefix-cache hit
+   metrics.
+2. **Final DeepSeek regression check (~$1–$2 off-peak):** Re-run
+   `experiments/phase2/run.py --only step5 step7` off-peak to verify `3/3`
+   carriers at `100%` precision (no `edit_file` or `read_file` false positives)
+   and reduced spend vs. `$2.42`.
+3. **Publish `v0.2`:** Commit benchmark results, package `ctxblame` (`uvx
+   ctxblame`) on PyPI, and publish the technical writeup.
 
 ## Tests
 

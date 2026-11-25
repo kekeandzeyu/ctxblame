@@ -28,20 +28,20 @@ Under the hood, `src/ctxblame/blame.py#L405-L429` currently runs **Zeller's clas
 
 ## 2. Algorithmic Upgrade Plan (Making `ctxblame` Technically Novel)
 
-### Milestone 1: Conditional / Contrastive Blame (`P(A | E)` via `--given`)
+### Milestone 1: Conditional / Contrastive Blame (`P(A | E)` via `--given`) — Implemented (`65d1387`)
 Separate **Stage Preconditions** (*why take action family `E` now?*) from **Choice Carriers** (*given `E`, why choose variant `A` over alternatives?*):
 * Introduce conditioning matcher `E` (`--given <spec>`, defaulting when `--key-arg` is used to *"calls the same tool / intent category"*, e.g. *"runs any `pytest` command"* while target `A` is *"uses `python -m pytest -q`"*).
 * Track `(k_target, k_given, n_ok)` in `Outcome`:
   * **Precondition collapse:** If removing subset `S` drops `k_given / n_ok` significantly below baseline `P(E)`, `S` contains a **workflow precondition** (such as `turn 6 edit_file`). Isolate and auto-protect that precondition (reporting it separately under `Preconditions`), rather than reporting it as a cause of `A`.
   * **Choice flip:** Score `ddmin` flips on the conditional Wilson interval of `k_target / k_given` while `P(E)` remains intact.
-* **Acceptance test:** Re-run `p1/pytest/openai/step5` and `p1/pytest/anthropic/step7` and verify `3/3` planted carriers are recovered with `100%` precision (no `edit_file` false positive).
+* **Acceptance test:** Verified locally via end-to-end HTTP simulation (`tests/test_blame_cli.py`); pending live re-run on `p1/pytest/openai/step5` and `p1/pytest/anthropic/step7` to confirm `3/3` planted carriers with `100%` precision.
 
-### Milestone 2: Explicit AND-Preconditions vs. OR-Carriers (Minimal Hitting-Set Duality)
+### Milestone 2: Explicit AND-Preconditions vs. OR-Carriers (Minimal Hitting-Set Duality) — Implemented (`ba1b402`)
 Formalize multi-carrier attribution beyond single-subset `ddmin`:
 * **AND-context (necessary chunks):** Chunks whose individual removal collapses `P(E)` or `P(A | E)`.
 * **OR-carrier bundles (minimal hitting sets):** Minimal sets $C = \{c_1, \dots, c_m\}$ where removing *all* $c \in C$ flips $P(A \mid E)$ below threshold, **and** holding $C \setminus \{c_i\}$ removed proves each $c_i$ alone restores $P(A \mid E)$ (filtering out hitchhiking non-carriers that `ddmin` kept by chance).
 
-### Milestone 3: KV-Cache-Stratified Suffix-First Search (5–10× Cost Reduction)
+### Milestone 3: KV-Cache-Stratified Suffix-First Search (5–10× Cost Reduction) — Implemented (`ba1b402`)
 Make prefix-cache economics a first-class primitive in search ordering:
 1. Partition chunks by byte offset into tiers: `Tier 3: Tail History` → `Tier 2: Early History` → `Tier 1: System Prompt` → `Tier 0: Tool Schemas`.
 2. Probe suffix tiers first while keeping bytes `0 .. tier_start` **byte-identical**, preserving 70%–95% KV cache hit rates (`30×–50×` cheaper input tokens on DeepSeek, `10×` on Anthropic).
@@ -50,11 +50,11 @@ Make prefix-cache economics a first-class primitive in search ordering:
 
 ---
 
-## 3. Low-Cost Validation & API Budget (~$10–$18 Total)
+## 3. Low-Cost Validation Plan (Colab `$0` + ~$1–$2 Final Check)
 
-| Phase | Scope | Compute / Pricing Strategy | Est. Spend |
-| :--- | :--- | :--- | :--- |
-| **1. Conditional Blame (`--given`)** | Unit tests + re-validation on Phase 0 & Phase 1 (`step5`, `step7`) traces. | Develop on `deepseek-flash` (`$0.006/M` cached, 50% off-peak discount); final check on `deepseek-v4-pro`. | **~$1.50** |
-| **2. Cache-Stratified Search** | Benchmark replay cost & cache-hit % before vs. after on 20k–40k token traces. | `deepseek-flash` + `deepseek-v4-pro` off-peak. | **~$2.50** |
-| **3. Attribution Benchmark (~30 Steps)** | Compare `ctxblame` against single-chunk leave-one-out ablation & LLM self-explanation across planted single-carrier, redundant OR-carrier, and multi-step precondition traces. | Open models (`Qwen3`) via Colab `vLLM` (**$0**) + DeepSeek API + ~10 sanity steps on Claude Haiku/Sonnet. | **~$6.00–$12.00** |
-| **4. Release (`v0.2` on PyPI)** | Ship `uvx ctxblame` + technical writeup covering server-side `thinking` cache leaks, self-reinforcing history, and conditional vs. unconditional blame. | Local. | **$0** |
+| Step | Status | Scope | Compute / Pricing Strategy | Est. Spend |
+| :--- | :--- | :--- | :--- | :--- |
+| **0. Colab / Self-Hosted Support** | Done (`65d1387`, `6389eb2`) | `--free`, `--model`, `--max-tokens`, `--no-thinking-param`, optional local API key, `notebooks/colab_vllm.ipynb`. | Local tests + Colab `vLLM`. | **$0** |
+| **1–3. Core Algorithmic Upgrades** | Done (`65d1387`, `ba1b402`) | Conditional `--given`, `C \ {c_i}` hitchhiker pruning & AND/OR duality, KV-cache-stratified suffix-first search, 99 unit/CLI tests. | Local mock models. | **$0** |
+| **4. Phase 3 Attribution Benchmark** | Script ready (`6389eb2`); run on Colab next | Run `experiments/phase3/benchmark.py` (12 cases: `ctxblame` vs. `ctxblame_uncond` vs. `loo` vs. `self_explain`) + record fresh traces & live vLLM prefix-cache hit metrics. | Colab L4 / A100 (`Qwen/Qwen3-8B` or `Qwen3-14B`) via `vLLM --enable-prefix-caching`. | **$0** |
+| **5. Final DeepSeek Regression & `v0.2` Release** | Pending | Re-run `experiments/phase2/run.py --only step5 step7` off-peak to update `experiments/phase2/results/results.md`; publish `uvx ctxblame` (`v0.2`) + writeup. | DeepSeek API off-peak (50% discount). | **~$1–$2** |
