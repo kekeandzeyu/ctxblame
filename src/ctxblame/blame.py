@@ -470,6 +470,7 @@ class Tester:
         self.samples: dict[frozenset, list] = {}
         self.log: list[dict] = []
         self.replays = 0
+        self.usage = {"input_uncached": 0, "input_cache_read": 0, "input_cache_write": 0, "output": 0}
 
     def replayer(self) -> Replayer:
         rec = self.step.record["request"]
@@ -505,6 +506,10 @@ class Tester:
                 break
             samples += got
             new += len(got)
+            for s in got:
+                if s.usage:
+                    for k_u in self.usage:
+                        self.usage[k_u] += s.usage.get(k_u) or 0
             ok = [s for s in samples if s.ok]
             if self.given_matcher is not None and self.given_target is not None:
                 k_given, k_target = 0, 0
@@ -548,8 +553,8 @@ async def ddmin(items: list[str], test: Callable[[frozenset], Awaitable[Outcome]
                 base: frozenset = frozenset(),
                 pred: Callable[[Outcome], bool] | None = None) -> list[str]:
     """Minimal subset S of items with pred(test(base | S)) true, assuming
-    pred(test(base | items)) is true. Later parts are tried first (cheaper:
-    the cached prompt prefix survives)."""
+    pred(test(base | items)) is true. Subsets try suffixes first and complements
+    keep prefixes intact first, maximizing KV prompt-cache hits."""
     hit = pred or (lambda o: o.flipped)
     n = 2
     while len(items) >= 2:
@@ -561,7 +566,7 @@ async def ddmin(items: list[str], test: Callable[[frozenset], Awaitable[Outcome]
                 items, n, found = p, 2, True
                 break
         if not found and len(parts) > 2:
-            for p in reversed(parts):
+            for p in parts:  # omit prefix parts first so comp keeps the earliest prefix intact
                 comp = [x for x in items if x not in p]
                 if hit(await test(base | frozenset(comp))):
                     items, n, found = comp, max(n - 1, 2), True
@@ -578,8 +583,16 @@ class Cause:
     members: list[str]  # chunk ids (refined to lines where that helped)
     together: Outcome | None = None  # all members removed
     alone: dict[str, Outcome] = field(default_factory=dict)
+    restored: dict[str, Outcome] = field(default_factory=dict)  # C \ {c_i}: keeping c_i alone restores
     controls: list[tuple[str, Outcome]] = field(default_factory=list)
     role: str = "cause"  # cause | precondition
+
+    @property
+    def relation(self) -> str:
+        """AND (individually necessary) vs. OR (minimal hitting set of redundant backups)."""
+        if self.role == "precondition":
+            return "and_precondition" if len(self.members) == 1 else "or_preconditions"
+        return "and_cause" if len(self.members) == 1 else "or_carriers"
 
     @property
     def specific(self) -> bool | None:
@@ -591,6 +604,129 @@ class Cause:
                      for _, o in self.controls)
             return ok > len(self.controls) / 2
         return sum(o.verdict == "kept" for _, o in self.controls) > len(self.controls) / 2
+
+
+def _tier_kind(cid: str, by_id: dict[str, Chunk]) -> int:
+    """0 = tool schemas, 1 = system prompt, 2 = conversation history."""
+    c = by_id[cid]
+    if c.kind == "tool desc" or cid.startswith("tooldesc:"):
+        return 0
+    if c.kind == "system" or cid.startswith("sys"):
+        return 1
+    return 2
+
+
+def partition_tiers(remaining: list[str], by_id: dict[str, Chunk]) -> list[list[str]]:
+    """Partition ``remaining`` into prefix-to-suffix KV-cache tiers:
+    [Tool Schemas, System Prompt, Early History, Tail History] (empty tiers omitted).
+    For synthetic chunk lists without tool/system kinds, splits into contiguous tiers."""
+    if len(remaining) <= 2:
+        return [list(remaining)] if remaining else []
+    has_structured = any(_tier_kind(cid, by_id) in (0, 1) for cid in remaining)
+    if has_structured:
+        t0 = [cid for cid in remaining if _tier_kind(cid, by_id) == 0]
+        t1 = [cid for cid in remaining if _tier_kind(cid, by_id) == 1]
+        hist = [cid for cid in remaining if _tier_kind(cid, by_id) == 2]
+        if len(hist) >= 3:
+            mid = len(hist) // 2
+            tiers = [t0, t1, hist[:mid], hist[mid:]]
+        else:
+            tiers = [t0, t1, hist]
+        return [t for t in tiers if t]
+    n_tiers = 4 if len(remaining) >= 4 else 2
+    size = -(-len(remaining) // n_tiers)
+    return [remaining[i:i + size] for i in range(0, len(remaining), size)]
+
+
+async def _widen_suffix(tiers: list[list[str]], test, base: frozenset,
+                        pred: Callable[[Outcome], bool]) -> tuple[Outcome, int]:
+    """Probe cumulative suffix windows from tail to prefix, stopping at the first
+    window satisfying ``pred``. Preserves KV-cache hits on untouched prefix tiers."""
+    window: list[str] = []
+    last_out = Outcome(0, 0, "kept")
+    for i in range(len(tiers) - 1, -1, -1):
+        window = tiers[i] + window
+        last_out = await test(base | frozenset(window))
+        if pred(last_out):
+            return last_out, i
+    return last_out, -1
+
+
+async def _stratified_ddmin(tiers: list[list[str]], test, pred: Callable[[Outcome], bool],
+                            base: frozenset = frozenset()) -> list[str]:
+    """Find a minimal hitting subset across suffix-to-prefix ``tiers`` assuming
+    ``tiers[0]`` is the earliest newly added tier needed for ``pred`` and
+    ``tiers[1:]`` alone did not satisfy ``pred``.
+
+    Shrinks ``tiers[0]`` first (narrowing prefix mutations quickly), then checks
+    if it suffices alone; if not, recursively widens/shrinks ``tiers[1:]`` with
+    the minimal prefix piece held removed."""
+    if not tiers:
+        return []
+    if len(tiers) == 1:
+        return await ddmin(tiers[0], test, base, pred=pred)
+    head, tail_tiers = tiers[0], tiers[1:]
+    tail_all = [x for t in tail_tiers for x in t]
+    # Check if the newly added tier alone suffices (common for single system/tool rules)
+    if pred(await test(base | frozenset(head))):
+        return await ddmin(head, test, base, pred=pred)
+    # Cross-tier redundant bundle: shrink head with tail held removed
+    s_head = await ddmin(head, test, base | frozenset(tail_all), pred=pred)
+    new_base = base | frozenset(s_head)
+    if pred(await test(new_base)):
+        return s_head
+    # Recursively widen & shrink only the suffix tiers still needed given s_head
+    _, hit_idx = await _widen_suffix(tail_tiers, test, new_base, pred)
+    if hit_idx < 0:
+        return s_head + tail_all
+    s_tail = await _stratified_ddmin(tail_tiers[hit_idx:], test, pred, base=new_base)
+    return s_head + s_tail
+
+
+async def _prune_bundle(members: list[str], by_id: dict[str, Chunk], test,
+                        pred: Callable[[Outcome], bool],
+                        notes: list[str] | None = None) -> tuple[list[str], dict[str, Outcome]]:
+    """Leave-one-in restoration check (C \\ {c_i}) on a multi-member bundle.
+
+    For each member c_i, holds all other members removed and checks whether
+    keeping c_i alone restores the decision / action family (i.e. ``not pred``).
+    Members whose omission still satisfies ``pred`` are noisy hitchhikers and
+    are pruned, yielding a verified minimal hitting set."""
+    if len(members) <= 1:
+        return list(members), {}
+    ordered = sorted(members, key=lambda cid: getattr(by_id[cid], "pos", 0))
+    current = list(ordered)
+    restored: dict[str, Outcome] = {}
+    pruned: list[str] = []
+    for cid in ordered:
+        if cid not in current or len(current) <= 1:
+            continue
+        others = [x for x in current if x != cid]
+        out = await test(frozenset(others))
+        if pred(out):
+            current = others
+            pruned.append(cid)
+            restored.pop(cid, None)
+        else:
+            restored[cid] = out
+    if pruned and len(current) > 1:
+        restored = {}
+        for cid in list(current):
+            if len(current) <= 1:
+                break
+            others = [x for x in current if x != cid]
+            out = await test(frozenset(others))
+            if pred(out):
+                current = others
+                pruned.append(cid)
+            else:
+                restored[cid] = out
+    elif len(current) <= 1:
+        restored = {}
+    if pruned and notes is not None:
+        notes.append(f"pruned non-essential hitchhiker(s): {', '.join(pruned)}")
+    keep = set(current)
+    return [m for m in members if m in keep], {k: v for k, v in restored.items() if k in keep}
 
 
 async def _refine_members(members: list[str], by_id: dict[str, Chunk], test,
@@ -615,9 +751,14 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
                  notes: list[str] | None = None,
                  preconditions: list[Cause] | None = None,
                  max_preconditions: int = 3) -> tuple[Outcome, list[Cause]]:
-    """Returns (outcome with every non-precondition chunk removed, causes);
-    isolated workflow preconditions are appended to ``preconditions`` and
-    explanations of why the search stopped are appended to ``notes``."""
+    """KV-cache-stratified suffix-first search.
+
+    Probes suffix tiers before prefix tiers to preserve KV prompt-cache hits,
+    isolates and auto-protects workflow preconditions (collapsing action family E),
+    and prunes noisy hitchhikers via leave-one-in restoration checks (C \\ {c_i}).
+
+    Returns ``(probe_outcome, causes)``; isolated preconditions are appended to
+    ``preconditions`` and search explanations to ``notes``."""
     notes = notes if notes is not None else []
     preconds = preconditions if preconditions is not None else []
     rng = rng or random.Random(0)
@@ -626,62 +767,57 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
         for k in c.children:
             by_id[k.id] = k
     remaining = [c.id for c in coarse]
-    everything = await test(frozenset(remaining))
 
-    # Conditional blame: if removing everything collapses the action family E,
-    # isolate and auto-protect workflow preconditions first so choice search runs
-    # with E intact.
     is_collapsed = lambda o: o.collapsed  # noqa: E731
     is_flipped = lambda o: o.flipped  # noqa: E731
+    is_hit = lambda o: o.collapsed or o.flipped  # noqa: E731
+
     protected_ids: set[str] = set()
     raw_preconds: list[Cause] = []
-    while remaining and everything.collapsed and len(raw_preconds) < max_preconditions:
-        s = await ddmin(remaining, test, pred=is_collapsed)
-        if not (await test(frozenset(s))).collapsed:
-            break
-        if len(s) > max_members:
-            notes.append(f"diffuse precondition: the smallest removal that stops the action family "
-                         f"has {len(s)} chunks")
-            break
-        members = await _refine_members(list(s), by_id, test, is_collapsed) if refine else list(s)
-        protected_set = set(members)
-        protected_ids |= protected_set
-        new_remaining = []
-        for cid in remaining:
-            if cid in protected_set:
-                continue
-            kid_ids = [k.id for k in by_id[cid].children]
-            if kid_ids and any(k in protected_set for k in kid_ids):
-                new_remaining.extend(k for k in kid_ids if k not in protected_set)
-            else:
-                new_remaining.append(cid)
-        remaining = new_remaining
-        raw_preconds.append(Cause(members, role="precondition"))
-        everything = await test(frozenset(remaining)) if remaining else Outcome(0, 0, "kept")
-
-    for pre in raw_preconds:
-        pre.together = await test(frozenset(pre.members), fresh=True)
-        if not pre.together.collapsed:
-            notes.append(f"dropped an unconfirmed precondition ({', '.join(pre.members)}): {pre.together} "
-                         "after more replays")
-            continue
-        if len(pre.members) > 1:
-            for cid in pre.members:
-                pre.alone[cid] = await test(frozenset([cid]))
-        size = sum(by_id[c].chars for c in pre.members)
-        for ctl in pick_controls(control_pool, size, set(pre.members), n_controls, rng):
-            pre.controls.append((" / ".join(_short(c.text, 40) for c in ctl),
-                                 await test(frozenset(), extra=ctl)))
-        preconds.append(pre)
-    preconds.sort(key=lambda c: c.specific is False)
-
     causes: list[Cause] = []
-    if not everything.flipped:
-        return everything, causes
+    first_flip: Outcome | None = None
+    last_probe = Outcome(0, 0, "kept")
+
     while remaining and len(causes) < max_causes:
-        if causes and not (await test(frozenset(remaining))).flipped:
+        tiers = partition_tiers(remaining, by_id)
+        probe, hit_idx = await _widen_suffix(tiers, test, frozenset(), is_hit)
+        last_probe = probe
+        if hit_idx < 0:
             break
-        s = await ddmin(remaining, test, pred=is_flipped)
+
+        if probe.collapsed:
+            if len(raw_preconds) >= max_preconditions:
+                break
+            s = await _stratified_ddmin(tiers[hit_idx:], test, is_collapsed)
+            s, _ = await _prune_bundle(s, by_id, test, is_collapsed, notes)
+            if not (await test(frozenset(s))).collapsed:
+                break
+            if len(s) > max_members:
+                notes.append(f"diffuse precondition: the smallest removal that stops the action family "
+                             f"has {len(s)} chunks")
+                break
+            members = await _refine_members(list(s), by_id, test, is_collapsed) if refine else list(s)
+            members, restored = await _prune_bundle(members, by_id, test, is_collapsed, notes)
+            protected_set = set(members)
+            protected_ids |= protected_set
+            new_remaining = []
+            for cid in remaining:
+                if cid in protected_set:
+                    continue
+                kid_ids = [k.id for k in by_id[cid].children]
+                if kid_ids and any(k in protected_set for k in kid_ids):
+                    new_remaining.extend(k for k in kid_ids if k not in protected_set)
+                else:
+                    new_remaining.append(cid)
+            remaining = new_remaining
+            raw_preconds.append(Cause(members, restored=restored, role="precondition"))
+            continue
+
+        # Choice flip
+        if first_flip is None:
+            first_flip = probe
+        s = await _stratified_ddmin(tiers[hit_idx:], test, is_flipped)
+        s, _ = await _prune_bundle(s, by_id, test, is_flipped, notes)
         if not (await test(frozenset(s))).flipped:
             break
         if causes:  # a further cause must be small and specific, not "remove lots of anything"
@@ -699,9 +835,26 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
         remaining = [x for x in remaining if x not in s]
         causes.append(Cause(list(s)))
 
+    for pre in raw_preconds:
+        pre.together = await test(frozenset(pre.members), fresh=True)
+        if not pre.together.collapsed:
+            notes.append(f"dropped an unconfirmed precondition ({', '.join(pre.members)}): {pre.together} "
+                         "after more replays")
+            continue
+        if len(pre.members) > 1:
+            for cid in pre.members:
+                pre.alone[cid] = await test(frozenset([cid]))
+        size = sum(by_id[c].chars for c in pre.members)
+        for ctl in pick_controls(control_pool, size, set(pre.members), n_controls, rng):
+            pre.controls.append((" / ".join(_short(c.text, 40) for c in ctl),
+                                 await test(frozenset(), extra=ctl)))
+        preconds.append(pre)
+    preconds.sort(key=lambda c: c.specific is False)
+
     for cause in causes:
         if refine:
             cause.members = await _refine_members(cause.members, by_id, test, is_flipped)
+        cause.members, cause.restored = await _prune_bundle(cause.members, by_id, test, is_flipped, notes)
         cause.together = await test(frozenset(cause.members), fresh=True)
         if not cause.together.flipped:
             notes.append(f"dropped an unconfirmed finding ({', '.join(cause.members)}): {cause.together} "
@@ -716,6 +869,7 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
                                    await test(frozenset(), extra=ctl)))
     causes = [c for c in causes if c.together and c.together.flipped]
     causes.sort(key=lambda c: c.specific is False)  # specific causes first
+    everything = first_flip if first_flip is not None else last_probe
     return everything, causes
 
 
@@ -777,11 +931,13 @@ def add_args(ap) -> None:
 
 
 def _serialize_findings(findings: list[Cause], by_id: dict[str, Chunk]) -> list[dict]:
-    return [{"members": [{"id": m, "kind": by_id[m].kind, "label": by_id[m].label,
+    return [{"relation": c.relation,
+             "members": [{"id": m, "kind": by_id[m].kind, "label": by_id[m].label,
                           "text": by_id[m].text} for m in c.members],
              "together": asdict(c.together) if c.together else None,
              "specific": c.specific,
              "alone": {k: asdict(v) for k, v in c.alone.items()},
+             "restored": {k: asdict(v) for k, v in c.restored.items()},
              "controls": [{"removed": t, **asdict(o)} for t, o in c.controls]} for c in findings]
 
 
@@ -895,8 +1051,12 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
             say(f"\n{what} {n} (redundant preconditions for {g_lbl}: {together}):")
         for cid in p.members:
             ch = by_id[cid]
-            alone = f"   alone: {p.alone[cid]}" if cid in p.alone else ""
-            say(f"  - {ch.label}: {_short(ch.text, 90)!r}{alone}")
+            extra_s = ""
+            if cid in p.alone:
+                extra_s += f"   alone: {p.alone[cid]}"
+            if cid in p.restored:
+                extra_s += f"   restores: {p.restored[cid]}"
+            say(f"  - {ch.label}: {_short(ch.text, 90)!r}{extra_s}")
         if p.controls:
             say("  controls (random same-size removals): " + ", ".join(str(o) for _, o in p.controls)
                 + ("" if p.specific else "  -> NOT specific: random removals stop it too"))
@@ -909,8 +1069,12 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
             say(f"\n{what} {n} (redundant: only removing all of these flips it: {together}):")
         for cid in c.members:
             ch = by_id[cid]
-            alone = f"   alone: {c.alone[cid]}" if cid in c.alone else ""
-            say(f"  - {ch.label}: {_short(ch.text, 90)!r}{alone}")
+            extra_s = ""
+            if cid in c.alone:
+                extra_s += f"   alone: {c.alone[cid]}"
+            if cid in c.restored:
+                extra_s += f"   restores: {c.restored[cid]}"
+            say(f"  - {ch.label}: {_short(ch.text, 90)!r}{extra_s}")
         if c.controls:
             say("  controls (random same-size removals): " + ", ".join(str(o) for _, o in c.controls)
                 + ("" if c.specific else "  -> NOT specific: random removals flip it too"))
@@ -922,8 +1086,17 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
     if stopped:
         say(f"\nStopped early: {stopped}")
     cost = ledger.total - start
-    say(f"\nTests: {len(test.log)}, replays: {test.replays + len(samples)}, cost ${cost:.4f} "
-        f"(ledger ${ledger.total:.4f} of ${args.budget:.2f})")
+    usage = dict(test.usage)
+    for s in samples:
+        if s.usage:
+            for k_u in usage:
+                usage[k_u] += s.usage.get(k_u) or 0
+    total_in = usage["input_uncached"] + usage["input_cache_read"] + usage["input_cache_write"]
+    cache_hit_rate = (usage["input_cache_read"] / total_in) if total_in else None
+    cache_stats = {**usage, "cache_hit_rate": cache_hit_rate}
+    cache_note = f", cache hit {cache_hit_rate:.0%}" if cache_hit_rate is not None else ""
+    say(f"\nTests: {len(test.log)}, replays: {test.replays + len(samples)}, cost ${cost:.4f}"
+        f"{cache_note} (ledger ${ledger.total:.4f} of ${args.budget:.2f})")
     result = ("causes" if causes else
               "preconditions_only" if preconditions and everything and not everything.flipped else
               "not_in_context" if everything and not everything.flipped else
@@ -931,6 +1104,7 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
     report.update(result=result,
                   causes=_serialize_findings(causes, by_id),
                   preconditions=_serialize_findings(preconditions, by_id),
+                  cache_stats=cache_stats,
                   notes=notes, stopped=stopped, tests=test.log, cost=cost,
                   replays=test.replays + len(samples))
     return report

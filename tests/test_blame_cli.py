@@ -139,12 +139,16 @@ def test_why_conditional_separates_precondition_from_redundant_carriers_on_free_
     # Precondition is edit_file (call_2), NOT reported as a choice cause
     pre_ids = [m["id"] for pre in rep["preconditions"] for m in pre["members"]]
     assert pre_ids == ["pair:call_2"]
+    assert rep["preconditions"][0]["relation"] == "and_precondition"
     cause_ids = sorted(m["id"] for c in rep["causes"] for m in c["members"])
     assert len(cause_ids) == 3
     assert "pair:call_1" in cause_ids  # earlier pytest call
     assert any(cid.startswith("tooldesc:bash") for cid in cause_ids)
     assert any(cid.startswith("sys@msg0.") for cid in cause_ids)
     assert "pair:call_2" not in cause_ids
+    assert rep["causes"][0]["relation"] == "or_carriers"
+    assert sorted(rep["causes"][0]["restored"]) == cause_ids
+    assert "cache_stats" in rep and rep["cache_stats"]["input_uncached"] > 0
 
 
 def test_why_given_none_preserves_unconditional_behavior(tmp_path, monkeypatch):

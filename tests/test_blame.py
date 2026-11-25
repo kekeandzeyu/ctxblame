@@ -4,8 +4,8 @@ import random
 import pytest
 
 from ctxblame.ablate import validate
-from ctxblame.blame import (Cause, Outcome, apply_chunks, chunk_request, ddmin, decide, decide_conditional,
-                            pick_controls, resolve_given, search)
+from ctxblame.blame import (Cause, Chunk, Outcome, _prune_bundle, apply_chunks, chunk_request, ddmin,
+                            decide, decide_conditional, partition_tiers, pick_controls, resolve_given, search)
 from ctxblame.formats import ANTHROPIC, OPENAI, Decision, ToolCall
 from ctxblame.match import Matcher
 from ctxblame.replay import Sample
@@ -250,4 +250,145 @@ def test_search_precondition_only_reports_precondition_and_no_causes():
     every, causes = asyncio.run(search(chunks, t, n_controls=0, preconditions=preconds))
     assert not every.flipped
     assert [p.members for p in preconds] == [["freeze_rule"]]
+    assert preconds[0].relation == "and_precondition"
     assert causes == []
+
+
+def test_prune_bundle_drops_noisy_hitchhiker_and_proves_restoration():
+    by_id = {x: Chunk(x, "system", x, x * 10, i * 100) for i, x in enumerate(["a", "hitch", "b"])}
+    # True minimal OR-carriers are {"a", "b"}; "hitch" is irrelevant
+    t = fake(lambda r: {"a", "b"} <= r)
+    notes: list[str] = []
+    members, restored = asyncio.run(_prune_bundle(["a", "hitch", "b"], by_id, t, lambda o: o.flipped, notes))
+    assert members == ["a", "b"]
+    assert set(restored) == {"a", "b"}
+    assert all(o.verdict == "kept" for o in restored.values())
+    assert any("hitch" in n for n in notes)
+
+
+def test_search_prunes_hitchhiker_under_noisy_ddmin_and_sets_relations():
+    chunks = [Chunk(x, "system", x, x * 10, i * 100) for i, x in enumerate(["a", "hitch", "b", "c"])]
+    seen_ab = 0
+
+    async def noisy_test(removed, extra=(), fresh=False):
+        nonlocal seen_ab
+        r = frozenset(removed) | frozenset(c.id for c in extra)
+        # First time {"a", "b"} is tested alone (during ddmin), inject a noisy false keep
+        # so ddmin keeps "hitch"; subsequent pruning check reveals "hitch" is non-essential.
+        if r == frozenset({"a", "b"}) and seen_ab == 0:
+            seen_ab += 1
+            return Outcome(5, 5, "kept")
+        return Outcome(0, 10, "flipped") if {"a", "b"} <= r else Outcome(5, 5, "kept")
+
+    notes: list[str] = []
+    _, causes = asyncio.run(search(chunks, noisy_test, n_controls=0, notes=notes))
+    assert [sorted(c.members) for c in causes] == [["a", "b"]]
+    assert causes[0].relation == "or_carriers"
+    assert set(causes[0].restored) == {"a", "b"}
+    assert all(o.verdict == "kept" for o in causes[0].restored.values())
+
+
+def test_partition_tiers_orders_prefix_to_suffix():
+    chunks = [
+        Chunk("tooldesc:bash", "tool desc", "bash", "x" * 500, 0),
+        Chunk("tooldesc:read", "tool desc", "read", "x" * 500, 500),
+        Chunk("sys.p1", "system", "sys1", "x" * 500, 1000),
+        Chunk("pair:1", "tool call", "p1", "x" * 500, 1500),
+        Chunk("pair:2", "tool call", "p2", "x" * 500, 2000),
+        Chunk("pair:3", "tool call", "p3", "x" * 500, 2500),
+        Chunk("pair:4", "tool call", "p4", "x" * 500, 3000),
+    ]
+    by_id = {c.id: c for c in chunks}
+    tiers = partition_tiers([c.id for c in chunks], by_id)
+    assert tiers == [
+        ["tooldesc:bash", "tooldesc:read"],
+        ["sys.p1"],
+        ["pair:1", "pair:2"],
+        ["pair:3", "pair:4"],
+    ]
+
+
+def test_suffix_first_search_preserves_prefix_kv_cache_for_tail_cause():
+    # 20 chunks totaling 20,000 chars: 4 tool descs (0..4k), 4 system (4k..8k),
+    # 6 early history (8k..14k), 6 tail history (14k..20k).
+    specs = (
+        [(f"tooldesc:t{i}", "tool desc") for i in range(4)]
+        + [(f"sys.p{i}", "system") for i in range(4)]
+        + [(f"pair:e{i}", "tool call") for i in range(6)]
+        + [(f"pair:tail{i}", "tool call") for i in range(6)]
+    )
+    chunks = [Chunk(cid, kind, cid, "x" * 1000, i * 1000) for i, (cid, kind) in enumerate(specs)]
+    by_id = {c.id: c for c in chunks}
+    total_chars = 20_000
+    calls: list[frozenset] = []
+    uncached_chars = 0
+    cached_chars = 0
+
+    async def metered_test(removed, extra=(), fresh=False):
+        nonlocal uncached_chars, cached_chars
+        r = frozenset(removed) | frozenset(c.id for c in extra)
+        calls.append(r)
+        # Earliest mutated byte offset determines how much KV prefix survives
+        first_mut = min((by_id[cid].pos for cid in r), default=total_chars)
+        cached_chars += first_mut
+        uncached_chars += total_chars - first_mut
+        return Outcome(0, 10, "flipped") if "pair:tail4" in r else Outcome(5, 5, "kept")
+
+    _, causes = asyncio.run(search(chunks, metered_test, max_causes=1, n_controls=0))
+    assert [c.members for c in causes] == [["pair:tail4"]]
+    assert causes[0].relation == "and_cause"
+    # Never mutated tool schemas or system prompt at all!
+    prefix_ids = {f"tooldesc:t{i}" for i in range(4)} | {f"sys.p{i}" for i in range(4)}
+    assert all(not (r & prefix_ids) for r in calls)
+    hit_rate = cached_chars / (cached_chars + uncached_chars)
+    assert hit_rate >= 0.75  # >75% KV prefix cache hit rate (>4x-5x uncached reduction)
+
+
+def test_stratified_search_isolates_tail_precondition_without_prefix_misses_then_finds_cross_tier_bundle():
+    specs = (
+        [(f"tooldesc:t{i}", "tool desc") for i in range(4)]
+        + [(f"sys.p{i}", "system") for i in range(4)]
+        + [(f"pair:e{i}", "tool call") for i in range(4)]
+        + [(f"pair:tail{i}", "tool call") for i in range(4)]
+    )
+    chunks = [Chunk(cid, kind, cid, "x" * 1000, i * 1000) for i, (cid, kind) in enumerate(specs)]
+    calls: list[tuple[frozenset, str]] = []
+
+    async def oracle(removed, extra=(), fresh=False):
+        r = frozenset(removed) | frozenset(c.id for c in extra)
+        if "pair:tail2" in r:
+            out = Outcome(0, 0, "collapsed", k_given=0, n_total=10, given_verdict="collapsed")
+        elif {"tooldesc:t1", "sys.p2", "pair:e1"} <= r:
+            out = Outcome(0, 10, "flipped", k_given=10, n_total=10, given_verdict="intact")
+        else:
+            out = Outcome(5, 5, "kept", k_given=5, n_total=5, given_verdict="intact")
+        calls.append((r, out.verdict))
+        return out
+
+    preconds: list[Cause] = []
+    _, causes = asyncio.run(search(chunks, oracle, max_causes=1, n_controls=0, preconditions=preconds))
+    assert [p.members for p in preconds] == [["pair:tail2"]]
+    assert preconds[0].relation == "and_precondition"
+    assert [sorted(c.members) for c in causes] == [["pair:e1", "sys.p2", "tooldesc:t1"]]
+    assert causes[0].relation == "or_carriers"
+    assert set(causes[0].restored) == {"pair:e1", "sys.p2", "tooldesc:t1"}
+    # Every call that hit collapsed (precondition isolation) stayed strictly inside tail history
+    prefix_ids = {cid for cid, kind in specs if kind in ("tool desc", "system")}
+    collapsed_calls = [r for r, v in calls if v == "collapsed"]
+    assert collapsed_calls and all(not (r & prefix_ids) for r in collapsed_calls)
+
+
+def test_ddmin_complements_keep_prefix_intact_first():
+    items = ["p0", "p1", "p2", "p3"]
+    order: list[frozenset] = []
+
+    async def t(removed):
+        r = frozenset(removed)
+        order.append(r)
+        # Flips whenever any 3 items are removed (forces complement tests at n=4)
+        return Outcome(0, 10, "flipped") if len(r) >= 3 else Outcome(5, 5, "kept")
+
+    asyncio.run(ddmin(items, t))
+    # First 3-item complement tried should omit "p0" (keeping earliest prefix "p0" intact!)
+    three_item_tests = [r for r in order if len(r) == 3]
+    assert three_item_tests[0] == frozenset({"p1", "p2", "p3"})
