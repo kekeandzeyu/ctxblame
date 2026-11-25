@@ -392,5 +392,20 @@ def _p3_synthetic_cases() -> list[BenchCase]:
     return cases
 
 
-def all_cases() -> list[BenchCase]:
+def core_cases() -> list[BenchCase]:
     return _p0_openai_cases() + _p1_openai_cases() + _p3_synthetic_cases()
+
+
+SUITES = ("core", "gen", "gen-open", "all")
+
+
+def all_cases(suite: str = "core", gen_n: int = 64, gen_seed: int = 0) -> list[BenchCase]:
+    """``core`` = the 12 hand-written cases, ``gen`` = generated cases (direct
+    style), ``gen-open`` = generated cases (open style), ``all`` = core + gen."""
+    out = []
+    if suite in ("core", "all"):
+        out += core_cases()
+    if suite in ("gen", "all", "gen-open"):
+        from gen_cases import generated_cases
+        out += generated_cases(gen_n, gen_seed, style="open" if suite == "gen-open" else "direct")
+    return out

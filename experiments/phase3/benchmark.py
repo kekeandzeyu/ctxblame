@@ -44,7 +44,7 @@ REPO = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 from cases import BenchCase, all_cases  # noqa: E402
 
-METHODS = ("ctxblame", "ctxblame_uncond", "loo", "self_explain")
+METHODS = ("ctxblame", "ctxblame_uncond", "loo", "self_explain", "contextcite")
 
 
 # ------------------------------------------------------------------ scoring
@@ -396,7 +396,12 @@ def dry_run(cases: list[BenchCase]) -> int:
 
 
 async def main_async(args) -> int:
-    cases = [c for c in all_cases() if not args.only or any(o in c.name or o in c.category for o in args.only)]
+    cases = [c for c in all_cases(args.suite, args.gen_n, args.gen_seed) if not args.only or any(o in c.name or o in c.category for o in args.only)]
+    if args.valid_from:
+        valid = set(json.loads(args.valid_from.read_text())["valid"])
+        dropped = [c.name for c in cases if c.name not in valid]
+        cases = [c for c in cases if c.name in valid]
+        print(f"oracle filter: {len(cases)} valid cases kept, {len(dropped)} dropped", flush=True)
     if not cases:
         print("error: no benchmark cases matched --only", file=sys.stderr)
         return 2
@@ -420,6 +425,7 @@ async def main_async(args) -> int:
         "--batch", str(args.batch),
         "--max-n", str(args.max_n),
         "--controls", str(args.controls),
+        "--seed", str(args.seed),
     ]
     if args.model:
         common += ["--model", args.model]
@@ -432,10 +438,9 @@ async def main_async(args) -> int:
     if args.extra_body:
         common += ["--extra-body", json.dumps(args.extra_body)]
 
-    rows: list[dict] = []
-    for case in cases:
-        for meth in args.methods:
-            print(f"== {case.name} [{meth}]", flush=True)
+    async def run_one(case: BenchCase, meth: str) -> dict:
+        print(f"== {case.name} [{meth}]", flush=True)
+        try:
             if meth == "ctxblame":
                 rep = await run_ctxblame(case, base, api_key, common, unconditional=False)
             elif meth == "ctxblame_uncond":
@@ -444,14 +449,33 @@ async def main_async(args) -> int:
                 rep = await run_loo(case, base, api_key, common)
             elif meth == "self_explain":
                 rep = await run_self_explain(case, base, api_key, common)
+            elif meth == "contextcite":
+                from contextcite import contextcite
+                step = with_model_override(case.step, args.model, args.max_tokens, args.no_thinking_param,
+                                           args.extra_body)
+                rep = await contextcite(step, base, step.body.get("model", ""), case.protect,
+                                        n_ablations=args.cc_ablations, seed=args.seed,
+                                        extra_body=args.extra_body)
             else:
                 raise ValueError(f"unknown method {meth!r}")
-            sc = score_report(case, rep)
-            row = {"case": case.name, "category": case.category, "method": meth, "score": sc, "report": rep}
-            rows.append(row)
-            print(f"   result={sc['result']} carriers={sc['carriers_found']}/{sc['carriers']} "
-                  f"prec={_fmt_pct(sc['precision'])} replays={sc['replays']} "
-                  f"cache={_fmt_pct(sc['cache_hit_rate'])} {sc['seconds']:.1f}s ${sc['cost']:.3f}", flush=True)
+        except BudgetStop:
+            raise
+        except Exception as e:  # one broken run must not lose the whole benchmark
+            rep = {"result": "error", "error": f"{type(e).__name__}: {e}"[:500], "causes": [],
+                   "preconditions": [], "replays": 0, "cost": 0.0, "seconds": 0.0}
+        sc = score_report(case, rep)
+        print(f"   {case.name} [{meth}] result={sc['result']} carriers={sc['carriers_found']}/{sc['carriers']} "
+              f"prec={_fmt_pct(sc['precision'])} replays={sc['replays']} "
+              f"cache={_fmt_pct(sc['cache_hit_rate'])} {sc['seconds']:.1f}s ${sc['cost']:.3f}", flush=True)
+        return {"case": case.name, "category": case.category, "method": meth, "score": sc, "report": rep}
+
+    sem = asyncio.Semaphore(args.parallel_cases)
+
+    async def guarded(case, meth):
+        async with sem:
+            return await run_one(case, meth)
+
+    rows: list[dict] = list(await asyncio.gather(*(guarded(c, m) for c in cases for m in args.methods)))
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -475,8 +499,18 @@ def main(argv: list[str] | None = None) -> int:
                     help="JSON object merged into every request body (e.g. Qwen3 "
                          "'{\"chat_template_kwargs\": {\"enable_thinking\": false}}')")
     ap.add_argument("--api-key-env", default=None)
-    ap.add_argument("--methods", nargs="+", choices=METHODS, default=list(METHODS))
+    ap.add_argument("--methods", nargs="+", choices=METHODS, default=list(METHODS[:4]))
+    ap.add_argument("--parallel-cases", type=int, default=1,
+                    help="(case, method) runs in flight at once (a dedicated GPU batches them)")
+    ap.add_argument("--seed", type=int, default=0, help="seed for random controls and contextcite masks")
+    ap.add_argument("--cc-ablations", type=int, default=64, help="random ablations for the contextcite baseline")
     ap.add_argument("--only", nargs="*", help="filter cases by substring match on name or category")
+    ap.add_argument("--suite", choices=("core", "gen", "gen-open", "all"), default="core",
+                    help="core = 12 hand-written cases, gen = generated cases (gen_cases.py), all = both")
+    ap.add_argument("--gen-n", type=int, default=64, help="number of generated cases")
+    ap.add_argument("--valid-from", type=Path, default=None,
+                    help="oracle.json from oracle.py: run only the cases it marked valid")
+    ap.add_argument("--gen-seed", type=int, default=0, help="seed of the generated suite")
     ap.add_argument("-n", type=int, default=10, help="baseline replays")
     ap.add_argument("--batch", type=int, default=5)
     ap.add_argument("--max-n", type=int, default=15)
