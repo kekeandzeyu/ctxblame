@@ -246,3 +246,24 @@ def test_local_vllm_model_override_zero_cost_no_key(tmp_path, monkeypatch, capsy
     assert "Authorization" not in app[CALLS][0]["headers"]
     run = json.loads(next((tmp_path / "runs").glob("*.json")).read_text())
     assert run["summary"]["cost"] == 0.0
+
+
+def test_extra_body_is_merged_into_replayed_request():
+    import argparse as _ap
+    import pytest as _pt
+    from ctxblame.replay import parse_extra_body, with_model_override
+    from ctxblame.trace import Step
+
+    rec = {"step": 1, "format": "openai", "upstream": "http://127.0.0.1:8000/v1",
+           "request": {"path": "/chat/completions", "headers": {},
+                       "body": {"model": "deepseek-v4-pro", "thinking": {"type": "enabled"}, "messages": []}},
+           "response": {"status": 200, "streamed": False, "body": {}}}
+    extra = parse_extra_body('{"chat_template_kwargs": {"enable_thinking": false}}')
+    out = with_model_override(Step(1, rec), "Qwen/Qwen3-14B", 2048, True, extra)
+    assert out.body["chat_template_kwargs"] == {"enable_thinking": False}
+    assert out.body["model"] == "Qwen/Qwen3-14B" and "thinking" not in out.body
+    assert "chat_template_kwargs" not in rec["request"]["body"]  # original untouched
+    assert parse_extra_body(None) == {}
+    for bad in ("[1]", "{not json"):
+        with _pt.raises(_ap.ArgumentTypeError):
+            parse_extra_body(bad)

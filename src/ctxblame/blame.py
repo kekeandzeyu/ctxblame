@@ -37,7 +37,7 @@ from .formats import ANTHROPIC, Decision, ToolCall, extract_decision
 from .match import MODES, Matcher, intent
 from .pricing import Ledger, resolve_model
 from .replay import (FatalReplayError, Replayer, Sample, build_headers, estimate_cost, resolve_api_key,
-                     sample_decision, summarize, wilson, with_model_override)
+                     parse_extra_body, sample_decision, summarize, wilson, with_model_override)
 from .trace import Step, get_step, load_trace, matcher_for
 
 # ------------------------------------------------------------------ chunks
@@ -923,6 +923,9 @@ def add_args(ap) -> None:
     ap.add_argument("--max-tokens", type=int, default=None, help="override max_tokens in the replayed request")
     ap.add_argument("--no-thinking-param", action="store_true",
                     help="strip top-level 'thinking' field from the request body (useful for vLLM / SGLang)")
+    ap.add_argument("--extra-body", type=parse_extra_body, default={}, metavar="JSON",
+                    help="JSON object merged into every request body, e.g. "
+                         "'{\"chat_template_kwargs\": {\"enable_thinking\": false}}' for Qwen3 on vLLM")
     ap.add_argument("--free", action="store_true",
                     help="treat the endpoint as $0/token (skips price-table lookup; API key optional)")
     ap.add_argument("--api-key-env", default=None)
@@ -946,7 +949,8 @@ def _serialize_findings(findings: list[Cause], by_id: dict[str, Chunk]) -> list[
 
 async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
     step = with_model_override(step, getattr(args, "model", None), getattr(args, "max_tokens", None),
-                               bool(getattr(args, "no_thinking_param", False)))
+                               bool(getattr(args, "no_thinking_param", False)),
+                               getattr(args, "extra_body", None))
     free = bool(getattr(args, "free", False))
     fmt = step.fmt
     mode = args.match or ("args" if args.key_arg else "intent")
@@ -1120,7 +1124,7 @@ def run_cli(args) -> int:
     except (LookupError, ValueError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 5
-    step = with_model_override(step, args.model, args.max_tokens, args.no_thinking_param)
+    step = with_model_override(step, args.model, args.max_tokens, args.no_thinking_param, args.extra_body)
     base = (args.base_url or step.record["upstream"]).rstrip("/")
     api_key, key_env = resolve_api_key(step.fmt, base, args.api_key_env, free=args.free)
     if api_key is None:

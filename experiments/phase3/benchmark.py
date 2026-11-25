@@ -35,8 +35,8 @@ from ctxblame.ablate import validate
 from ctxblame.blame import BudgetStop, Chunk, Tester, apply_chunks, chunk_request
 from ctxblame.formats import extract_decision, extract_usage
 from ctxblame.pricing import Ledger, cost as calc_cost, resolve_model
-from ctxblame.replay import (Replayer, build_headers, estimate_cost, resolve_api_key, summarize,
-                             with_model_override)
+from ctxblame.replay import (Replayer, build_headers, estimate_cost, parse_extra_body, resolve_api_key,
+                             summarize, with_model_override)
 from ctxblame.trace import Step, matcher_for
 
 HERE = Path(__file__).parent
@@ -147,7 +147,8 @@ async def run_ctxblame(case: BenchCase, base: str, api_key: str, common: list[st
 async def run_loo(case: BenchCase, base: str, api_key: str, common: list[str]) -> dict:
     """Baseline 1: Single-chunk leave-one-out ablation against unconditional P(target)."""
     args = _parse_blame_args(case, common, ["--given", "none"])
-    step = with_model_override(case.step, args.model, args.max_tokens, args.no_thinking_param)
+    step = with_model_override(case.step, args.model, args.max_tokens, args.no_thinking_param,
+                               args.extra_body)
     fmt = step.fmt
     mode = args.match or ("args" if args.key_arg else "intent")
     matcher = matcher_for(step, mode, args.key_arg or None, any_call=not args.first_call)
@@ -206,7 +207,8 @@ async def run_loo(case: BenchCase, base: str, api_key: str, common: list[str]) -
 async def run_self_explain(case: BenchCase, base: str, api_key: str, common: list[str]) -> dict:
     """Baseline 2: Ask the LLM directly which context chunk IDs caused its tool call."""
     args = _parse_blame_args(case, common)
-    step = with_model_override(case.step, args.model, args.max_tokens, args.no_thinking_param)
+    step = with_model_override(case.step, args.model, args.max_tokens, args.no_thinking_param,
+                               args.extra_body)
     fmt = step.fmt
     mode = args.match or ("args" if args.key_arg else "intent")
     matcher = matcher_for(step, mode, args.key_arg or None, any_call=not args.first_call)
@@ -244,6 +246,7 @@ async def run_self_explain(case: BenchCase, base: str, api_key: str, common: lis
             {"role": "system", "content": "Respond with compact JSON only: {\"chunk_ids\": [...]}."},
             {"role": "user", "content": prompt},
         ],
+        **(args.extra_body or {}),
     }
     url = base + "/chat/completions"
     headers = build_headers("openai", {}, api_key)
@@ -426,6 +429,8 @@ async def main_async(args) -> int:
         common += ["--no-thinking-param"]
     if args.free:
         common += ["--free"]
+    if args.extra_body:
+        common += ["--extra-body", json.dumps(args.extra_body)]
 
     rows: list[dict] = []
     for case in cases:
@@ -466,6 +471,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--no-thinking-param", action="store_true",
                     help="strip DeepSeek top-level 'thinking' param (recommended for vLLM / SGLang)")
     ap.add_argument("--free", action="store_true", help="treat endpoint as $0/token")
+    ap.add_argument("--extra-body", type=parse_extra_body, default={}, metavar="JSON",
+                    help="JSON object merged into every request body (e.g. Qwen3 "
+                         "'{\"chat_template_kwargs\": {\"enable_thinking\": false}}')")
     ap.add_argument("--api-key-env", default=None)
     ap.add_argument("--methods", nargs="+", choices=METHODS, default=list(METHODS))
     ap.add_argument("--only", nargs="*", help="filter cases by substring match on name or category")

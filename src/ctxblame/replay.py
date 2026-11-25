@@ -59,13 +59,27 @@ def resolve_api_key(fmt: str, base_url: str, api_key_env: str | None = None,
     return None, key_env
 
 
+def parse_extra_body(s: str | None) -> dict:
+    """Parse ``--extra-body`` JSON (a JSON object merged into every request body)."""
+    if not s:
+        return {}
+    try:
+        obj = json.loads(s)
+    except json.JSONDecodeError as e:
+        raise argparse.ArgumentTypeError(f"--extra-body is not valid JSON: {e}") from e
+    if not isinstance(obj, dict):
+        raise argparse.ArgumentTypeError("--extra-body must be a JSON object")
+    return obj
+
+
 def with_model_override(step: Step, model: str | None = None, max_tokens: int | None = None,
-                        strip_thinking_param: bool = False) -> Step:
+                        strip_thinking_param: bool = False, extra_body: dict | None = None) -> Step:
     """Return a shallow copy of ``step`` with optional request-body overrides
-    (model name, max_tokens cap, or stripping provider-specific ``thinking``)."""
-    if not model and max_tokens is None and not strip_thinking_param:
+    (model name, max_tokens cap, stripping provider-specific ``thinking``, or
+    extra top-level fields such as vLLM's ``chat_template_kwargs``)."""
+    if not model and max_tokens is None and not strip_thinking_param and not extra_body:
         return step
-    body = dict(step.body)
+    body = {**step.body, **(extra_body or {})}
     if model:
         body["model"] = model
     if max_tokens is not None:
@@ -333,6 +347,9 @@ def add_args(ap: argparse.ArgumentParser) -> None:
     ap.add_argument("--max-tokens", type=int, default=None, help="override max_tokens in the replayed request")
     ap.add_argument("--no-thinking-param", action="store_true",
                     help="strip top-level 'thinking' field from the request body (useful for vLLM / SGLang)")
+    ap.add_argument("--extra-body", type=parse_extra_body, default={}, metavar="JSON",
+                    help="JSON object merged into every request body, e.g. "
+                         "'{\"chat_template_kwargs\": {\"enable_thinking\": false}}' for Qwen3 on vLLM")
     ap.add_argument("--free", action="store_true",
                     help="treat the endpoint as $0/token (skips price-table lookup; API key optional)")
     ap.add_argument("--api-key-env", default=None, help="env var holding the key (never pass the key itself)")
@@ -348,7 +365,7 @@ def run_cli(args) -> int:
     except (LookupError, ValueError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 5
-    step = with_model_override(step, args.model, args.max_tokens, args.no_thinking_param)
+    step = with_model_override(step, args.model, args.max_tokens, args.no_thinking_param, args.extra_body)
     fmt, body = step.fmt, step.body
     if args.list_units:
         for u in list_units(fmt, body):
