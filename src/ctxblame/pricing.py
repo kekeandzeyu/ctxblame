@@ -12,6 +12,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 from .formats import Usage
 
@@ -22,6 +23,18 @@ class Price:
     output: float
     cache_read: float
     cache_write: float
+
+
+FREE_PRICE = Price(0.0, 0.0, 0.0, 0.0)
+LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1", "0.0.0.0"}
+
+
+def is_local_upstream(upstream: str) -> bool:
+    """True when upstream points to a local/loopback server (e.g. local or Colab vLLM/Ollama)."""
+    if not upstream:
+        return False
+    host = (urlparse(upstream).hostname or "").lower()
+    return host in LOCAL_HOSTS
 
 
 def _claude(i: float, o: float) -> Price:
@@ -49,20 +62,27 @@ def deepseek_multiplier(when: datetime) -> float:
     return 1.0 if peak else 0.5
 
 
-def resolve_model(model: str, upstream: str = "") -> str:
+def resolve_model(model: str, upstream: str = "", free: bool = False) -> str:
     """Map a model name to its price-table key. DeepSeek's Anthropic endpoint
     accepts claude-* names and serves its own models (opus -> v4-pro, others
-    -> flash), so those are priced as DeepSeek."""
+    -> flash), so those are priced as DeepSeek. Self-hosted local models (or
+    any endpoint with ``free=True``) resolve to ``"free"`` ($0/token)."""
+    if free:
+        return "free"
     if "deepseek" in upstream and model.startswith("claude"):
         return "deepseek-v4-pro" if model.startswith("claude-opus") else "deepseek-flash"
     if model in DEEPSEEK or model in CLAUDE:
         return model
-    raise KeyError(f"no price for model {model!r}; add it to ctxblame/pricing.py")
+    if is_local_upstream(upstream):
+        return "free"
+    raise KeyError(f"no price for model {model!r}; add it to ctxblame/pricing.py or pass --free")
 
 
 def cost(model: str, usage: Usage, when: datetime | None = None, upstream: str = "",
-         assume_peak: bool = False) -> float:
-    key = resolve_model(model, upstream)
+         assume_peak: bool = False, free: bool = False) -> float:
+    key = resolve_model(model, upstream, free=free)
+    if key == "free":
+        return 0.0
     p = DEEPSEEK.get(key) or CLAUDE[key]
     mult = 1.0
     if key in DEEPSEEK and not assume_peak:

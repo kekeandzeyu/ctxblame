@@ -24,6 +24,7 @@ import copy
 import json
 import os
 import random
+import re
 import sys
 from collections import Counter
 from dataclasses import asdict, dataclass, field
@@ -32,11 +33,11 @@ from typing import Awaitable, Callable
 
 from .ablate import (AblationError, _cut, _segments, _short, _thinking_text, remove_units, text_fields,
                      validate)
-from .formats import ANTHROPIC, extract_decision
-from .match import MODES, Matcher
+from .formats import ANTHROPIC, Decision, ToolCall, extract_decision
+from .match import MODES, Matcher, intent
 from .pricing import Ledger, resolve_model
-from .replay import (FatalReplayError, Replayer, build_headers, default_key_env, estimate_cost, summarize,
-                     wilson)
+from .replay import (FatalReplayError, Replayer, Sample, build_headers, estimate_cost, resolve_api_key,
+                     sample_decision, summarize, wilson, with_model_override)
 from .trace import Step, get_step, load_trace, matcher_for
 
 # ------------------------------------------------------------------ chunks
@@ -295,21 +296,38 @@ def apply_chunks(fmt: str, body: dict, chunks: list[Chunk]) -> dict:
 class Outcome:
     k: int
     n: int
-    verdict: str  # flipped | kept | unclear | rejected | error
+    verdict: str  # flipped | kept | unclear | collapsed | rejected | error
     cost: float = 0.0
     dist: list = field(default_factory=list)
     note: str = ""
+    k_given: int | None = None
+    n_total: int | None = None
+    given_verdict: str | None = None  # collapsed | intact | unclear
 
     @property
     def rate(self) -> float | None:
         return self.k / self.n if self.n else None
 
     @property
+    def given_rate(self) -> float | None:
+        return self.k_given / self.n_total if self.k_given is not None and self.n_total else None
+
+    @property
     def flipped(self) -> bool:
         return self.verdict == "flipped"
 
+    @property
+    def collapsed(self) -> bool:
+        return self.verdict == "collapsed"
+
     def __str__(self) -> str:
-        return f"{self.k}/{self.n}" if self.verdict not in ("rejected", "error") else self.verdict
+        if self.verdict in ("rejected", "error"):
+            return self.verdict
+        if self.k_given is not None and self.n_total is not None:
+            if self.verdict == "collapsed":
+                return f"collapsed (given {self.k_given}/{self.n_total})"
+            return f"{self.k}/{self.n} (given {self.k_given}/{self.n_total})"
+        return f"{self.k}/{self.n}"
 
 
 class BudgetStop(Exception):
@@ -332,17 +350,122 @@ def decide(k: int, n: int, threshold: float, max_n: int, min_flip_n: int = 1) ->
     return "more"
 
 
+def decide_conditional(k_target: int, k_given: int, n_ok: int, cond_threshold: float,
+                       given_threshold: float, max_n: int, min_flip_n: int = 1) -> tuple[str, str]:
+    """Conditional verdict on P(target | given) plus P(given).
+
+    Returns ``(verdict, given_verdict)`` where ``verdict`` is one of
+    ``collapsed | flipped | kept | unclear | more`` and ``given_verdict`` is
+    one of ``collapsed | intact | unclear | more``.
+    """
+    gv_raw = decide(k_given, n_ok, given_threshold, max_n, min_flip_n)
+    if gv_raw == "flipped":
+        return "collapsed", "collapsed"
+    if gv_raw == "more":
+        return "more", "more"
+    gv = "intact" if gv_raw == "kept" else "unclear"
+    if gv == "unclear" and (n_ok == 0 or k_given / n_ok <= given_threshold):
+        return "unclear", "unclear"
+    if k_given == 0:
+        return ("more" if n_ok < max_n else "unclear"), gv
+    lo, hi = wilson(k_target, k_given)
+    if hi < cond_threshold and k_given >= min_flip_n:
+        return "flipped", gv
+    if lo > cond_threshold:
+        return "kept", gv
+    if n_ok >= max_n:
+        min_at_cap = max(1, min_flip_n // 2)
+        if hi < cond_threshold and k_given >= min_at_cap:
+            return "flipped", gv
+        return ("kept" if k_target / k_given > cond_threshold else "unclear"), gv
+    return "more", gv
+
+
+def _representative_call(samples: list[Sample], recorded: Decision, matcher: Matcher,
+                         target: str) -> ToolCall | None:
+    """First tool call matching ``target`` across baseline samples or the recorded reply."""
+    for s in samples:
+        if not s.ok:
+            continue
+        for c in sample_decision(s).calls:
+            if matcher._one(c) == target:
+                return c
+    for c in recorded.calls:
+        if matcher._one(c) == target:
+            return c
+    return recorded.calls[0] if recorded.calls else None
+
+
+def resolve_given(spec: str | None, key_args: list[str], target: str, matcher: Matcher,
+                  samples: list[Sample], recorded: Decision,
+                  cwd: str | None = None) -> tuple[Matcher | None, str | None]:
+    """Build ``(given_matcher, given_target)`` for conditional blame P(target | given).
+
+    - ``--given none`` disables conditioning.
+    - When ``spec`` is omitted and ``--key-arg`` is used, automatically picks the
+      coarser ``intent`` when it abstracts away the ``--key-arg`` regex (e.g.
+      ``run pytest`` for ``command~^python -m pytest``), otherwise tool ``name``.
+    - Explicit specs: ``intent``, ``name``, ``intent:<key>``, ``name:<tool>``,
+      ``[Tool:]arg~regex``, an intent phrase (contains space), or a tool name.
+    """
+    if spec is not None and spec.strip().lower() in ("none", "off", ""):
+        return None, None
+    if spec is None and not key_args:
+        return None, None
+    any_call = matcher.any_call
+    rep = _representative_call(samples, recorded, matcher, target)
+    if spec is None:
+        if rep is None:
+            return None, None
+        rep_int = intent(rep, cwd)
+        coarser_intent = (
+            rep_int != f"call {rep.name}"
+            and bool(key_args)
+            and all("~" in k and re.search(k.split("~", 1)[1], rep_int) is None for k in key_args)
+        )
+        if coarser_intent:
+            return Matcher("intent", cwd=cwd, any_call=any_call), rep_int
+        return Matcher("name", any_call=any_call), rep.name
+    s = spec.strip()
+    if s == "intent":
+        return (Matcher("intent", cwd=cwd, any_call=any_call), intent(rep, cwd)) if rep else (None, None)
+    if s == "name":
+        return (Matcher("name", any_call=any_call), rep.name) if rep else (None, None)
+    if s.startswith("intent:"):
+        return Matcher("intent", cwd=cwd, any_call=any_call), s.split(":", 1)[1].strip()
+    if s.startswith("name:"):
+        return Matcher("name", any_call=any_call), s.split(":", 1)[1].strip()
+    if "~" in s:
+        head = s.split("~", 1)[0]
+        if ":" in head:
+            tool_name, arg_spec = s.split(":", 1)
+        else:
+            if rep is None:
+                raise ValueError(f"--given {s!r} needs a tool call or explicit Tool:arg~regex")
+            tool_name, arg_spec = rep.name, s
+        gtarget = f"{tool_name}({json.dumps({arg_spec: True}, sort_keys=True, ensure_ascii=False)})"
+        return Matcher("args", [arg_spec], any_call=any_call), gtarget
+    if " " in s:
+        return Matcher("intent", cwd=cwd, any_call=any_call), s
+    return Matcher("name", any_call=any_call), s
+
+
 class Tester:
     """Runs one removal test against the API: batches of replays until decided."""
 
     def __init__(self, step: Step, base_url: str, api_key: str, matcher: Matcher, target: str,
                  chunks: dict[str, Chunk], ledger: Ledger, baseline_rate: float,
-                 batch: int = 5, max_n: int = 15, concurrency: int = 8) -> None:
+                 batch: int = 5, max_n: int = 15, concurrency: int = 8,
+                 given_matcher: Matcher | None = None, given_target: str | None = None,
+                 baseline_given_rate: float | None = None, free: bool = False) -> None:
         self.step, self.base, self.key = step, base_url, api_key
         self.matcher, self.target, self.chunks, self.ledger = matcher, target, chunks, ledger
+        self.given_matcher, self.given_target = given_matcher, given_target
         self.threshold = baseline_rate / 2
+        self.given_threshold = (baseline_given_rate / 2) if baseline_given_rate is not None else None
         self.batch, self.max_n, self.conc = batch, max_n, concurrency
-        self.est = estimate_cost(step, base_url)
+        self.free = free
+        self.est = estimate_cost(step, base_url, model=step.body.get("model", ""), free=free)
         self.cache: dict[frozenset, Outcome] = {}
         self.samples: dict[frozenset, list] = {}
         self.log: list[dict] = []
@@ -352,7 +475,7 @@ class Tester:
         rec = self.step.record["request"]
         return Replayer(self.step.fmt, self.base + rec["path"], build_headers(self.step.fmt, rec.get("headers"),
                                                                               self.key),
-                        self.ledger, self.base, self.est, self.conc)
+                        self.ledger, self.base, self.est, self.conc, free=self.free)
 
     async def __call__(self, removed: frozenset, extra: list[Chunk] = (), fresh: bool = False) -> Outcome:
         """``fresh``: confirm a finding with at least two more batches, deciding on
@@ -383,15 +506,34 @@ class Tester:
             samples += got
             new += len(got)
             ok = [s for s in samples if s.ok]
-            k = sum(self.matcher.same(None, self.target, s.key, s.keys or [s.key]) for s in ok)
-            v = decide(k, len(ok), self.threshold, max_n, 2 * self.batch) if ok else "more"
-            if v == "unclear" and not extended:  # borderline: one extension to twice the replays
-                max_n, extended = max_n * 2, True
-                continue
-            if new >= min_new and (v != "more" or new >= max_n * 2):
-                dist = Counter(x for s in ok for x in set(s.keys or [s.key])).most_common(4)
-                out = Outcome(k, len(ok), v if ok else "error", sum(s.cost for s in samples), dist)
-                break
+            if self.given_matcher is not None and self.given_target is not None:
+                k_given, k_target = 0, 0
+                for s in ok:
+                    if self.given_matcher.same(sample_decision(s), self.given_target):
+                        k_given += 1
+                        if self.matcher.same(None, self.target, s.key, s.keys or [s.key]):
+                            k_target += 1
+                v, gv = (decide_conditional(k_target, k_given, len(ok), self.threshold,
+                                            self.given_threshold or 0.5, max_n, 2 * self.batch)
+                         if ok else ("more", "more"))
+                if v == "unclear" and not extended:
+                    max_n, extended = max_n * 2, True
+                    continue
+                if new >= min_new and (v != "more" or new >= max_n * 2):
+                    dist = Counter(x for s in ok for x in set(s.keys or [s.key])).most_common(4)
+                    out = Outcome(k_target, k_given, v if ok else "error", sum(s.cost for s in samples),
+                                  dist, k_given=k_given, n_total=len(ok), given_verdict=gv if ok else None)
+                    break
+            else:
+                k = sum(self.matcher.same(None, self.target, s.key, s.keys or [s.key]) for s in ok)
+                v = decide(k, len(ok), self.threshold, max_n, 2 * self.batch) if ok else "more"
+                if v == "unclear" and not extended:  # borderline: one extension to twice the replays
+                    max_n, extended = max_n * 2, True
+                    continue
+                if new >= min_new and (v != "more" or new >= max_n * 2):
+                    dist = Counter(x for s in ok for x in set(s.keys or [s.key])).most_common(4)
+                    out = Outcome(k, len(ok), v if ok else "error", sum(s.cost for s in samples), dist)
+                    break
         self.replays += new
         self.samples[key] = samples
         self.cache[key] = out
@@ -403,23 +545,25 @@ class Tester:
 
 
 async def ddmin(items: list[str], test: Callable[[frozenset], Awaitable[Outcome]],
-                base: frozenset = frozenset()) -> list[str]:
-    """Minimal subset S of items with test(base | S) flipped, assuming
-    test(base | items) is flipped. Later parts are tried first (cheaper:
+                base: frozenset = frozenset(),
+                pred: Callable[[Outcome], bool] | None = None) -> list[str]:
+    """Minimal subset S of items with pred(test(base | S)) true, assuming
+    pred(test(base | items)) is true. Later parts are tried first (cheaper:
     the cached prompt prefix survives)."""
+    hit = pred or (lambda o: o.flipped)
     n = 2
     while len(items) >= 2:
         size = -(-len(items) // n)
         parts = [items[i:i + size] for i in range(0, len(items), size)]
         found = False
         for p in reversed(parts):
-            if (await test(base | frozenset(p))).flipped:
+            if hit(await test(base | frozenset(p))):
                 items, n, found = p, 2, True
                 break
         if not found and len(parts) > 2:
             for p in reversed(parts):
                 comp = [x for x in items if x not in p]
-                if (await test(base | frozenset(comp))).flipped:
+                if hit(await test(base | frozenset(comp))):
                     items, n, found = comp, max(n - 1, 2), True
                     break
         if not found:
@@ -435,22 +579,47 @@ class Cause:
     together: Outcome | None = None  # all members removed
     alone: dict[str, Outcome] = field(default_factory=dict)
     controls: list[tuple[str, Outcome]] = field(default_factory=list)
+    role: str = "cause"  # cause | precondition
 
     @property
     def specific(self) -> bool | None:
-        """Do same-size random removals leave the decision alone? (None: no controls)"""
+        """Do same-size random removals leave the decision (or action family) alone?"""
         if not self.controls:
             return None
+        if self.role == "precondition":
+            ok = sum((o.given_verdict == "intact") if o.given_verdict is not None else (o.verdict == "kept")
+                     for _, o in self.controls)
+            return ok > len(self.controls) / 2
         return sum(o.verdict == "kept" for _, o in self.controls) > len(self.controls) / 2
+
+
+async def _refine_members(members: list[str], by_id: dict[str, Chunk], test,
+                          pred: Callable[[Outcome], bool]) -> list[str]:
+    refined: list[str] = []
+    for cid in members:
+        others = frozenset(x for x in members if x != cid) | frozenset(refined)
+        kids = [k.id for k in by_id[cid].children]
+        # removing all lines of a text chunk is removing the chunk (known to hit);
+        # a tool pair keeps its call, so check that the result alone carries it
+        whole_text = not by_id[cid].units or by_id[cid].id.startswith("msg[")
+        if kids and (whole_text or pred(await test(others | frozenset(kids)))):
+            refined += await ddmin(kids, test, others, pred=pred)
+        else:
+            refined.append(cid)
+    return refined
 
 
 async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = True,
                  n_controls: int = 2, rng: random.Random | None = None,
                  control_pool: list[Chunk] = (), max_members: int = 5,
-                 notes: list[str] | None = None) -> tuple[Outcome, list[Cause]]:
-    """Returns (outcome with every chunk removed, causes); explanations of
-    why the search stopped are appended to ``notes``."""
+                 notes: list[str] | None = None,
+                 preconditions: list[Cause] | None = None,
+                 max_preconditions: int = 3) -> tuple[Outcome, list[Cause]]:
+    """Returns (outcome with every non-precondition chunk removed, causes);
+    isolated workflow preconditions are appended to ``preconditions`` and
+    explanations of why the search stopped are appended to ``notes``."""
     notes = notes if notes is not None else []
+    preconds = preconditions if preconditions is not None else []
     rng = rng or random.Random(0)
     by_id = {c.id: c for c in coarse}
     for c in coarse:
@@ -458,19 +627,67 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
             by_id[k.id] = k
     remaining = [c.id for c in coarse]
     everything = await test(frozenset(remaining))
+
+    # Conditional blame: if removing everything collapses the action family E,
+    # isolate and auto-protect workflow preconditions first so choice search runs
+    # with E intact.
+    is_collapsed = lambda o: o.collapsed  # noqa: E731
+    is_flipped = lambda o: o.flipped  # noqa: E731
+    protected_ids: set[str] = set()
+    raw_preconds: list[Cause] = []
+    while remaining and everything.collapsed and len(raw_preconds) < max_preconditions:
+        s = await ddmin(remaining, test, pred=is_collapsed)
+        if not (await test(frozenset(s))).collapsed:
+            break
+        if len(s) > max_members:
+            notes.append(f"diffuse precondition: the smallest removal that stops the action family "
+                         f"has {len(s)} chunks")
+            break
+        members = await _refine_members(list(s), by_id, test, is_collapsed) if refine else list(s)
+        protected_set = set(members)
+        protected_ids |= protected_set
+        new_remaining = []
+        for cid in remaining:
+            if cid in protected_set:
+                continue
+            kid_ids = [k.id for k in by_id[cid].children]
+            if kid_ids and any(k in protected_set for k in kid_ids):
+                new_remaining.extend(k for k in kid_ids if k not in protected_set)
+            else:
+                new_remaining.append(cid)
+        remaining = new_remaining
+        raw_preconds.append(Cause(members, role="precondition"))
+        everything = await test(frozenset(remaining)) if remaining else Outcome(0, 0, "kept")
+
+    for pre in raw_preconds:
+        pre.together = await test(frozenset(pre.members), fresh=True)
+        if not pre.together.collapsed:
+            notes.append(f"dropped an unconfirmed precondition ({', '.join(pre.members)}): {pre.together} "
+                         "after more replays")
+            continue
+        if len(pre.members) > 1:
+            for cid in pre.members:
+                pre.alone[cid] = await test(frozenset([cid]))
+        size = sum(by_id[c].chars for c in pre.members)
+        for ctl in pick_controls(control_pool, size, set(pre.members), n_controls, rng):
+            pre.controls.append((" / ".join(_short(c.text, 40) for c in ctl),
+                                 await test(frozenset(), extra=ctl)))
+        preconds.append(pre)
+    preconds.sort(key=lambda c: c.specific is False)
+
     causes: list[Cause] = []
     if not everything.flipped:
         return everything, causes
     while remaining and len(causes) < max_causes:
         if causes and not (await test(frozenset(remaining))).flipped:
             break
-        s = await ddmin(remaining, test)
+        s = await ddmin(remaining, test, pred=is_flipped)
         if not (await test(frozenset(s))).flipped:
             break
         if causes:  # a further cause must be small and specific, not "remove lots of anything"
             size = sum(by_id[c].chars for c in s)
             gate = [await test(frozenset(), extra=ctl)
-                    for ctl in pick_controls(control_pool, size, set(s), 2, rng)]
+                    for ctl in pick_controls(control_pool, size, set(s) | protected_ids, 2, rng)]
             if len(s) > max_members or sum(o.verdict == "kept" for o in gate) < len(gate) / 2 or not gate:
                 notes.append(f"no further specific cause: removing the rest of the context flips the "
                              f"decision only in bulk ({len(s)} chunks, random same-size removals: "
@@ -484,18 +701,7 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
 
     for cause in causes:
         if refine:
-            refined = []
-            for cid in cause.members:
-                others = frozenset(x for x in cause.members if x != cid) | frozenset(refined)
-                kids = [k.id for k in by_id[cid].children]
-                # removing all lines of a text chunk is removing the chunk (known to flip);
-                # a tool pair keeps its call, so check that the result alone carries it
-                whole_text = not by_id[cid].units or by_id[cid].id.startswith("msg[")
-                if kids and (whole_text or (await test(others | frozenset(kids))).flipped):
-                    refined += await ddmin(kids, test, others)
-                else:
-                    refined.append(cid)
-            cause.members = refined
+            cause.members = await _refine_members(cause.members, by_id, test, is_flipped)
         cause.together = await test(frozenset(cause.members), fresh=True)
         if not cause.together.flipped:
             notes.append(f"dropped an unconfirmed finding ({', '.join(cause.members)}): {cause.together} "
@@ -505,7 +711,7 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
             for cid in cause.members:
                 cause.alone[cid] = await test(frozenset([cid]))
         size = sum(by_id[c].chars for c in cause.members)
-        for ctl in pick_controls(control_pool, size, set(cause.members), n_controls, rng):
+        for ctl in pick_controls(control_pool, size, set(cause.members) | protected_ids, n_controls, rng):
             cause.controls.append((" / ".join(_short(c.text, 40) for c in ctl),
                                    await test(frozenset(), extra=ctl)))
     causes = [c for c in causes if c.together and c.together.flipped]
@@ -549,6 +755,9 @@ def add_args(ap) -> None:
                     help="compare only the first tool call (default: any of the parallel calls)")
     ap.add_argument("--target", default=None, help="decision to explain (default: the recorded one, or "
                     "the usual one if the recorded one is atypical)")
+    ap.add_argument("--given", default=None,
+                    help="condition blame on action family E: 'intent', 'name', 'run pytest', 'bash', "
+                         "'arg~regex', or 'none' to disable (default: auto when --key-arg is used)")
     ap.add_argument("--protect", action="append", default=[], help="text never to remove")
     ap.add_argument("--no-tool-descs", action="store_true", help="do not consider tool descriptions")
     ap.add_argument("--max-causes", type=int, default=3)
@@ -556,6 +765,9 @@ def add_args(ap) -> None:
     ap.add_argument("--no-refine", action="store_true")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--base-url", default=None)
+    ap.add_argument("--model", default=None, help="override the model name in the replayed request")
+    ap.add_argument("--free", action="store_true",
+                    help="treat the endpoint as $0/token (skips price-table lookup; API key optional)")
     ap.add_argument("--api-key-env", default=None)
     ap.add_argument("--concurrency", type=int, default=8)
     ap.add_argument("--budget", type=float, default=5.0, help="hard cap on total spend in the ledger (USD)")
@@ -564,13 +776,25 @@ def add_args(ap) -> None:
     ap.add_argument("--json", action="store_true", help="print the JSON report instead of text")
 
 
+def _serialize_findings(findings: list[Cause], by_id: dict[str, Chunk]) -> list[dict]:
+    return [{"members": [{"id": m, "kind": by_id[m].kind, "label": by_id[m].label,
+                          "text": by_id[m].text} for m in c.members],
+             "together": asdict(c.together) if c.together else None,
+             "specific": c.specific,
+             "alone": {k: asdict(v) for k, v in c.alone.items()},
+             "controls": [{"removed": t, **asdict(o)} for t, o in c.controls]} for c in findings]
+
+
 async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
+    step = with_model_override(step, getattr(args, "model", None))
+    free = bool(getattr(args, "free", False))
     fmt = step.fmt
     mode = args.match or ("args" if args.key_arg else "intent")
     matcher = matcher_for(step, mode, args.key_arg or None, any_call=not args.first_call)
     ledger = Ledger(args.ledger, args.budget)
     start = ledger.total
-    recorded = matcher.key(extract_decision(fmt, step.response))
+    recorded_dec = extract_decision(fmt, step.response)
+    recorded = matcher.key(recorded_dec)
     report: dict = {"trace": str(args.trace), "step": step.step, "match": mode, "any_call": not args.first_call,
                     "recorded": recorded}
 
@@ -579,7 +803,8 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
             print(s, file=out or sys.stdout, flush=True)
 
     # 1. baseline
-    probe = Tester(step, base, api_key, matcher, recorded, {}, ledger, 1.0, args.n, args.n, args.concurrency)
+    probe = Tester(step, base, api_key, matcher, recorded, {}, ledger, 1.0, args.n, args.n, args.concurrency,
+                   free=free)
     rp = probe.replayer()
     samples = await rp.run(step.body, args.n, matcher)
     target = args.target or recorded
@@ -597,15 +822,40 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
         report.update(result="no_stable_decision", cost=ledger.total - start)
         return report
 
+    notes: list[str] = []
+    # 1b. optional conditional action family E (P(target | given))
+    given_spec = getattr(args, "given", None)
+    given_matcher, given_target = resolve_given(given_spec, args.key_arg, target, matcher, samples,
+                                                recorded_dec, matcher.cwd)
+    b_given_rate: float | None = None
+    b_cond_rate = b_rate
+    if given_matcher is not None and given_target is not None:
+        ok = [s for s in samples if s.ok]
+        b_given_k = sum(given_matcher.same(sample_decision(s), given_target) for s in ok)
+        b_cond_k = sum(given_matcher.same(sample_decision(s), given_target)
+                       and matcher.same(None, target, s.key, s.keys or [s.key]) for s in ok)
+        if not ok or b_given_k / len(ok) < 0.5 or b_given_k == 0 or b_cond_k / b_given_k < 0.5:
+            notes.append(f"given {given_target!r} was not reliable at baseline ({b_given_k}/{len(ok)}); "
+                         "falling back to unconditional blame")
+            given_matcher, given_target = None, None
+        else:
+            b_given_rate = b_given_k / len(ok)
+            b_cond_rate = b_cond_k / b_given_k
+            report["given"] = {"mode": given_matcher.mode, "target": given_target,
+                               "baseline_given": b_given_k, "baseline_n": len(ok),
+                               "baseline_cond": b_cond_k, "baseline_cond_rate": b_cond_rate}
+            say(f"Given:     {given_target} ({b_given_k}/{len(ok)} baseline; "
+                f"P(decision | given) = {b_cond_k}/{b_given_k})")
+
     # 2. chunks; can reasoning be removed at all?
     coarse = chunk_request(fmt, step.body, args.protect, not args.no_tool_descs)
     by_id = {c.id: c for c in coarse}
     for c in coarse:
         for k in c.children:
             by_id[k.id] = k
-    test = Tester(step, base, api_key, matcher, target, by_id, ledger, b_rate, args.batch, args.max_n,
-                  args.concurrency)
-    notes = []
+    test = Tester(step, base, api_key, matcher, target, by_id, ledger, b_cond_rate, args.batch, args.max_n,
+                  args.concurrency, given_matcher=given_matcher, given_target=given_target,
+                  baseline_given_rate=b_given_rate, free=free)
     think = [c.id for c in coarse if c.kind == "thinking"]
     if think:
         o = await test(frozenset(think))
@@ -617,17 +867,39 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
 
     # 3-5. search
     pool = [k for c in coarse for k in (c.children or [c]) if c.kind != "thinking" and k.spans]
+    preconditions: list[Cause] = []
     try:
         everything, causes = await search(coarse, test, args.max_causes, not args.no_refine, args.controls,
-                                          random.Random(args.seed), pool, notes=notes)
+                                          random.Random(args.seed), pool, notes=notes,
+                                          preconditions=preconditions)
         stopped = None
     except BudgetStop as e:
         everything, causes, stopped = None, [], str(e)
     report["everything_removed"] = asdict(everything) if everything else None
     if everything is not None:
-        say(f"Everything but the task removed: {everything}" +
-            ("  -> the decision comes from the context" if everything.flipped else
-             "  -> the context does not carry it (the task and the model's habits do)"))
+        if preconditions:
+            say(f"Everything else removed (preconditions kept): {everything}" +
+                ("  -> the choice comes from the context" if everything.flipped else
+                 "  -> given preconditions, no other context carries the choice"))
+        else:
+            say(f"Everything but the task removed: {everything}" +
+                ("  -> the decision comes from the context" if everything.flipped else
+                 "  -> the context does not carry it (the task and the model's habits do)"))
+    for n, p in enumerate(preconditions, 1):
+        together = p.together
+        what = "Precondition" if p.specific is not False else "Context needed for action family (not specific)"
+        g_lbl = given_target or "action family"
+        if len(p.members) == 1:
+            say(f"\n{what} {n} (removing it stops {g_lbl}: {together}):")
+        else:
+            say(f"\n{what} {n} (redundant preconditions for {g_lbl}: {together}):")
+        for cid in p.members:
+            ch = by_id[cid]
+            alone = f"   alone: {p.alone[cid]}" if cid in p.alone else ""
+            say(f"  - {ch.label}: {_short(ch.text, 90)!r}{alone}")
+        if p.controls:
+            say("  controls (random same-size removals): " + ", ".join(str(o) for _, o in p.controls)
+                + ("" if p.specific else "  -> NOT specific: random removals stop it too"))
     for n, c in enumerate(causes, 1):
         together = c.together
         what = "Cause" if c.specific is not False else "Context it needs (not specific)"
@@ -652,14 +924,13 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
     cost = ledger.total - start
     say(f"\nTests: {len(test.log)}, replays: {test.replays + len(samples)}, cost ${cost:.4f} "
         f"(ledger ${ledger.total:.4f} of ${args.budget:.2f})")
-    report.update(result="causes" if causes else ("not_in_context" if everything and not everything.flipped
-                                                  else "none_found"),
-                  causes=[{"members": [{"id": m, "kind": by_id[m].kind, "label": by_id[m].label,
-                                        "text": by_id[m].text} for m in c.members],
-                           "together": asdict(c.together) if c.together else None,
-                           "specific": c.specific,
-                           "alone": {k: asdict(v) for k, v in c.alone.items()},
-                           "controls": [{"removed": t, **asdict(o)} for t, o in c.controls]} for c in causes],
+    result = ("causes" if causes else
+              "preconditions_only" if preconditions and everything and not everything.flipped else
+              "not_in_context" if everything and not everything.flipped else
+              "none_found")
+    report.update(result=result,
+                  causes=_serialize_findings(causes, by_id),
+                  preconditions=_serialize_findings(preconditions, by_id),
                   notes=notes, stopped=stopped, tests=test.log, cost=cost,
                   replays=test.replays + len(samples))
     return report
@@ -671,16 +942,16 @@ def run_cli(args) -> int:
     except (LookupError, ValueError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 5
+    step = with_model_override(step, args.model)
     base = (args.base_url or step.record["upstream"]).rstrip("/")
-    key_env = args.api_key_env or default_key_env(step.fmt, base)
-    api_key = os.environ.get(key_env)
-    if not api_key:
+    api_key, key_env = resolve_api_key(step.fmt, base, args.api_key_env, free=args.free)
+    if api_key is None:
         print(f"error: set {key_env} in the environment", file=sys.stderr)
         return 2
-    resolve_model(step.body.get("model", ""), base)
+    resolve_model(step.body.get("model", ""), base, free=args.free)
     try:
         report = asyncio.run(why(step, args, api_key, base))
-    except FatalReplayError as e:
+    except (FatalReplayError, ValueError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 4
     args.out.mkdir(parents=True, exist_ok=True)

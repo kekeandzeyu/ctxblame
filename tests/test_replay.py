@@ -221,3 +221,28 @@ def test_cli_list_units_needs_no_key(tmp_path, monkeypatch, capsys):
     rec = write_record(tmp_path, "anthropic", "http://127.0.0.1:9")
     assert replay.main([str(rec), "--list-units"]) == 0
     assert "msg[0]" in capsys.readouterr().out
+
+
+def test_local_vllm_model_override_zero_cost_no_key(tmp_path, monkeypatch, capsys):
+    from ctxblame.pricing import cost as calc_cost, resolve_model
+    from ctxblame.formats import Usage
+
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    assert resolve_model("Qwen/Qwen3-14B", "http://127.0.0.1:8000/v1") == "free"
+    assert calc_cost("Qwen/Qwen3-14B", Usage(10000, 0, 0, 500), upstream="http://localhost:8000/v1") == 0.0
+    with pytest.raises(KeyError):
+        resolve_model("Qwen/Qwen3-14B", "https://api.example.com/v1")
+    assert resolve_model("Qwen/Qwen3-14B", "https://api.example.com/v1", free=True) == "free"
+
+    app = make_upstream()
+    with ServerThread(app) as base:
+        rec = write_record(tmp_path, "openai", base)
+        rc = replay.main([str(rec), "-n", "3", "--model", "Qwen/Qwen3-14B", "--free",
+                          "--ledger", str(tmp_path / "s.jsonl"), "--out", str(tmp_path / "runs")])
+    assert rc == 0
+    assert len(app[CALLS]) == 3
+    assert app[CALLS][0]["body"]["model"] == "Qwen/Qwen3-14B"
+    assert "Authorization" not in app[CALLS][0]["headers"]
+    run = json.loads(next((tmp_path / "runs").glob("*.json")).read_text())
+    assert run["summary"]["cost"] == 0.0

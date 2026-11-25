@@ -27,10 +27,11 @@ from pathlib import Path
 
 from aiohttp import ClientSession, ClientTimeout
 
+from ctxblame.pricing import is_local_upstream
 from ctxblame.sse import assemble_message, assemble_openai_chunks, parse_sse
 
 REPO = Path(__file__).resolve().parents[2]
-VENV_PY = REPO / ".venv" / "bin" / "python"
+VENV_PY = REPO / ".venv" / "bin" / "python" if (REPO / ".venv" / "bin" / "python").exists() else Path(sys.executable)
 
 TASK = ("Running the test suite shows a failure in tests/test_formats.py. "
         "Find the cause and fix it, then confirm the whole suite passes.")
@@ -287,40 +288,49 @@ async def post_stream(s: ClientSession, url: str, headers: dict, body: dict, fmt
 
 
 async def run_agent(args) -> int:
-    key = os.environ.get("DEEPSEEK_API_KEY")
-    if not key:
-        print("error: set DEEPSEEK_API_KEY", file=sys.stderr)
+    base = args.base_url.rstrip("/")
+    key_env = args.api_key_env or "DEEPSEEK_API_KEY"
+    key = os.environ.get(key_env)
+    if not key and not (not args.api_key_env and is_local_upstream(base)):
+        print(f"error: set {key_env}", file=sys.stderr)
         return 2
     ws = Path(args.workspace).resolve()
     if not args.reuse_workspace:
         make_workspace(ws)
     box = Sandbox(ws)
     system = SYSTEM.format(cwd=ws, agents_md=AGENTS_MD.strip())
-    base = args.base_url.rstrip("/")
     if args.format == "anthropic":
         url = base + "/v1/messages"
-        headers = {"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"}
+        headers = {"anthropic-version": "2023-06-01", "content-type": "application/json"}
+        if key:
+            headers["x-api-key"] = key
         messages: list = [{"role": "user", "content": TASK}]
     else:
         url = base + "/chat/completions"
-        headers = {"authorization": f"Bearer {key}", "content-type": "application/json"}
+        headers = {"content-type": "application/json"}
+        if key:
+            headers["authorization"] = f"Bearer {key}"
         messages = [{"role": "system", "content": system}, {"role": "user", "content": TASK}]
 
     async with ClientSession(timeout=ClientTimeout(total=900)) as s:
         for step in range(1, args.max_steps + 1):
             if args.format == "anthropic":
-                body = {"model": args.model, "max_tokens": 16000, "stream": True,
+                body = {"model": args.model, "max_tokens": args.max_tokens, "stream": True,
                         "system": [{"type": "text", "text": system}], "tools": anthropic_tools(),
-                        "messages": messages, "thinking": {"type": "enabled", "budget_tokens": 8000}}
+                        "messages": messages}
+                if not args.no_thinking:
+                    body["thinking"] = {"type": "enabled", "budget_tokens": 8000}
                 msg = await post_stream(s, url, headers, body, "anthropic")
                 content = [{k: v for k, v in b.items() if not k.startswith("_")} for b in msg["content"]]
                 messages.append({"role": "assistant", "content": content})
                 calls = [(b["id"], b["name"], b.get("input") or {}) for b in content if b["type"] == "tool_use"]
                 text = "".join(b.get("text", "") for b in content if b["type"] == "text")
             else:
-                body = {"model": args.model, "max_tokens": 16000, "stream": True,
+                body = {"model": args.model, "max_tokens": args.max_tokens, "stream": True,
                         "stream_options": {"include_usage": True}, "tools": openai_tools(),
-                        "messages": messages, "thinking": {"type": "enabled"}}
+                        "messages": messages}
+                if not args.no_thinking:
+                    body["thinking"] = {"type": "enabled"}
                 resp = await post_stream(s, url, headers, body, "openai")
                 m = resp["choices"][0]["message"]
                 am = {"role": "assistant", "content": m.get("content") or ""}
@@ -360,6 +370,10 @@ def main() -> int:
     ap.add_argument("--format", choices=["anthropic", "openai"], required=True)
     ap.add_argument("--base-url", required=True, help="the ctxblame proxy, e.g. http://127.0.0.1:8791")
     ap.add_argument("--model", default="deepseek-v4-pro")
+    ap.add_argument("--api-key-env", default=None, help="env var holding the API key (optional for localhost)")
+    ap.add_argument("--max-tokens", type=int, default=16000)
+    ap.add_argument("--no-thinking", action="store_true",
+                    help="omit provider-specific thinking parameter (useful for vLLM / SGLang)")
     ap.add_argument("--workspace", required=True)
     ap.add_argument("--reuse-workspace", action="store_true")
     ap.add_argument("--max-steps", type=int, default=30)

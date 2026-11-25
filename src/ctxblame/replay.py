@@ -26,7 +26,7 @@ from .formats import (ANTHROPIC, Decision, ToolCall, Usage, assemble_stream, ext
                       extract_usage)
 from .ablate import AblationError, list_units, remove_random_span, remove_text, remove_units
 from .match import MODES, Matcher
-from .pricing import BudgetExceeded, Ledger, cost, resolve_model
+from .pricing import BudgetExceeded, Ledger, cost, is_local_upstream, resolve_model
 from .sse import parse_sse
 from .trace import Step, get_step, load_trace, matcher_for
 
@@ -46,6 +46,27 @@ def default_key_env(fmt: str, base_url: str) -> str:
     return "ANTHROPIC_API_KEY" if fmt == ANTHROPIC else "OPENAI_API_KEY"
 
 
+def resolve_api_key(fmt: str, base_url: str, api_key_env: str | None = None,
+                    free: bool = False) -> tuple[str | None, str]:
+    """Return ``(api_key, env_var_name)``. Local or ``--free`` endpoints do not
+    require a key unless ``--api-key-env`` was explicitly requested."""
+    key_env = api_key_env or default_key_env(fmt, base_url)
+    api_key = os.environ.get(key_env)
+    if api_key:
+        return api_key, key_env
+    if not api_key_env and (free or is_local_upstream(base_url)):
+        return "", key_env
+    return None, key_env
+
+
+def with_model_override(step: Step, model: str | None) -> Step:
+    """Return a shallow copy of ``step`` with ``body['model']`` replaced."""
+    if not model:
+        return step
+    req = {**step.record["request"], "body": {**step.body, "model": model}}
+    return Step(step.step, {**step.record, "request": req})
+
+
 def build_headers(fmt: str, rec_headers: dict, api_key: str) -> dict:
     h = {"content-type": "application/json"}
     lower = {k.lower(): v for k, v in (rec_headers or {}).items()}
@@ -53,9 +74,11 @@ def build_headers(fmt: str, rec_headers: dict, api_key: str) -> dict:
         h["anthropic-version"] = lower.get("anthropic-version", "2023-06-01")
         if "anthropic-beta" in lower:
             h["anthropic-beta"] = lower["anthropic-beta"]
-        h["x-api-key"] = api_key
+        if api_key:
+            h["x-api-key"] = api_key
     else:
-        h["authorization"] = f"Bearer {api_key}"
+        if api_key:
+            h["authorization"] = f"Bearer {api_key}"
     return h
 
 
@@ -82,13 +105,15 @@ class Replayer:
     """Sends request bodies and charges every response to the ledger."""
 
     def __init__(self, fmt: str, url: str, headers: dict, ledger: Ledger, upstream: str,
-                 est_cost: float, concurrency: int = 4, run_id: str | None = None) -> None:
+                 est_cost: float, concurrency: int = 4, run_id: str | None = None,
+                 free: bool = False) -> None:
         self.fmt, self.url, self.headers = fmt, url, headers
         self.ledger, self.upstream, self.est = ledger, upstream, est_cost
         self.sem = asyncio.Semaphore(concurrency)
         self.inflight = 0
         self.fatal: FatalReplayError | None = None  # once set, nothing more is sent
         self.run_id = run_id or uuid.uuid4().hex[:8]
+        self.free = free
 
     async def call(self, session: ClientSession, body: dict) -> tuple[dict, Usage, float, str]:
         async with self.sem:
@@ -129,7 +154,7 @@ class Replayer:
                 continue
             usage = extract_usage(self.fmt, resp)
             model = resp.get("model") or body.get("model", "")
-            c = cost(model, usage, datetime.now(timezone.utc), self.upstream)
+            c = cost(model, usage, datetime.now(timezone.utc), self.upstream, free=self.free)
             self.ledger.add(self.run_id, model, usage, c)
             return resp, usage, c, model
         raise AssertionError("unreachable")
@@ -255,16 +280,16 @@ def print_summary(label: str, summary: dict, ledger: Ledger, budget: float) -> N
 
 # ---------------------------------------------------------------------- cli
 
-def estimate_cost(step: Step, upstream: str) -> float:
+def estimate_cost(step: Step, upstream: str, model: str | None = None, free: bool = False) -> float:
     """Per-call estimate from the recorded call, with 50% headroom."""
     resp, body = step.response, step.body
-    model = resp.get("model") or body.get("model", "")
+    model = model or body.get("model") or resp.get("model", "")
     usage = extract_usage(step.fmt, resp)
     if usage.input_uncached + usage.input_cache_read + usage.output == 0:
         usage = Usage(input_uncached=len(json.dumps(body)) // 3, output=2000)
     # price at peak and as if nothing were cached: an upper bound
     full = Usage(usage.input_uncached + usage.input_cache_read + usage.input_cache_write, 0, 0, usage.output)
-    return 1.5 * cost(model, full, upstream=upstream, assume_peak=True)
+    return 1.5 * cost(model, full, upstream=upstream, assume_peak=True, free=free)
 
 
 def add_args(ap: argparse.ArgumentParser) -> None:
@@ -295,6 +320,9 @@ def add_args(ap: argparse.ArgumentParser) -> None:
                     help="text --remove-random must not touch (e.g. the cause, the user's task)")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--base-url", default=None, help="default: the upstream the record was made against")
+    ap.add_argument("--model", default=None, help="override the model name in the replayed request")
+    ap.add_argument("--free", action="store_true",
+                    help="treat the endpoint as $0/token (skips price-table lookup; API key optional)")
     ap.add_argument("--api-key-env", default=None, help="env var holding the key (never pass the key itself)")
     ap.add_argument("--concurrency", type=int, default=8)
     ap.add_argument("--budget", type=float, default=5.0, help="hard cap on total spend in the ledger (USD)")
@@ -308,6 +336,7 @@ def run_cli(args) -> int:
     except (LookupError, ValueError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 5
+    step = with_model_override(step, args.model)
     fmt, body = step.fmt, step.body
     if args.list_units:
         for u in list_units(fmt, body):
@@ -319,16 +348,15 @@ def run_cli(args) -> int:
         print(f"error: {e}", file=sys.stderr)
         return 6
     base = (args.base_url or step.record["upstream"]).rstrip("/")
-    key_env = args.api_key_env or default_key_env(fmt, base)
-    api_key = os.environ.get(key_env)
-    if not api_key:
+    api_key, key_env = resolve_api_key(fmt, base, args.api_key_env, free=args.free)
+    if api_key is None:
         print(f"error: set {key_env} in the environment", file=sys.stderr)
         return 2
-    resolve_model(body.get("model", ""), base)  # fail early on unknown prices
+    resolve_model(body.get("model", ""), base, free=args.free)  # fail early on unknown prices
     mode = args.match or ("args" if args.key_arg else "intent")
     matcher = matcher_for(step, mode, args.key_arg or None, args.all_calls, args.any_call)
     recorded = extract_decision(fmt, step.response)
-    est = estimate_cost(step, base)
+    est = estimate_cost(step, base, model=body.get("model", ""), free=args.free)
 
     ledger = Ledger(args.ledger, args.budget)
     if ledger.total + est > args.budget:
@@ -340,7 +368,7 @@ def run_cli(args) -> int:
           f"(~${est:.4f}/call worst case; spent so far ${ledger.total:.4f})")
     rp = Replayer(fmt, base + step.record["request"]["path"],
                   build_headers(fmt, step.record["request"].get("headers"), api_key),
-                  ledger, base, est, args.concurrency)
+                  ledger, base, est, args.concurrency, free=args.free)
     try:
         samples = asyncio.run(rp.run(body, args.n, matcher))
     except FatalReplayError as e:
