@@ -10,7 +10,8 @@
 # SERVE_ARGS (extra vllm serve flags, e.g. "--reasoning-parser qwen3"),
 # MAX_TOKENS (default 1024), METHODS, PARALLEL (default 8), CONC (default 16),
 # ORACLE_N (default 20), SKIP_SERVE=1 to reuse a running server on :8000,
-# SUITE (default all; e.g. real, gen-long).
+# SUITE (default all; e.g. real, gen-long), BLAME_ARGS (extra ctxblame flags,
+# e.g. "--strict-restore --member-controls 2").
 set -euo pipefail
 : "${TAG:?}" "${MODEL:?}" "${NAME:?}" "${EXTRA_BODY:?}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -54,7 +55,7 @@ for s in $SEEDS; do
   # shellcheck disable=SC2086
   "$PY" experiments/phase3/benchmark.py --suite "$SUITE" --valid-from "$OUT/oracle_all.json" "${COMMON[@]}" \
     --max-tokens "$MAX_TOKENS" --methods $METHODS --parallel-cases "${PARALLEL:-8}" --concurrency "${CONC:-16}" \
-    --seed "$s" --budget 1 --ledger "$LOGS/ledger_${TAG}_$s.jsonl" --out-dir "$OUT/seed$s" \
+    --seed "$s" --blame-args "${BLAME_ARGS:-}" --budget 1 --ledger "$LOGS/ledger_${TAG}_$s.jsonl" --out-dir "$OUT/seed$s" \
     > "$LOGS/bench_${TAG}_$s.log" 2>&1
   echo "[$TAG] seed $s done"
 done

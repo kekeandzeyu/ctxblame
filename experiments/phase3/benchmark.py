@@ -23,6 +23,7 @@ import argparse
 import asyncio
 import json
 import re
+import shlex
 import sys
 import time
 from dataclasses import asdict
@@ -469,6 +470,7 @@ async def main_async(args) -> int:
         common += ["--free"]
     if args.extra_body:
         common += ["--extra-body", json.dumps(args.extra_body)]
+    common += shlex.split(args.blame_args)  # e.g. "--strict-restore --member-controls 2"
 
     async def run_one(case: BenchCase, meth: str) -> dict:
         print(f"== {case.name} [{meth}]", flush=True)
@@ -548,6 +550,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--batch", type=int, default=5)
     ap.add_argument("--max-n", type=int, default=15)
     ap.add_argument("--controls", type=int, default=2)
+    ap.add_argument("--blame-args", default="",
+                    help="extra ctxblame flags for the ctxblame* methods, e.g. '--strict-restore --member-controls 2'")
     ap.add_argument("--concurrency", type=int, default=8)
     ap.add_argument("--budget", type=float, default=10.0)
     ap.add_argument("--ledger", type=Path, default=REPO / ".ctxblame" / "phase3_spend.jsonl")

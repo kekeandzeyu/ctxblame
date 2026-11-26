@@ -430,3 +430,36 @@ def test_search_non_monotonic_falls_back_to_tier_windows():
     _, causes = asyncio.run(search(chunks, t, n_controls=0, notes=notes))
     assert [sorted(c.members) for c in causes] == [["sys.p2", "tooldesc:bash"]]
     assert any("non-monotonic" in n for n in notes)
+
+
+def test_member_controls_drop_neutral_bundle_member():
+    """A noisy model: the decision survives removing both carriers A and B as long
+    as *some* neutral context (H, or the neutral line X) is left. H then passes the
+    leave-one-in check like a carrier; member controls (remove X too) expose it."""
+    chunks = [C("A"), C("H"), C("B")] + [C(f"c{i}") for i in range(4)]
+    rule = lambda r: {"A", "B"} <= r and ("H" in r or "X" in r)  # noqa: E731
+    pool = [C("X")]
+    _, plain = run(rule, chunks, n_controls=0, control_pool=pool)
+    assert [sorted(c.members) for c in plain] == [["A", "B", "H"]]
+    notes: list[str] = []
+    _, vetted = run(rule, chunks, n_controls=0, control_pool=pool, member_controls=1, notes=notes)
+    assert [sorted(c.members) for c in vetted] == [["A", "B"]]
+    assert vetted[0].together.flipped  # confirmed with H removed as well
+    assert any("do not restore the decision specifically" in n and "H" in n for n in notes)
+
+
+def test_strict_restore_drops_member_whose_restoration_is_unclear():
+    chunks = [C("A"), C("H"), C("B")] + [C(f"c{i}") for i in range(3)]
+
+    async def test(removed, extra=(), fresh=False):
+        r = frozenset(removed) | frozenset(c.id for c in extra)
+        if {"A", "B", "H"} <= r:
+            return Outcome(0, 10, "flipped")
+        if r == frozenset({"A", "B"}):  # keeping only H: borderline, not a clear restore
+            return Outcome(4, 15, "unclear")
+        return Outcome(5, 5, "kept")
+
+    _, plain = asyncio.run(search(chunks, test, n_controls=0))
+    assert [sorted(c.members) for c in plain] == [["A", "B", "H"]]
+    _, strict = asyncio.run(search(chunks, test, n_controls=0, strict_restore=True))
+    assert [sorted(c.members) for c in strict] == [["A", "B"]]

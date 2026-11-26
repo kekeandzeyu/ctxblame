@@ -766,6 +766,43 @@ async def _prune_bundle(members: list[str], by_id: dict[str, Chunk], test,
     return [m for m in members if m in keep], {k: v for k, v in restored.items() if k in keep}
 
 
+async def _vet_members(members: list[str], restored: dict[str, Outcome], by_id: dict[str, Chunk], test,
+                       strict: bool, n_controls: int, pool: list[Chunk], avoid: set[str],
+                       rng: random.Random, notes: list[str]) -> tuple[list[str], dict[str, Outcome]]:
+    """Stricter checks on the members of an OR bundle, for models whose decision
+    also moves when unrelated context goes (where "keeping c_i alone restores it"
+    can hold for a neutral line).
+
+    strict: keeping c_i alone must *clearly* restore the decision (verdict kept,
+    confirmed with more replays); unclear or collapsed no longer counts.
+    n_controls: c_i must still restore it when a random same-size run of other
+    lines is removed as well; a line that only helps by being "some context"
+    fails this. At least one member is always kept."""
+    if len(members) <= 1:
+        return members, restored
+    keep, bad = list(members), []
+    for cid in members:
+        if len(keep) <= 1:
+            break
+        others = frozenset(x for x in keep if x != cid)
+        ok = True
+        if strict:
+            out = await test(others, fresh=True)
+            restored[cid] = out
+            ok = out.verdict == "kept"
+        if ok and n_controls:
+            ctls = pick_controls(pool, by_id[cid].chars, set(members) | avoid, n_controls, rng)
+            if ctls:
+                outs = [await test(others, extra=ctl) for ctl in ctls]
+                ok = sum(o.verdict == "kept" for o in outs) > len(outs) / 2
+        if not ok:
+            keep.remove(cid)
+            bad.append(cid)
+    if bad:
+        notes.append(f"dropped bundle member(s) that do not restore the decision specifically: {', '.join(bad)}")
+    return keep, {k: v for k, v in restored.items() if k in keep}
+
+
 async def _refine_members(members: list[str], by_id: dict[str, Chunk], test,
                           pred: Callable[[Outcome], bool]) -> list[str]:
     refined: list[str] = []
@@ -787,7 +824,8 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
                  control_pool: list[Chunk] = (), max_members: int = 5,
                  notes: list[str] | None = None,
                  preconditions: list[Cause] | None = None,
-                 max_preconditions: int = 3, stratify: bool = True) -> tuple[Outcome, list[Cause]]:
+                 max_preconditions: int = 3, stratify: bool = True,
+                 strict_restore: bool = False, member_controls: int = 0) -> tuple[Outcome, list[Cause]]:
     """KV-cache-stratified suffix-first search.
 
     Probes suffix tiers before prefix tiers to preserve KV prompt-cache hits,
@@ -915,7 +953,14 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
         if refine:
             cause.members = await _refine_members(cause.members, by_id, test, is_flipped)
         cause.members, cause.restored = await _prune_bundle(cause.members, by_id, test, is_flipped, notes)
-        cause.together = await test(frozenset(cause.members), fresh=True)
+        removal = list(cause.members)  # what is removed to confirm the flip
+        if strict_restore or member_controls:
+            # vetted-out members stay in the confirming removal (the flip may need
+            # them gone too), but are not reported as carriers
+            cause.members, cause.restored = await _vet_members(
+                cause.members, cause.restored, by_id, test, strict_restore, member_controls,
+                control_pool, protected_ids, rng, notes)
+        cause.together = await test(frozenset(removal), fresh=True)
         if not cause.together.flipped:
             notes.append(f"dropped an unconfirmed finding ({', '.join(cause.members)}): {cause.together} "
                          "after more replays")
@@ -979,6 +1024,12 @@ def add_args(ap) -> None:
     ap.add_argument("--no-refine", action="store_true")
     ap.add_argument("--no-stratify", action="store_true",
                     help="ablation: no KV-cache tiers (remove everything first, ddmin over all chunks)")
+    ap.add_argument("--strict-restore", action="store_true",
+                    help="keep an OR-bundle member only if keeping it alone clearly restores the decision "
+                         "(confirmed with more replays); for noisy models")
+    ap.add_argument("--member-controls", type=int, default=0, metavar="N",
+                    help="each OR-bundle member must still restore the decision when N random same-size "
+                         "runs of other lines are removed too (default 0 = off); for noisy models")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--base-url", default=None)
     ap.add_argument("--model", default=None, help="override the model name in the replayed request")
@@ -1098,7 +1149,9 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
         everything, causes = await search(coarse, test, args.max_causes, not args.no_refine, args.controls,
                                           random.Random(args.seed), pool, notes=notes,
                                           preconditions=preconditions,
-                                          stratify=not getattr(args, "no_stratify", False))
+                                          stratify=not getattr(args, "no_stratify", False),
+                                          strict_restore=getattr(args, "strict_restore", False),
+                                          member_controls=getattr(args, "member_controls", 0))
         stopped = None
     except BudgetStop as e:
         everything, causes, stopped = None, [], str(e)
