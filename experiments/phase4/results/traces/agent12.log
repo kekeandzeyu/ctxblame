@@ -1,0 +1,31 @@
+[1] bash({"command": "python -m pytest -q -x --tb=line", "description": "Run the test suite to identify the failure in tests/test_formats.py"}) -> 853 chars
+[2] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 20}) -> 1263 chars
+[3] grep({"pattern": "extract_usage", "path": "tests/test_formats.py"}) -> 211 chars
+[4] grep({"pattern": "Usage", "path": "src/"}) -> 1454 chars
+[5] read_file({"path": "src/ctxblame/formats.py", "offset": 110, "limit": 20}) -> 790 chars
+[6] grep({"pattern": "OPENAI", "path": "src/ctxblame/formats.py"}) -> 87 chars
+[7] read_file({"path": "src/ctxblame/formats.py", "offset": 125, "limit": 20}) -> 871 chars
+[8] read_file({"path": "tests/test_formats.py", "offset": 50, "limit": 10}) -> 600 chars
+[9] grep({"pattern": "Usage", "path": "tests/test_formats.py"}) -> 421 chars
+[10] read_file({"path": "src/ctxblame/formats.py", "offset": 130, "limit": 20}) -> 724 chars
+[11] read_file({"path": "tests/test_formats.py", "offset": 52, "limit": 5}) -> 224 chars
+[12] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[13] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[14] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[15] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[16] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[17] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[18] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[19] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[20] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[21] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[22] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[23] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[24] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[25] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[26] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[27] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[28] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[29] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+[30] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 10}) -> 544 chars
+stopped after 30 steps

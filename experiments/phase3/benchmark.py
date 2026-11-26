@@ -538,7 +538,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--seed", type=int, default=0, help="seed for random controls and contextcite masks")
     ap.add_argument("--cc-ablations", type=int, default=64, help="random ablations for the contextcite baseline")
     ap.add_argument("--only", nargs="*", help="filter cases by substring match on name or category")
-    ap.add_argument("--suite", choices=("core", "gen", "gen-open", "all"), default="core",
+    ap.add_argument("--suite", choices=("core", "gen", "gen-open", "gen-long", "real", "all"), default="core",
                     help="core = 12 hand-written cases, gen = generated cases (gen_cases.py), all = both")
     ap.add_argument("--gen-n", type=int, default=64, help="number of generated cases")
     ap.add_argument("--valid-from", type=Path, default=None,

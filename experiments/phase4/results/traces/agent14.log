@@ -1,0 +1,31 @@
+[1] bash({"command": "python -m pytest -q -x --tb=line tests/test_formats.py", "description": "Run the test suite for test_formats.py to identify the failure.") -> 804 chars
+[2] read_file({"path": "tests/test_formats.py", "offset": 45, "limit": 20}) -> 1263 chars
+[3] grep({"pattern": "extract_usage", "path": "src"}) -> 410 chars
+[4] read_file({"path": "src/ctxblame/formats.py", "offset": 120, "limit": 20}) -> 1081 chars
+[5] read_file({"path": "tests/test_formats.py", "offset": 50, "limit": 10}) -> 600 chars
+[6] grep({"pattern": "OPENAI", "path": "src/ctxblame/formats.py"}) -> 87 chars
+[7] grep({"pattern": "Usage", "path": "src/ctxblame/formats.py"}) -> 590 chars
+[8] read_file({"path": "src/ctxblame/formats.py", "offset": 127, "limit": 20}) -> 857 chars
+[9] read_file({"path": "tests/test_formats.py", "offset": 52, "limit": 5}) -> 224 chars
+[10] grep({"pattern": "OPENAI", "path": "tests/test_formats.py"}) -> 552 chars
+[11] read_file({"path": "tests/test_formats.py", "offset": 42, "limit": 10}) -> 615 chars
+[12] read_file({"path": "src/ctxblame/formats.py", "offset": 130, "limit": 10}) -> 641 chars
+[13] read_file({"path": "tests/test_formats.py", "offset": 42, "limit": 10}) -> 615 chars
+[14] grep({"pattern": "assemble_openai_chunks", "path": "src"}) -> 293 chars
+[15] read_file({"path": "src/ctxblame/sse.py", "offset": 177, "limit": 20}) -> 829 chars
+[16] read_file({"path": "src/ctxblame/sse.py", "offset": 183, "limit": 20}) -> 733 chars
+[17] read_file({"path": "src/ctxblame/sse.py", "offset": 200, "limit": 10}) -> 513 chars
+[18] read_file({"path": "src/ctxblame/sse.py", "offset": 206, "limit": 10}) -> 543 chars
+[19] read_file({"path": "tests/test_formats.py", "offset": 42, "limit": 10}) -> 615 chars
+[20] read_file({"path": "src/ctxblame/sse.py", "offset": 207, "limit": 10}) -> 567 chars
+[21] read_file({"path": "src/ctxblame/sse.py", "offset": 216, "limit": 10}) -> 614 chars
+[22] read_file({"path": "src/ctxblame/sse.py", "offset": 224, "limit": 10}) -> 517 chars
+[23] read_file({"path": "tests/test_formats.py", "offset": 46, "limit": 10}) -> 536 chars
+[24] read_file({"path": "src/ctxblame/formats.py", "offset": 138, "limit": 10}) -> 180 chars
+[25] read_file({"path": "tests/test_formats.py", "offset": 52, "limit": 5}) -> 224 chars
+[26] read_file({"path": "src/ctxblame/sse.py", "offset": 206, "limit": 10}) -> 543 chars
+[27] read_file({"path": "src/ctxblame/sse.py", "offset": 206, "limit": 10}) -> 543 chars
+[28] read_file({"path": "tests/test_formats.py", "offset": 42, "limit": 10}) -> 615 chars
+[29] read_file({"path": "src/ctxblame/sse.py", "offset": 206, "limit": 10}) -> 543 chars
+[30] read_file({"path": "src/ctxblame/sse.py", "offset": 206, "limit": 10}) -> 543 chars
+stopped after 30 steps

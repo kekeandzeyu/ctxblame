@@ -133,21 +133,23 @@ TOOLS = [
 
 # ------------------------------------------------------------------ workspace
 
-def make_workspace(ws: Path) -> None:
+def make_workspace(ws: Path, agents_md: str = AGENTS_MD) -> None:
     if ws.exists():
         shutil.rmtree(ws)
     ws.mkdir(parents=True)
     for name in ("src", "tests", "pyproject.toml", "README.md", "LICENSE"):
         src = REPO / name
         if src.is_dir():
-            shutil.copytree(src, ws / name, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+            # tests that import experiments/ (not copied) would fail to collect
+            shutil.copytree(src, ws / name, ignore=shutil.ignore_patterns("__pycache__", "*.pyc",
+                                                                          "test_phase3_benchmark.py"))
         else:
             shutil.copy2(src, ws / name)
     f = ws / "src" / "ctxblame" / "formats.py"
     text = f.read_text()
     assert BUG[0] in text, "planted-bug anchor not found; update BUG"
     f.write_text(text.replace(BUG[0], BUG[1]))
-    (ws / "AGENTS.md").write_text(AGENTS_MD)
+    (ws / "AGENTS.md").write_text(agents_md)
     (ws / "docs").mkdir()
     (ws / "docs" / "ARCHITECTURE.md").write_text(ARCHITECTURE_MD)
     subprocess.run(["git", "init", "-q"], cwd=ws, check=True)
@@ -262,13 +264,18 @@ class Sandbox:
 
 # ---------------------------------------------------------------------- agent
 
-def anthropic_tools():
-    return [{"name": t["name"], "description": t["description"], "input_schema": t["schema"]} for t in TOOLS]
+def _tools(test_cmd: str) -> list[dict]:
+    return json.loads(json.dumps(TOOLS).replace("python -m pytest -q", test_cmd))
 
 
-def openai_tools():
+def anthropic_tools(test_cmd: str = "python -m pytest -q"):
+    return [{"name": t["name"], "description": t["description"], "input_schema": t["schema"]}
+            for t in _tools(test_cmd)]
+
+
+def openai_tools(test_cmd: str = "python -m pytest -q"):
     return [{"type": "function", "function": {"name": t["name"], "description": t["description"],
-                                              "parameters": t["schema"]}} for t in TOOLS]
+                                              "parameters": t["schema"]}} for t in _tools(test_cmd)]
 
 
 async def post_stream(s: ClientSession, url: str, headers: dict, body: dict, fmt: str) -> dict:
@@ -295,10 +302,17 @@ async def run_agent(args) -> int:
         print(f"error: set {key_env}", file=sys.stderr)
         return 2
     ws = Path(args.workspace).resolve()
+    agents_md = AGENTS_MD.replace("python -m pytest -q", args.test_cmd)
     if not args.reuse_workspace:
-        make_workspace(ws)
+        make_workspace(ws, agents_md)
     box = Sandbox(ws)
-    system = SYSTEM.format(cwd=ws, agents_md=AGENTS_MD.strip())
+    system = SYSTEM.format(cwd=ws, agents_md=agents_md.strip())
+    if args.manual:  # a production-length generic agent manual before the task-specific prompt
+        import random as _random
+        sys.path.insert(0, str(REPO / "experiments" / "phase3"))
+        from gen_cases import _manual
+        system = _manual(_random.Random(0)) + "\n\n" + system
+    extra = json.loads(args.extra_body) if args.extra_body else {}
     if args.format == "anthropic":
         url = base + "/v1/messages"
         headers = {"anthropic-version": "2023-06-01", "content-type": "application/json"}
@@ -316,8 +330,8 @@ async def run_agent(args) -> int:
         for step in range(1, args.max_steps + 1):
             if args.format == "anthropic":
                 body = {"model": args.model, "max_tokens": args.max_tokens, "stream": True,
-                        "system": [{"type": "text", "text": system}], "tools": anthropic_tools(),
-                        "messages": messages}
+                        "system": [{"type": "text", "text": system}], "tools": anthropic_tools(args.test_cmd),
+                        "messages": messages, **extra}
                 if not args.no_thinking:
                     body["thinking"] = {"type": "enabled", "budget_tokens": 8000}
                 msg = await post_stream(s, url, headers, body, "anthropic")
@@ -327,8 +341,8 @@ async def run_agent(args) -> int:
                 text = "".join(b.get("text", "") for b in content if b["type"] == "text")
             else:
                 body = {"model": args.model, "max_tokens": args.max_tokens, "stream": True,
-                        "stream_options": {"include_usage": True}, "tools": openai_tools(),
-                        "messages": messages}
+                        "stream_options": {"include_usage": True}, "tools": openai_tools(args.test_cmd),
+                        "messages": messages, **extra}
                 if not args.no_thinking:
                     body["thinking"] = {"type": "enabled"}
                 resp = await post_stream(s, url, headers, body, "openai")
@@ -377,6 +391,12 @@ def main() -> int:
     ap.add_argument("--workspace", required=True)
     ap.add_argument("--reuse-workspace", action="store_true")
     ap.add_argument("--max-steps", type=int, default=30)
+    ap.add_argument("--test-cmd", default="python -m pytest -q",
+                    help="the test command AGENTS.md and the bash tool's example prescribe")
+    ap.add_argument("--manual", action="store_true",
+                    help="prepend a ~30k-char generic agent manual to the system prompt (production-length)")
+    ap.add_argument("--extra-body", default=None, metavar="JSON",
+                    help="JSON merged into every request, e.g. vLLM sampling or chat_template_kwargs")
     return asyncio.run(run_agent(ap.parse_args()))
 
 

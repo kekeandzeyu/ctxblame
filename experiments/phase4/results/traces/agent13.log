@@ -1,0 +1,33 @@
+[1] bash({"command": "python -m pytest -q -x --tb=line", "description": "Run the test suite to identify the failure in tests/test_formats.py"}) -> 853 chars
+[2] read_file({"path": "tests/test_formats.py", "offset": 1, "limit": 20}) -> 831 chars
+[3] grep({"pattern": "test_openai_stream_assembly_and_decision", "path": "tests/test_formats.py"}) -> 73 chars
+[4] read_file({"path": "tests/test_formats.py", "offset": 41, "limit": 20}) -> 1230 chars
+[5] read_file({"path": "ctxblame/formats.py", "offset": 1, "limit": 20}) -> 85 chars
+[6] list_dir({"path": "ctxblame"}) -> 74 chars
+[7] list_dir({"path": "."}) -> 75 chars
+[8] list_dir({"path": "src"}) -> 9 chars
+[9] list_dir({"path": "src/ctxblame"}) -> 103 chars
+[10] read_file({"path": "src/ctxblame/formats.py", "offset": 1, "limit": 20}) -> 626 chars
+[11] grep({"pattern": "extract_usage", "path": "src/ctxblame/formats.py"}) -> 82 chars
+[12] read_file({"path": "src/ctxblame/formats.py", "offset": 127, "limit": 20}) -> 857 chars
+[13] edit_file({"path": "src/ctxblame/formats.py", "old_string": "return Usage(prompt, hit, 0, u.get(\"completion_tokens\") or 0)", "new_string": "input_uncached = p) -> 30 chars
+[14] bash({"command": "python -m pytest -q -x --tb=line", "description": "Run the test suite to confirm the fix"}) -> 1696 chars
+[15] read_file({"path": "src/ctxblame/formats.py", "offset": 139, "limit": 10}) -> 189 chars
+[16] edit_file({"path": "src/ctxblame/formats.py", "old_string": "input_uncached = prompt - hit\nreturn Usage(prompt, hit, input_uncached, u.get(\"completion_tokens\) -> 30 chars
+[17] bash({"command": "python -m pytest -q -x --tb=line", "description": "Run the test suite to confirm the fix"}) -> 934 chars
+[18] read_file({"path": "tests/test_formats.py", "offset": 52, "limit": 10}) -> 628 chars
+[19] read_file({"path": "src/ctxblame/formats.py", "offset": 127, "limit": 20}) -> 910 chars
+[20] edit_file({"path": "src/ctxblame/formats.py", "old_string": "input_uncached = prompt - hit\n    return Usage(prompt, hit, input_uncached, u.get(\"completion_tok) -> 30 chars
+[21] bash({"command": "python -m pytest -q -x --tb=line", "description": "Run the test suite to confirm the fix"}) -> 934 chars
+[22] read_file({"path": "tests/test_formats.py", "offset": 52, "limit": 10}) -> 628 chars
+[23] read_file({"path": "src/ctxblame/formats.py", "offset": 127, "limit": 20}) -> 910 chars
+[24] read_file({"path": "tests/test_formats.py", "offset": 41, "limit": 20}) -> 1230 chars
+[25] read_file({"path": "src/ctxblame/formats.py", "offset": 1, "limit": 20}) -> 626 chars
+[26] grep({"pattern": "Usage", "path": "src/ctxblame/formats.py"}) -> 603 chars
+[27] read_file({"path": "src/ctxblame/formats.py", "offset": 116, "limit": 20}) -> 1027 chars
+[28] read_file({"path": "tests/test_formats.py", "offset": 52, "limit": 10}) -> 628 chars
+[29] done: The test failure indicates that the `input_uncached` value is not being calculated correctly for the OpenAI format. The test expects `input_uncached` to be 36, but the current implementation is not achieving this.
+
+Looking at the `extract_usage` function in `src/ctxblame/formats.py`, the `input_uncached` is calculated as `prompt - hit`. However, the test is failing, suggesting that this calculation is not yielding the expected result.
+
+To fix this, we need to ensure that the `prompt` and `hit` values are being correctly extracted from the response. The `prompt` value is derived from `u.get("pr

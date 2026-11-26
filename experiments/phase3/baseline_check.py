@@ -97,7 +97,7 @@ def main(argv=None) -> int:
     ap.add_argument("-n", type=int, default=20)
     ap.add_argument("--concurrency", type=int, default=20)
     ap.add_argument("--only", nargs="*")
-    ap.add_argument("--suite", choices=("core", "gen", "gen-open", "all"), default="core")
+    ap.add_argument("--suite", choices=("core", "gen", "gen-open", "gen-long", "real", "all"), default="core")
     ap.add_argument("--gen-n", type=int, default=64)
     ap.add_argument("--gen-seed", type=int, default=0)
     ap.add_argument("--budget", type=float, default=5.0)

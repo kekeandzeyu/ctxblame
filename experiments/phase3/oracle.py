@@ -28,7 +28,7 @@ import json
 import sys
 from pathlib import Path
 
-from ctxblame.blame import Chunk, apply_chunks, chunk_request
+from ctxblame.blame import Chunk, apply_chunks, chunk_request, resolve_given
 from ctxblame.ablate import AblationError
 from ctxblame.formats import extract_decision
 from ctxblame.match import Matcher
@@ -60,9 +60,7 @@ def _arg(argv: list[str], flag: str) -> str | None:
     return argv[argv.index(flag) + 1] if flag in argv else None
 
 
-async def rates(rp: Replayer, body: dict, n: int, matcher: Matcher, given: Matcher | None, gtarget: str,
-                target: str) -> dict:
-    samples = await rp.run(body, n, matcher)
+def _rates(samples: list, matcher: Matcher, given: Matcher | None, gtarget: str, target: str) -> dict:
     ok = [s for s in samples if s.ok]
     kg = sum(given.same(sample_decision(s), gtarget) for s in ok) if given else len(ok)
     ka = sum((given.same(sample_decision(s), gtarget) if given else True)
@@ -73,6 +71,11 @@ async def rates(rp: Replayer, body: dict, n: int, matcher: Matcher, given: Match
             "errors": len(samples) - len(ok)}
 
 
+async def rates(rp: Replayer, body: dict, n: int, matcher: Matcher, given: Matcher | None, gtarget: str,
+                target: str) -> dict:
+    return _rates(await rp.run(body, n, matcher), matcher, given, gtarget, target)
+
+
 async def check(case, args, api_key: str) -> dict:
     step = with_model_override(case.step, args.model, args.max_tokens, args.no_thinking_param, args.extra_body)
     fmt = step.fmt
@@ -80,14 +83,18 @@ async def check(case, args, api_key: str) -> dict:
     matcher = matcher_for(step, "args" if key_args else "intent", key_args or None, any_call=True)
     target = _arg(case.argv, "--target") or matcher.key(extract_decision(fmt, step.response))
     gname = _arg(case.argv, "--given")
-    given = Matcher("name", any_call=True) if gname and gname != "none" else None
     base = args.base_url.rstrip("/")
     rec = step.record["request"]
     rp = Replayer(fmt, base + rec["path"], build_headers(fmt, rec.get("headers"), api_key),
                   Ledger(args.ledger, args.budget), base, estimate_cost(step, base, free=args.free),
                   args.concurrency, free=args.free)
     chunks = chunk_request(fmt, step.body, case.protect)
-    R = lambda body: rates(rp, body, args.n, matcher, given, gname or "", target)  # noqa: E731
+    # the action family E, resolved exactly as ctxblame resolves --given (auto when --key-arg is used)
+    base_samples = await rp.run(step.body, args.n, matcher)
+    given, gtarget = resolve_given(gname, key_args, target, matcher, base_samples,
+                                   extract_decision(fmt, step.response), matcher.cwd)
+    gtarget = gtarget or ""
+    R = lambda body: rates(rp, body, args.n, matcher, given, gtarget, target)  # noqa: E731
 
     def without(cs: list[Chunk]) -> dict | None:
         try:
@@ -95,8 +102,8 @@ async def check(case, args, api_key: str) -> dict:
         except AblationError:
             return None
 
-    out: dict = {"case": case.name, "category": case.category, "target": target, "given": gname}
-    out["base"] = await R(step.body)
+    out: dict = {"case": case.name, "category": case.category, "target": target, "given": gtarget or None}
+    out["base"] = _rates(base_samples, matcher, given, gtarget, target)
     b = out["base"]
     if case.category == "negative":
         body = without([c for c in chunks if c.kind != "thinking"])
@@ -184,7 +191,7 @@ def main(argv=None) -> int:
     ap.add_argument("-n", type=int, default=20)
     ap.add_argument("--concurrency", type=int, default=32)
     ap.add_argument("--parallel-cases", type=int, default=4)
-    ap.add_argument("--suite", choices=("core", "gen", "gen-open", "all"), default="gen")
+    ap.add_argument("--suite", choices=("core", "gen", "gen-open", "gen-long", "real", "all"), default="gen")
     ap.add_argument("--gen-n", type=int, default=64)
     ap.add_argument("--gen-seed", type=int, default=0)
     ap.add_argument("--only", nargs="*")

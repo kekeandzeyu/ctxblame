@@ -125,7 +125,7 @@ def main(argv=None) -> int:
     if not rows:
         print(f"no seed*/benchmark.json under {d}")
         return 1
-    cases = {c.name: c for c in all_cases("all") + all_cases("gen-open")}
+    cases = {c.name: c for c in all_cases("all") + all_cases("gen-open") + all_cases("gen-long") + all_cases("real")}
     methods = list(dict.fromkeys(r["method"] for r in rows))
     seeds = sorted({r["seed"] for r in rows})
 

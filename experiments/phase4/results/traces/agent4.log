@@ -1,0 +1,31 @@
+[1] bash({"command": "python -m pytest -q -x --tb=line", "description": "Run the test suite to identify the failure in tests/test_formats.py"}) -> 852 chars
+[2] read_file({"path": "tests/test_formats.py", "offset": 1, "limit": 20}) -> 831 chars
+[3] grep({"pattern": "test_openai_stream_assembly_and_decision", "path": "tests/test_formats.py"}) -> 73 chars
+[4] read_file({"path": "tests/test_formats.py", "offset": 41, "limit": 20}) -> 1230 chars
+[5] read_file({"path": "ctxblame/formats.py", "offset": 1, "limit": 20}) -> 84 chars
+[6] list_dir({"path": "ctxblame"}) -> 73 chars
+[7] list_dir({"path": "."}) -> 75 chars
+[8] list_dir({"path": "src"}) -> 9 chars
+[9] list_dir({"path": "src/ctxblame"}) -> 103 chars
+[10] read_file({"path": "src/ctxblame/formats.py", "offset": 1, "limit": 20}) -> 626 chars
+[11] grep({"pattern": "extract_usage", "path": "src/ctxblame/formats.py"}) -> 82 chars
+[12] read_file({"path": "src/ctxblame/formats.py", "offset": 127, "limit": 20}) -> 857 chars
+[13] grep({"pattern": "Usage", "path": "src/ctxblame/formats.py"}) -> 590 chars
+[14] read_file({"path": "src/ctxblame/formats.py", "offset": 116, "limit": 20}) -> 1027 chars
+[15] grep({"pattern": "OPENAI_STREAM", "path": "tests/test_formats.py"}) -> 133 chars
+[16] read_file({"path": "tests/test_formats.py", "offset": 20, "limit": 20}) -> 1162 chars
+[17] grep({"pattern": "Usage", "path": "tests/test_formats.py"}) -> 421 chars
+[18] read_file({"path": "src/ctxblame/formats.py", "offset": 131, "limit": 20}) -> 636 chars
+[19] read_file({"path": "tests/test_formats.py", "offset": 52, "limit": 5}) -> 224 chars
+[20] read_file({"path": "tests/test_formats.py", "offset": 27, "limit": 20}) -> 1046 chars
+[21] bash({"command": "python -m pytest -q -x --tb=line tests/test_formats.py::test_openai_stream_assembly_and_decision", "description": "Re-run the specific te) -> 792 chars
+[22] read_file({"path": "src/ctxblame/formats.py", "offset": 138, "limit": 20}) -> 180 chars
+[23] read_file({"path": "tests/test_formats.py", "offset": 27, "limit": 20}) -> 1046 chars
+[24] grep({"pattern": "prompt_cache_miss_tokens", "path": "src/ctxblame/formats.py"}) -> 12 chars
+[25] grep({"pattern": "cache_read_input_tokens", "path": "src/ctxblame/formats.py"}) -> 108 chars
+[26] grep({"pattern": "input_uncached", "path": "src/ctxblame/formats.py"}) -> 178 chars
+[27] grep({"pattern": "input_uncached", "path": "tests/test_formats.py"}) -> 12 chars
+[28] read_file({"path": "src/ctxblame/formats.py", "offset": 131, "limit": 20}) -> 636 chars
+[29] read_file({"path": "tests/test_formats.py", "offset": 52, "limit": 5}) -> 224 chars
+[30] read_file({"path": "src/ctxblame/formats.py", "offset": 138, "limit": 20}) -> 180 chars
+stopped after 30 steps
