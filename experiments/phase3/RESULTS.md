@@ -1,7 +1,7 @@
 # Attribution benchmark results (Phases 3–4, open models, $0)
 
-All runs: vLLM with prefix caching on one RTX 4090 48GB, thinking off,
-3 seeds. Only **oracle-valid** cases are scored: `oracle.py` first checks on
+All runs: vLLM with prefix caching on one RTX 4090 48GB, 3 seeds, thinking
+off unless noted. Only **oracle-valid** cases are scored: `oracle.py` first checks on
 the model under test that the base decision is stable, removing all planted
 carriers flips it, each carrier alone restores it, and removing the
 precondition collapses the action family `E`. F1 = mean over case × seed with
@@ -18,20 +18,25 @@ redundancy) are in each `results/<tag>/summary.md`.
 
 ## Accuracy (F1)
 
-| Method | Qwen3-8B gen (53 cases) | Qwen3-14B gen (48) | Qwen3-14B real (13) | Qwen3-14B gen-long (38) |
-|---|---:|---:|---:|---:|
-| **ctxblame** | **94%** [88, 99] | **95%** [87, 99] | **92%** [77, 100] | **95%** [89, 99] |
-| ctxblame `--given none` | 79% | 76% | 60% | – |
-| ctxblame `--no-stratify` (flat search) | 95% | – | 92% | 90% |
-| ContextCite (Lasso on prompt logprobs) | 71% | 84% | 29% | – |
-| self-explanation | 73% | 60% | 46% | – |
-| leave-one-out | 34% | 39% | 0% | – |
+| Method | Qwen3-8B gen (53 cases) | Qwen3-14B gen (48) | Qwen3-14B thinking on, gen (55) | Qwen3-14B real (13) | Qwen3-14B gen-long (38) |
+|---|---:|---:|---:|---:|---:|
+| **ctxblame** | **94%** [88, 99] | **95%** [87, 99] | **95%** [89, 99] | **92%** [77, 100] | **95%** [89, 99] |
+| ctxblame `--given none` | 79% | 76% | 81% | 60% | – |
+| ctxblame `--no-stratify` (flat search) | 95% | – | – | 92% | 90% |
+| ContextCite (Lasso on prompt logprobs) | 71% | 84% | 83% | 29% | – |
+| self-explanation | 73% | 60% | 80% | 46% | – |
+| leave-one-out | 34% | 39% | 34% | 0% | – |
 
-Preconditions kept apart from causes: ctxblame 93% / 93% / 100% / 94%; every
+Preconditions kept apart from causes: ctxblame 93% / 93% / 94% / 100% / 94%; every
 baseline 0% (leave-one-out, ContextCite and unconditional ctxblame report the
 edit as a cause in 92–100% of precondition cases). Negatives (nothing in the
-context drives the decision) correct: ctxblame 97–100%; self-explanation and
-ContextCite 0% (they always name something).
+context drives the decision) correct: ctxblame 97–100%; ContextCite 0% and
+self-explanation 0–27% (they almost always name something).
+
+With thinking on, replays take ~5× longer (549 vs ~90 s per case) but the
+number of replays is unchanged (~190). Self-explanation gains the most from
+thinking (60% → 80%) yet still invents a cause for 73% of negatives; the
+hardest carrier for ctxblame is the tool description (75% recall).
 
 ## Cost: suffix-first vs flat search
 

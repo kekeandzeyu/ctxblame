@@ -156,13 +156,13 @@ Phase 3 attribution benchmark at **$0 API cost**.
   prompts, and 15 real recorded agent runs. ctxblame against
   `--given none`, ContextCite, leave-one-out and self-explanation:
 
-  | F1 | Qwen3-8B gen | Qwen3-14B gen | Qwen3-14B real traces | Qwen3-14B long prompts |
-  |---|---:|---:|---:|---:|
-  | **ctxblame** | **94%** | **95%** | **92%** | **95%** |
-  | ctxblame `--given none` | 79% | 76% | 60% | – |
-  | ContextCite | 71% | 84% | 29% | – |
-  | self-explanation | 73% | 60% | 46% | – |
-  | leave-one-out | 34% | 39% | 0% | – |
+  | F1 | Qwen3-8B gen | Qwen3-14B gen | Qwen3-14B gen, thinking on | Qwen3-14B real traces | Qwen3-14B long prompts |
+  |---|---:|---:|---:|---:|---:|
+  | **ctxblame** | **94%** | **95%** | **95%** | **92%** | **95%** |
+  | ctxblame `--given none` | 79% | 76% | 81% | 60% | – |
+  | ContextCite | 71% | 84% | 83% | 29% | – |
+  | self-explanation | 73% | 60% | 80% | 46% | – |
+  | leave-one-out | 34% | 39% | 34% | 0% | – |
 
   On long requests the suffix-first search needs 27% fewer replays and 34–38%
   less uncached input than a flat search; on short ones it saves nothing.
