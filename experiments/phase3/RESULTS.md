@@ -18,16 +18,16 @@ redundancy) are in each `results/<tag>/summary.md`.
 
 ## Accuracy (F1)
 
-| Method | Qwen3-8B gen (53 cases) | Qwen3-14B gen (48) | Qwen3-14B thinking on, gen (55) | Qwen3-14B real (13) | Qwen3-14B gen-long (38) |
-|---|---:|---:|---:|---:|---:|
-| **ctxblame** | **94%** [88, 99] | **95%** [87, 99] | **95%** [89, 99] | **92%** [77, 100] | **95%** [89, 99] |
-| ctxblame `--given none` | 79% | 76% | 81% | 60% | – |
-| ctxblame `--no-stratify` (flat search) | 95% | – | – | 92% | 90% |
-| ContextCite (Lasso on prompt logprobs) | 71% | 84% | 83% | 29% | – |
-| self-explanation | 73% | 60% | 80% | 46% | – |
-| leave-one-out | 34% | 39% | 34% | 0% | – |
+| Method | Qwen3-8B gen (53 cases) | Qwen3-14B gen (48) | Qwen3-14B thinking on, gen (55) | Llama-3.1-8B gen (46) | Qwen3-14B real (13) | Qwen3-14B gen-long (38) |
+|---|---:|---:|---:|---:|---:|---:|
+| **ctxblame** | **94%** [88, 99] | **95%** [87, 99] | **95%** [89, 99] | **85%** [76, 93] | **92%** [77, 100] | **95%** [89, 99] |
+| ctxblame `--given none` | 79% | 76% | 81% | 77% | 60% | – |
+| ctxblame `--no-stratify` (flat search) | 95% | – | – | – | 92% | 90% |
+| ContextCite (Lasso on prompt logprobs) | 71% | 84% | 83% | 84% | 29% | – |
+| self-explanation | 73% | 60% | 80% | 67% | 46% | – |
+| leave-one-out | 34% | 39% | 34% | 36% | 0% | – |
 
-Preconditions kept apart from causes: ctxblame 93% / 93% / 94% / 100% / 94%; every
+Preconditions kept apart from causes: ctxblame 93% / 93% / 94% / 76% / 100% / 94%; every
 baseline 0% (leave-one-out, ContextCite and unconditional ctxblame report the
 edit as a cause in 92–100% of precondition cases). Negatives (nothing in the
 context drives the decision) correct: ctxblame 97–100%; ContextCite 0% and
@@ -37,6 +37,21 @@ With thinking on, replays take ~5× longer (549 vs ~90 s per case) but the
 number of replays is unchanged (~190). Self-explanation gains the most from
 thinking (60% → 80%) yet still invents a cause for 73% of negatives; the
 hardest carrier for ctxblame is the tool description (75% recall).
+
+### Llama-3.1-8B: a harder, noisier model
+
+Run with vLLM's `llama3_json` parser and a patched copy of its chat template
+(the stock one refuses a history with parallel tool calls). Fewer cases pass
+the oracle (46/76), and ctxblame drops to 85% F1, statistically tied with
+ContextCite (84%). It still is the only method that separates preconditions
+(76%, everyone else 0%) and answers every negative correctly (100%; ContextCite
+0%, self-explanation 7%). The drop has one cause: Llama's decision also moves
+when *unrelated* lines are removed. ctxblame's random-removal controls catch
+part of this and withhold the finding as "not specific" (e.g. removing "You
+are a careful coding agent" flips `hatch run test:all` 11/13 times), and the
+rest shows up as OR bundles padded with neutral lines ("Hi!", "Understood.")
+that pass the leave-one-in check by chance. Recall with 3 redundant carriers
+falls to 78% (Qwen: 93–96%).
 
 ## Cost: suffix-first vs flat search
 

@@ -150,20 +150,22 @@ Phase 3 attribution benchmark at **$0 API cost**.
   end-to-end validation of the original `ddmin` engine, exposing precondition
   confounding (`step5`/`step7`), hitchhikers, and byte-0 cache invalidation.
 - **Phase 3–4** ([experiments/phase3/RESULTS.md](experiments/phase3/RESULTS.md)):
-  attribution benchmark on open models at $0 (Qwen3-8B, Qwen3-14B-FP8 on
-  vLLM, 3 seeds, oracle-validated cases): generated cases (8 tool conventions
+  attribution benchmark on open models at $0 (Qwen3-8B, Qwen3-14B-FP8 with
+  thinking off and on, Llama-3.1-8B; vLLM, 3 seeds, oracle-validated cases): generated cases (8 tool conventions
   × 5 carrier places, redundancy, preconditions, negatives), ~35k-char
   prompts, and 15 real recorded agent runs. ctxblame against
   `--given none`, ContextCite, leave-one-out and self-explanation:
 
-  | F1 | Qwen3-8B gen | Qwen3-14B gen | Qwen3-14B gen, thinking on | Qwen3-14B real traces | Qwen3-14B long prompts |
-  |---|---:|---:|---:|---:|---:|
-  | **ctxblame** | **94%** | **95%** | **95%** | **92%** | **95%** |
-  | ctxblame `--given none` | 79% | 76% | 81% | 60% | – |
-  | ContextCite | 71% | 84% | 83% | 29% | – |
-  | self-explanation | 73% | 60% | 80% | 46% | – |
-  | leave-one-out | 34% | 39% | 34% | 0% | – |
+  | F1 | Qwen3-8B gen | Qwen3-14B gen | Qwen3-14B gen, thinking on | Llama-3.1-8B gen | Qwen3-14B real traces | Qwen3-14B long prompts |
+  |---|---:|---:|---:|---:|---:|---:|
+  | **ctxblame** | **94%** | **95%** | **95%** | **85%** | **92%** | **95%** |
+  | ctxblame `--given none` | 79% | 76% | 81% | 77% | 60% | – |
+  | ContextCite | 71% | 84% | 83% | 84% | 29% | – |
+  | self-explanation | 73% | 60% | 80% | 67% | 46% | – |
+  | leave-one-out | 34% | 39% | 34% | 36% | 0% | – |
 
+  On the noisier Llama-3.1-8B, ctxblame ties ContextCite on F1 but is still
+  the only method that separates preconditions and gets negatives right.
   On long requests the suffix-first search needs 27% fewer replays and 34–38%
   less uncached input than a flat search; on short ones it saves nothing.
   ```sh
