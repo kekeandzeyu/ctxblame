@@ -1,0 +1,2567 @@
+{
+ "model": "Qwen3-14B",
+ "extra_body": {
+  "chat_template_kwargs": {
+   "enable_thinking": false
+  },
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20
+ },
+ "n": 20,
+ "suite": "gen-long",
+ "gen_n": 64,
+ "gen_seed": 0,
+ "valid": [
+  "gen-long/0-000/tox/user/long",
+  "gen-long/0-001/hatch/tooldesc+doc",
+  "gen-long/0-003/pnpm/history+pre",
+  "gen-long/0-008/tox/system+doc+user+pre",
+  "gen-long/0-009/hatch/doc+pre",
+  "gen-long/0-010/make/neg",
+  "gen-long/0-011/pnpm/system+tooldesc+user+pre/long",
+  "gen-long/0-016/tox/doc+user+pre/long",
+  "gen-long/0-017/hatch/system+tooldesc+user+pre",
+  "gen-long/0-018/make/user",
+  "gen-long/0-019/pnpm/system+tooldesc",
+  "gen-long/0-021/ruff/doc/long",
+  "gen-long/0-022/cargo/system+doc",
+  "gen-long/0-024/tox/tooldesc+pre",
+  "gen-long/0-025/hatch/system+user/long",
+  "gen-long/0-026/make/system+tooldesc+user",
+  "gen-long/0-027/pnpm/system+pre",
+  "gen-long/0-028/uv/system+user",
+  "gen-long/0-030/cargo/system",
+  "gen-long/0-032/tox/neg",
+  "gen-long/0-033/hatch/system",
+  "gen-long/0-035/pnpm/neg",
+  "gen-long/0-036/uv/doc+pre",
+  "gen-long/0-039/script/neg",
+  "gen-long/0-041/hatch/tooldesc+doc+user",
+  "gen-long/0-042/make/system+pre",
+  "gen-long/0-043/pnpm/neg",
+  "gen-long/0-048/tox/system",
+  "gen-long/0-049/hatch/system+user",
+  "gen-long/0-051/pnpm/neg",
+  "gen-long/0-052/uv/neg",
+  "gen-long/0-053/ruff/system+tooldesc+user",
+  "gen-long/0-055/script/system+doc",
+  "gen-long/0-056/tox/system+user+history+pre/long",
+  "gen-long/0-057/hatch/doc",
+  "gen-long/0-059/pnpm/system+tooldesc+user",
+  "gen-long/0-060/uv/system",
+  "gen-long/0-061/ruff/system+tooldesc+pre"
+ ],
+ "rows": [
+  {
+   "case": "gen-long/0-000/tox/user/long",
+   "category": "single",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-001/hatch/tooldesc+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `hatch run test:all`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "To test, use `hatch run test:all` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-002/make/system+tooldesc+doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Verify every change with `make check` (lint + type check + tests).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `make check`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    },
+    "Before sending a change, run `make check`; CI runs exactly the same target.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'e.g. `make check`' (0/20); carrier alone does not restore: 'Before sending a change, run `make check`; CI runs' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-003/pnpm/history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-004/uv/system+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Set up the environment with `uv sync --frozen`; never use pip install.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Environment setup: `uv sync --frozen` installs exactly what uv.lock pins.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-long/0-005/ruff/system+doc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Lint with `ruff check --fix src/`; flake8 and pylint are not used.": {
+     "n": 20,
+     "k_given": 7,
+     "k": 7,
+     "p_given": 0.35,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "One thing: please lint with `ruff check --fix src/` only.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Linting: run `ruff check --fix src/` and commit the fixes.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'Linting: run `ruff check --fix src/` and commit th' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-long/0-006/cargo/tooldesc",
+   "category": "single",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 15,
+    "k": 0,
+    "p_given": 0.75,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=20/20, P(A|E)=0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-007/script/system+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 19,
+    "k": 0,
+    "p_given": 0.95,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- To validate changes, run `./scripts/ci.sh --quick` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Validation: `./scripts/ci.sh --quick` runs the fast subset of CI locally.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'Validation: `./scripts/ci.sh --quick` runs the fas' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-008/tox/system+doc+user+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run the test suite with `tox -e py312`; never call pytest directly.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "By the way, in this project we only run tests through `tox -e py312`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Tests: always run `tox -e py312` (it pins the interpreter and dependencies).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-009/hatch/doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-010/make/neg",
+   "category": "negative",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-long/0-011/pnpm/system+tooldesc+user+pre/long",
+   "category": "precondition_or",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Install dependencies with `pnpm install --frozen-lockfile`; never use npm or yarn.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `pnpm install --frozen-lockfile`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Quick note: we install packages with `pnpm install --frozen-lockfile` here.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-012/uv/user/long",
+   "category": "single",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 12,
+    "k": 12,
+    "p_given": 0.6,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 6,
+    "k": 0,
+    "p_given": 0.3,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=12/20, P(A|E)=12/12)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-013/ruff/doc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "One thing: please lint with `ruff check --fix src/` only.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Linting: run `ruff check --fix src/` and commit the fixes.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-long/0-014/cargo/system+tooldesc+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run Rust tests with `cargo nextest run`, not `cargo test`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `cargo nextest run`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    },
+    "We use nextest: `cargo nextest run` (plain `cargo test` misses our config).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'e.g. `cargo nextest run`' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-015/script/doc",
+   "category": "single",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 1,
+    "k": 0,
+    "p_given": 0.05,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-long/0-016/tox/doc+user+pre/long",
+   "category": "precondition_or",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "By the way, in this project we only run tests through `tox -e py312`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Tests: always run `tox -e py312` (it pins the interpreter and dependencies).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-017/hatch/system+tooldesc+user+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Tests run only via `hatch run test:all`; do not invoke pytest or unittest yourself.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `hatch run test:all`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Note that our tests must be run with `hatch run test:all`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-018/make/user",
+   "category": "single",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-019/pnpm/system+tooldesc",
+   "category": "or_redundant",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Install dependencies with `pnpm install --frozen-lockfile`; never use npm or yarn.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `pnpm install --frozen-lockfile`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-020/uv/tooldesc+doc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 16,
+    "k": 0,
+    "p_given": 0.8,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `uv sync --frozen`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    },
+    "FYI our environments are always created with `uv sync --frozen`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Environment setup: `uv sync --frozen` installs exactly what uv.lock pins.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'e.g. `uv sync --frozen`' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-021/ruff/doc/long",
+   "category": "single",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-022/cargo/system+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run Rust tests with `cargo nextest run`, not `cargo test`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "We use nextest: `cargo nextest run` (plain `cargo test` misses our config).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-023/script/system+tooldesc+doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- To validate changes, run `./scripts/ci.sh --quick` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `./scripts/ci.sh --quick`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    },
+    "Validation: `./scripts/ci.sh --quick` runs the fast subset of CI locally.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'e.g. `./scripts/ci.sh --quick`' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-024/tox/tooldesc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-025/hatch/system+user/long",
+   "category": "or_redundant",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 14,
+    "k": 0,
+    "p_given": 0.7,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Tests run only via `hatch run test:all`; do not invoke pytest or unittest yourself.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Note that our tests must be run with `hatch run test:all`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-026/make/system+tooldesc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Verify every change with `make check` (lint + type check + tests).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `make check`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Also, the way we verify things here is `make check`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-027/pnpm/system+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-028/uv/system+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Set up the environment with `uv sync --frozen`; never use pip install.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "FYI our environments are always created with `uv sync --frozen`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-029/ruff/neg",
+   "category": "negative",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 11,
+    "k": 11,
+    "p_given": 0.55,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "negative decision not stable without context"
+  },
+  {
+   "case": "gen-long/0-030/cargo/system",
+   "category": "single",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-031/script/neg",
+   "category": "negative",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 9,
+    "k": 9,
+    "p_given": 0.45,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "negative decision not stable without context"
+  },
+  {
+   "case": "gen-long/0-032/tox/neg",
+   "category": "negative",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-long/0-033/hatch/system",
+   "category": "single",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 17,
+    "k": 0,
+    "p_given": 0.85,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-034/make/neg",
+   "category": "negative",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 10,
+    "k": 10,
+    "p_given": 0.5,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "negative decision not stable without context"
+  },
+  {
+   "case": "gen-long/0-035/pnpm/neg",
+   "category": "negative",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-long/0-036/uv/doc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-037/ruff/tooldesc+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `ruff check --fix src/`": {
+     "n": 20,
+     "k_given": 16,
+     "k": 16,
+     "p_given": 0.8,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Linting: run `ruff check --fix src/` and commit the fixes.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-long/0-038/cargo/tooldesc+user+history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `cargo nextest run`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    },
+    "Remember that tests here run via `cargo nextest run`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_38_2": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'e.g. `cargo nextest run`' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-039/script/neg",
+   "category": "negative",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-long/0-040/tox/system+tooldesc",
+   "category": "or_redundant",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run the test suite with `tox -e py312`; never call pytest directly.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `tox -e py312`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'e.g. `tox -e py312`' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-041/hatch/tooldesc+doc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `hatch run test:all`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Note that our tests must be run with `hatch run test:all`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "To test, use `hatch run test:all` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-042/make/system+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-043/pnpm/neg",
+   "category": "negative",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-long/0-044/uv/system+tooldesc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Set up the environment with `uv sync --frozen`; never use pip install.": {
+     "n": 20,
+     "k_given": 5,
+     "k": 5,
+     "p_given": 0.25,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `uv sync --frozen`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "FYI our environments are always created with `uv sync --frozen`.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'e.g. `uv sync --frozen`' (0/0); carrier alone does not restore: 'FYI our environments are always created with `uv s' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "gen-long/0-045/ruff/history+pre/long",
+   "category": "precondition_or",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 9,
+    "p_given": 1.0,
+    "p_cond": 0.45,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=20/20, P(A|E)=9/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-046/cargo/system+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "- Run Rust tests with `cargo nextest run`, not `cargo test`.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "Remember that tests here run via `cargo nextest run`.": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=0/20, P(A|E)=0/0); removing all carriers does not flip (0/0); carrier alone does not restore: '- Run Rust tests with `cargo nextest run`, not `ca' (0/0); carrier alone does not restore: 'Remember that tests here run via `cargo nextest ru' (0/0)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-047/script/tooldesc+user+history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "e.g. `./scripts/ci.sh --quick`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    },
+    "Our standard check is `./scripts/ci.sh --quick`, just so you know.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_47_3": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'e.g. `./scripts/ci.sh --quick`' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-048/tox/system",
+   "category": "single",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-049/hatch/system+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Tests run only via `hatch run test:all`; do not invoke pytest or unittest yourself.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Note that our tests must be run with `hatch run test:all`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-050/make/doc+user+history+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Also, the way we verify things here is `make check`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Before sending a change, run `make check`; CI runs exactly the same target.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    },
+    "pair:call_50_4": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'Before sending a change, run `make check`; CI runs' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-051/pnpm/neg",
+   "category": "negative",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-long/0-052/uv/neg",
+   "category": "negative",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "ctx_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "valid": true,
+   "why": ""
+  },
+  {
+   "case": "gen-long/0-053/ruff/system+tooldesc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 14,
+    "k": 0,
+    "p_given": 0.7,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Lint with `ruff check --fix src/`; flake8 and pylint are not used.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `ruff check --fix src/`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "One thing: please lint with `ruff check --fix src/` only.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-054/cargo/tooldesc",
+   "category": "single",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "unreliable baseline (P(E)=20/20, P(A|E)=0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-055/script/system+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 19,
+    "k": 0,
+    "p_given": 0.95,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- To validate changes, run `./scripts/ci.sh --quick` from the repository root.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Validation: `./scripts/ci.sh --quick` runs the fast subset of CI locally.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-056/tox/system+user+history+pre/long",
+   "category": "precondition_or",
+   "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run the test suite with `tox -e py312`; never call pytest directly.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "By the way, in this project we only run tests through `tox -e py312`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:call_56_3": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-057/hatch/doc",
+   "category": "single",
+   "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-058/make/doc+user/long",
+   "category": "or_redundant",
+   "target": "bash({\"command~make\\\\s+check\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 10,
+    "k": 10,
+    "p_given": 0.5,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "Also, the way we verify things here is `make check`.": {
+     "n": 20,
+     "k_given": 7,
+     "k": 7,
+     "p_given": 0.35,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Before sending a change, run `make check`; CI runs exactly the same target.": {
+     "n": 20,
+     "k_given": 13,
+     "k": 0,
+     "p_given": 0.65,
+     "p_cond": 0.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "unreliable baseline (P(E)=10/20, P(A|E)=10/10); removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'Before sending a change, run `make check`; CI runs' (0/13)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-059/pnpm/system+tooldesc+user",
+   "category": "or_redundant",
+   "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Install dependencies with `pnpm install --frozen-lockfile`; never use npm or yarn.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `pnpm install --frozen-lockfile`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "Quick note: we install packages with `pnpm install --frozen-lockfile` here.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-060/uv/system",
+   "category": "single",
+   "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {},
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-061/ruff/system+tooldesc+pre",
+   "category": "precondition_or",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Lint with `ruff check --fix src/`; flake8 and pylint are not used.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `ruff check --fix src/`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-062/cargo/system+tooldesc+doc",
+   "category": "or_redundant",
+   "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "- Run Rust tests with `cargo nextest run`, not `cargo test`.": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `cargo nextest run`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 0,
+     "p_given": 1.0,
+     "p_cond": 0.0,
+     "errors": 0
+    },
+    "We use nextest: `cargo nextest run` (plain `cargo test` misses our config).": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "carrier alone does not restore: 'e.g. `cargo nextest run`' (0/20)",
+   "e_coupled": false
+  },
+  {
+   "case": "gen-long/0-063/script/doc",
+   "category": "single",
+   "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+   "given": "bash",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {},
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family",
+   "e_coupled": true
+  }
+ ]
+}
