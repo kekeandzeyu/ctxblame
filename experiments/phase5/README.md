@@ -45,7 +45,31 @@ pre-fix engine solved. After a stabilizer, the suffix probe only changes its
 stopping rule: it widens past tiers whose removal stops E and stops at the first
 flip. Removing all of the rest is known to flip, so it always reaches one. The
 stratified ddmin counts collapses as "not flipped". `p5c-real` and `p5c-gen` run
-this final engine. The report now says
+this final engine.
+
+**Result on `real/run4/step21` with the final engine** (`p5c-real`). The stabilizer now
+always hands over to the choice search, and the case is still unsolved in all 3
+seeds:
+
+| seed | stabilizer kept | outcome | replays |
+|---|---|---|---:|
+| 0 | 3 chunks | diffuse: the smallest flipping removal has 10 chunks | 3,040 |
+| 1 | 2 chunks | diffuse: 6 chunks | 3,455 |
+| 2 | the `bash` tool description | removing all the rest keeps the choice | 820 |
+
+Seed 2 shows the cause. The tool description both enables the action (without it
+the agent does not use `bash`) and holds one of the three carriers (the
+``e.g. `python -m pytest -q -x --tb=line` `` example). This is the positivity
+violation AGENTS.md calls `triggers_and_steers`: a chunk that is a precondition
+and a carrier at once. In seeds 0 and 1 the same coupling runs through the
+history, so flipping the choice while E survives needs extra removals. The
+pre-fix engine's single success (seed 1) was replay luck. Two possible
+follow-ups, deliberately not done in Phase 5 to avoid tuning the engine on one
+case:
+- stabilize at line level, so the example line can separate from the rest of
+  the description;
+- report `triggers_and_steers` explicitly when the stabilizer contains a
+  recorded carrier. The report now says
 `none_found` rather than `not_in_context` when removing everything stopped E
 instead of keeping the decision. Regression test:
 `test_search_after_stabilizer_searches_the_whole_rest_for_the_choice`.
