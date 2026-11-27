@@ -34,9 +34,18 @@ without the history that explains it). With the stabilizer already used, the
 search stopped before any choice test, and the audit then correctly rejected all
 three noisy preconditions (p = 0.59 to 0.99).
 
-The fix: after a stabilizer, the choice search runs over the whole rest as one
-region, so it starts from the removal the stabilizer showed keeps E, and ddmin
-counts partial removals that stop E as "not flipped". The report now says
+A first fix (a5f5461) searched the whole rest as one region after a stabilizer.
+On the GPU (`p5b-real`, seed 0, stopped after one seed) it failed. Most partial
+removals of this trace's history stop E, so plain ddmin could not shrink below
+38 chunks ("diffuse"), at 3,710 replays.
+
+The fix that replaces it keeps the stratified tiers (tool schemas, system prompt,
+early and late history), which is what separated the carriers in the one seed the
+pre-fix engine solved. After a stabilizer, the suffix probe only changes its
+stopping rule: it widens past tiers whose removal stops E and stops at the first
+flip. Removing all of the rest is known to flip, so it always reaches one. The
+stratified ddmin counts collapses as "not flipped". `p5c-real` and `p5c-gen` run
+this final engine. The report now says
 `none_found` rather than `not_in_context` when removing everything stopped E
 instead of keeping the decision. Regression test:
 `test_search_after_stabilizer_searches_the_whole_rest_for_the_choice`.

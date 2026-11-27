@@ -1097,17 +1097,20 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
 
     while remaining and len(causes) < max_causes:
         # stratify=False (ablation): one tier, i.e. remove everything first and
-        # delta-debug over all chunks, as before the KV-cache-stratified search.
-        # After a stabilizer, also one tier: the stabilizer showed that removing
-        # all the rest keeps E, but a partial (suffix-tier) removal need not, since
-        # E can be non-monotone in what is removed (a late output without the
-        # history that explains it). ddmin then counts collapses as "not flipped".
-        tiers = partition_tiers(remaining, by_id) if stratify and not stabilized else [list(remaining)]
-        probe, hit_idx = await _widen_suffix(tiers, test, frozenset(), is_hit)
+        # delta-debug over all chunks, as before the KV-cache-stratified search
+        tiers = partition_tiers(remaining, by_id) if stratify else [list(remaining)]
+        # After a stabilizer, widen past tiers whose removal stops E and stop at the
+        # first flip: the stabilizer showed that removing all the rest keeps E, but a
+        # partial removal need not (E is non-monotone in what is removed: a late
+        # output without the history that explains it), and there are no more
+        # preconditions to protect. The stratified ddmin then counts collapses as
+        # "not flipped" and keeps the tier structure that separates the carriers.
+        hit = is_flipped if stabilized else is_hit
+        probe, hit_idx = await _widen_suffix(tiers, test, frozenset(), hit)
         last_probe = probe
         region = tiers[hit_idx:] if hit_idx >= 0 else []
         if hit_idx < 0:
-            alt = await _fallback_window(tiers, test, frozenset(), is_hit)
+            alt = await _fallback_window(tiers, test, frozenset(), hit)
             if alt is None:
                 break
             probe, window = alt
