@@ -53,6 +53,28 @@ rest shows up as OR bundles padded with neutral lines ("Hi!", "Understood.")
 that pass the leave-one-in check by chance. Recall with 3 redundant carriers
 falls to 78% (Qwen: 93–96%).
 
+#### Vetting bundle members does not close the gap
+
+If neutral lines only pass the leave-one-in check by noise, or by being "some
+context", two stricter checks should drop them: `--strict-restore` (keeping the
+line alone must clearly restore the decision, confirmed with more replays) and
+`--member-controls 2` (it must still restore it when a random same-size run of
+other lines is removed too). Measured, ctxblame only, 3 seeds:
+
+| ctxblame F1 | default | both checks | `--member-controls 2` only |
+|---|---:|---:|---:|
+| Llama-3.1-8B gen (46) | 85% [76, 93] | 85% [76, 92] | 87% [78, 94] |
+| Qwen3-14B gen (48) | 95% [87, 99] | 95% [88, 99] | – |
+| Qwen3-14B real (13) | 92% [77, 100] | 92% [77, 100] | – |
+
+No change beyond noise, at 10–17% more replays, so both stay off by default.
+The neutral lines that end up in Llama's bundles pass both checks: removing
+them together with the planted carriers really does flip the decision, and
+not because of how much text is removed. They are genuine interactions in
+this model (e.g. a rule in a read doc that Llama follows only while the
+conversation still has an assistant turn), which a planted-carrier ground
+truth counts as false positives.
+
 ## Cost: suffix-first vs flat search
 
 Simulated uncached input = what a per-run provider prefix cache bills once per

@@ -55,7 +55,7 @@ for s in $SEEDS; do
   # shellcheck disable=SC2086
   "$PY" experiments/phase3/benchmark.py --suite "$SUITE" --valid-from "$OUT/oracle_all.json" "${COMMON[@]}" \
     --max-tokens "$MAX_TOKENS" --methods $METHODS --parallel-cases "${PARALLEL:-8}" --concurrency "${CONC:-16}" \
-    --seed "$s" --blame-args "${BLAME_ARGS:-}" --budget 1 --ledger "$LOGS/ledger_${TAG}_$s.jsonl" --out-dir "$OUT/seed$s" \
+    --seed "$s" --blame-args="${BLAME_ARGS:-}" --budget 1 --ledger "$LOGS/ledger_${TAG}_$s.jsonl" --out-dir "$OUT/seed$s" \
     > "$LOGS/bench_${TAG}_$s.log" 2>&1
   echo "[$TAG] seed $s done"
 done
