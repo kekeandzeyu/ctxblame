@@ -16,6 +16,10 @@ Scenarios (baseline rate b, search threshold tau = b/2):
                    reported cause is false.
   power_bundle     a real 2-way OR bundle (removing both: 0.05). Measures how
                    often the true bundle is still reported (power).
+  hitchhiker       one real carrier X (removing it: 0.05) and a weak line Y
+                   (removing Y alone: 0.5, just above tau). A cause containing Y
+                   is false; power = reporting exactly {X}. Models the GPU-run
+                   failure where a bundle {carrier, hitchhiker} was rejected whole.
 
 Usage:
   uv run python experiments/phase5/null_sim.py --runs 500 --out experiments/phase5/results/<tag>/null_sim.json
@@ -56,6 +60,8 @@ def _rate_fn(scenario: str):
             return TAU if {"A", "B"} <= gone else B
         if scenario == "power_bundle":
             return 0.05 if {"A", "B"} <= gone else B
+        if scenario == "hitchhiker":
+            return 0.05 if "A" in gone else 0.5 if "B" in gone else B
         raise ValueError(scenario)
     return rate
 
@@ -103,6 +109,8 @@ def _is_false(scenario: str, c: Cause) -> bool:
     letters = {"ABCDEFGH"[int(x) - 1] if x.isdigit() else x for x in m}
     if scenario == "power_bundle":
         return letters != {"A", "B"}
+    if scenario == "hitchhiker":
+        return letters != {"A"}
     return True
 
 
@@ -129,7 +137,7 @@ def simulate(scenario: str, runs: int, seed: int, audit_n: int, alpha: float) ->
                 for r in range(runs)]
     any_false = sum(1 for r in rows if r["false"])
     true_found = sum(1 for r in rows if any(not _is_false(scenario, Cause(m)) for m in r["reported"])) \
-        if scenario == "power_bundle" else None
+        if scenario in ("power_bundle", "hitchhiker") else None
     lo, hi = wilson(any_false, runs)
     return {"scenario": scenario, "audit_n": audit_n, "alpha": alpha, "runs": runs,
             "fwer": any_false / runs, "fwer_ci": [lo, hi],
@@ -148,7 +156,7 @@ def main(argv=None) -> int:
     res = []
     print("| scenario | audit | runs | P(any false cause) [95% CI] | power | replays/run |")
     print("|---|---|---:|---:|---:|---:|")
-    for sc in ("boundary_single", "boundary_bundle", "power_bundle"):
+    for sc in ("boundary_single", "boundary_bundle", "power_bundle", "hitchhiker"):
         for n in (0, a.audit_n):
             r = simulate(sc, a.runs, a.seed, n, a.alpha)
             res.append(r)

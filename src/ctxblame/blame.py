@@ -991,18 +991,38 @@ async def audit_findings(findings: list[Cause], auditor, n: int, alpha: float) -
     tested the same way on P(E). Holm's step-down across all findings then
     controls the family-wise error rate at ``alpha``, conditional on the
     baseline and on the search's choice of hypotheses (which saw none of these
-    replays)."""
+    replays).
+
+    Two stages for a bundle: when its removal flips but some members do not
+    restore (a hitchhiker the search could not prune), those members are dropped
+    and the smaller bundle is audited again on new fresh replays. Stage 1 only
+    chooses the hypothesis; the p-value comes from stage 2 alone, which is
+    independent of it (sample splitting), so the family Holm controls is still
+    one final hypothesis per finding. Stage-1 outcomes are kept as ``stage1:*``."""
+    async def run(members: list[str], removal: frozenset, kinds: tuple[str, str]):
+        audit = {"together": await auditor.audit(removal, n)}
+        p_main = auditor.p_value(audit["together"], kinds[0])
+        p_members: dict[str, float] = {}
+        if len(members) > 1:
+            for cid in members:
+                audit[cid] = await auditor.audit(removal - {cid}, n)
+                p_members[cid] = auditor.p_value(audit[cid], kinds[1])
+        return audit, p_main, p_members
+
     for f in findings:
         removal = frozenset(f.removal or f.members)
-        main_kind, member_kind = ("collapse", "intact") if f.role == "precondition" else ("flip", "restore")
-        f.audit = {"together": await auditor.audit(removal, n)}
-        ps = [auditor.p_value(f.audit["together"], main_kind)]
-        if len(f.members) > 1:
-            for cid in f.members:
-                o = await auditor.audit(removal - {cid}, n)
-                f.audit[cid] = o
-                ps.append(auditor.p_value(o, member_kind))
-        f.p_value = max(ps)
+        kinds = ("collapse", "intact") if f.role == "precondition" else ("flip", "restore")
+        audit, p_main, p_members = await run(f.members, removal, kinds)
+        drop = [cid for cid, p in p_members.items() if p > alpha]
+        if p_main <= alpha and drop and len(drop) < len(f.members):
+            stage1 = {f"stage1:{k}": o for k, o in audit.items()}
+            f.members = [m for m in f.members if m not in drop]
+            f.removal = [m for m in (f.removal or []) if m not in drop]
+            removal = removal - set(drop)
+            audit, p_main, p_members = await run(f.members, removal, kinds)
+            audit = {**stage1, **audit}
+        f.audit = audit
+        f.p_value = max([p_main, *p_members.values()])
     for f, p in zip(findings, holm([f.p_value for f in findings])):
         f.p_adjusted = p
         f.certified = p <= alpha
@@ -1205,6 +1225,10 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
     causes = [c for c in causes if c.together and c.together.flipped]
     if audit_n:
         await audit_findings(causes + preconds, test, audit_n, alpha)
+        for c in causes + preconds:
+            if "stage1:together" in c.audit:
+                notes.append(f"audit dropped member(s) that did not restore it; {c.role} re-audited on new "
+                             f"fresh replays as {', '.join(c.members)}")
         failed = [c for c in causes + preconds if not c.certified]
         for c in failed:
             notes.append(f"not certified on {audit_n} fresh replays per test ({c.role}: {', '.join(c.members)}; "

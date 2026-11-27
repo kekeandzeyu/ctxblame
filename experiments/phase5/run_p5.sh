@@ -10,7 +10,8 @@
 #                                    must match v0.2's 92% F1 within its CI
 #   real   p5-real-qwen3-14b       : Phase 5 engine (defaults), real traces
 #   gen    p5-gen-qwen3-14b        : Phase 5 engine (defaults), core + generated cases
-#   real5b p5b-real-qwen3-14b      : real again with the 5.2b fix (not in the default RUNS)
+#   real5b p5b-real-qwen3-14b      : real again with the 5.2b fix and two-stage audit (not default)
+#   gen5b  p5b-gen-qwen3-14b       : gen again with the same fixes (not default)
 set -euo pipefail
 : "${MODEL:?path or HF id of Qwen3-14B-FP8}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -35,7 +36,9 @@ for r in $RUNS; do
     repro) run p5-repro-real-qwen3-14b real real-qwen3-14b "ctxblame" "--audit-n 0 --no-stabilize" ;;
     real)  run p5-real-qwen3-14b real real-qwen3-14b "ctxblame ctxblame_uncond" "" ;;
     gen)   run p5-gen-qwen3-14b all qwen3-14b-fp8 "ctxblame ctxblame_uncond" "" ;;
-    real5b) run p5b-real-qwen3-14b real real-qwen3-14b "ctxblame" "" ;;  # 5.2b fix (after a5f5461)
+    # v0.3 fixes found by the runs above: 5.2b (search after a stabilizer) and the two-stage audit
+    real5b) run p5b-real-qwen3-14b real real-qwen3-14b "ctxblame" "" ;;
+    gen5b)  run p5b-gen-qwen3-14b all qwen3-14b-fp8 "ctxblame" "" ;;
     *) echo "unknown run $r"; exit 2 ;;
   esac
 done

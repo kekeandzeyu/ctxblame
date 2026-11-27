@@ -70,6 +70,41 @@ and are not reused.
 uv run python experiments/phase5/null_sim.py --runs 500 --out experiments/phase5/results/<tag>/null_sim.json
 ```
 
+### Two-stage audit (found by `p5-gen` seed 0)
+
+On `gen`, the one-stage audit rejected two bundles that held a true carrier plus a
+hitchhiker the search had not pruned (`p0/tool_result_sentence_config`,
+`gen/0-013/ruff/doc+user`; both found by `v0.2`). Keeping the hitchhiker alone
+cannot restore the choice (p = 1), so the whole bundle failed, and the true
+carrier was lost with it.
+
+The audit now runs in two stages:
+- **Stage 1:** when a bundle's removal flips but some members do not restore,
+  those members are dropped.
+- **Stage 2:** the smaller bundle is audited on new fresh replays, and only
+  stage 2 gives its p-value.
+
+Stage 1 only chooses the hypothesis, so this is sample splitting and Holm still
+covers one final hypothesis per finding.
+[results/null-sim-v2](results/null-sim-v2/null_sim.json), 500 runs, seed 0, adds
+a `hitchhiker` scenario:
+
+| scenario | audit | P(any false cause) [95% CI] | power | replays/run |
+|---|---|---:|---:|---:|
+| bundle with a member at the boundary | one-stage (v1) | 1.6% [0.8, 3.1] | – | 234 |
+| bundle with a member at the boundary | two-stage | 3.0% [1.8, 4.9] | – | 286 |
+| true 2-way OR bundle | two-stage | 0.0% | 99% | 139 |
+| carrier + weak line (hitchhiker) | off (v0.2) | 0.4% [0.1, 1.4] | 97% | 111 |
+| carrier + weak line (hitchhiker) | two-stage | 0.0% [0.0, 0.8] | 97% | 130 |
+
+The false-cause rate rises in the boundary scenario but stays below α, as theory
+predicts. When stage 1 drops the boundary member, stage 2 tests {X, Y}, which
+sits exactly on its null boundary and is rejected at most α of the time. The
+simulated search rarely leaves the weak line in a bundle (real hitchhikers come
+from replay noise), so the hitchhiker scenario does not stress the fix.
+`test_audit_drops_a_hitchhiker_and_certifies_the_rest_on_new_replays` covers the
+mechanism deterministically.
+
 ## 5.5: GPU re-run
 
 On a GPU box with vLLM (48 GB is enough for Qwen3-14B-FP8):
