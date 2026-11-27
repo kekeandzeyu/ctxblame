@@ -8,7 +8,7 @@ Plan and exit gate: [docs/ROADMAP.md](../../docs/ROADMAP.md#phase-5--engine-corr
 | 5.2 stabilizer instead of stopping when preconditions run out or are diffuse | done offline; real-case acceptance in 5.5 | `blame.py:_stabilizer`, `search` |
 | 5.3 search/audit split with FWER control | done, null simulation below | `blame.py:Tester.audit`, `audit_findings`, `stats.py`, `null_sim.py` |
 | 5.4 Anthropic `cache_control` pinning | done, offline | `ablate.py:pin_cache_breakpoints` |
-| 5.5 GPU re-run of Qwen3-14B | pending | `run_p5.sh` |
+| 5.5 GPU re-run of Qwen3-14B | repro passes; `real`, `gen` running | `run_p5.sh` |
 
 ## 5.1: chunking is unchanged on every existing case
 
@@ -63,3 +63,16 @@ uv run --with numpy python experiments/phase3/analyze.py experiments/phase3/resu
 
 `repro` must reproduce `v0.2` (`real`: 92% F1 [77, 100]) before the Phase 5 runs
 are compared with it.
+
+**Environment check passed**
+([p5-repro-real-qwen3-14b](../phase3/results/p5-repro-real-qwen3-14b/summary.md)).
+The box was an RTX 4090 48 GB running vLLM 0.34.0, with the official Qwen3-14B-FP8
+weights (sha256 verified). It used the `v0.2` behaviour (`--audit-n 0 --no-stabilize`)
+on the same 13 oracle-valid `real` cases with 3 seeds.
+
+| | Recall | Precision | F1 [95% CI] | Precond. separated | Precond. blamed | Replays/case |
+|---|---:|---:|---:|---:|---:|---:|
+| `v0.2` (real-qwen3-14b) | 92% | 92% | 92% [77, 100] | 100% | 0% | 545 |
+| repro (p5-repro-real-qwen3-14b) | 92% | 92% | 92% [77, 100] | 100% | 0% | 531 |
+
+Every seed matches `v0.2` (seed F1 92 / 92 / 92).
