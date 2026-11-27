@@ -31,6 +31,21 @@ Instructions for coding and research agents working in `ctxblame`.
 - **Run against a local or Colab `vLLM` server (`$0`):**
   Pass `--base-url http://127.0.0.1:8000/v1 --free --no-thinking-param` (see `experiments/phase3/serve_vllm.sh` and `experiments/phase3/run_model.sh`).
 
+### Remote GPU Runs (launching and watching a VM)
+
+Host, port, and password are given per session by the user. Never write them into the repo, commits, or memory.
+
+- **Launch detached:** `cd <repo> && setsid nohup <driver, e.g. experiments/phase5/run_p5.sh> > ../logs/<run>.log 2>&1 < /dev/null & disown`. Logs go to `<repo>/../logs/`, the `LOGS` default in `run_model.sh`. If a local ssh/expect call stays open after the launch, stop the local call; the remote job survives.
+- **Check the first minute, not just the end.** Run the status check about 60 s after launch and confirm `bench=up` and that `cases_started` is rising. In Phase 5.5 a `set -e` failure killed the driver 30 s in, and the GPU sat idle for hours.
+- **Status check** (on the VM, over ssh): `experiments/phase3/vm_status.sh [tag-prefix]`.
+  - The first line is machine-readable: `job= bench= vllm= gpu=util%,MiB benchErr= vllmErr=`.
+  - Then it prints seeds finished per tag (`seed*/benchmark.json`, plus `summary` when done), `cases_started` per `bench_*.log`, and driver log tails.
+  - It exits 1 when something needs attention: errors or tracebacks in `bench_*`, `oracle_*` or `vllm_*` logs; vLLM down while a benchmark runs; or the driver gone while a tag it started has no `summary.md`.
+- **Watching:** poll `vm_status.sh` every few minutes from a background task. Wake on exit 1 (inspect the `-- errors` tail before restarting anything) and on each new driver-log line (seed or run finished). After a wake, re-arm the watcher until the last run's `summary.md` exists.
+- **Restarting:** `run_model.sh` skips seeds whose `benchmark.json` exists. Relaunch the same driver with `SKIP_SERVE=1` to reuse a live vLLM server on `:8000`. Never delete or overwrite a finished tag.
+- **Model weights in China-hosted VMs:** HF through the cluster proxy is slow. Fetch shards from ModelScope (`curl --noproxy "*"`, shards in parallel) and verify each against the HF LFS sha256 (`huggingface.co/api/models/<repo>/tree/main`) before serving.
+- **Provenance:** confirm the vLLM version matches the run being reproduced (the traces' `system_fingerprint`; `v0.2` = `vllm-0.34.0`). Copy results back into a fresh `experiments/phase3/results/<tag>/`.
+
 ## Hard Guardrails
 
 1. **Spend & Credential Safety:**
