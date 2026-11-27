@@ -4,14 +4,13 @@
 pieces of context removed and report which chunk caused the decision.
 Works with any model: the evidence comes from replays, not from the model's
 own explanation. Status: v0.2, validated on open models (see
-[docs/WRITEUP.md](docs/WRITEUP.md)); not yet on PyPI.
+[docs/WRITEUP.md](docs/WRITEUP.md)).
 
 ```sh
-uvx --from git+https://github.com/kekeandzeyu/ctxblame@v0.2.0 ctxblame --help
+uvx ctxblame --help        # or: pip install ctxblame
 ```
 
-The examples below use `uv run ctxblame` from a checkout; with the line above,
-use `uvx --from git+https://github.com/kekeandzeyu/ctxblame@v0.2.0 ctxblame`.
+The examples below use `uv run ctxblame` from a checkout; `uvx ctxblame` works the same.
 
 Two wire formats are supported, which covers most models: Anthropic Messages
 (`/v1/messages`) and OpenAI Chat Completions (`/chat/completions`).
@@ -198,7 +197,7 @@ See [docs/ROADMAP.md](docs/ROADMAP.md) for the full technical audit, bottleneck 
 ### `v0.2` — Empirical Validation & Initial Release (Released)
 1. ~~**Phase 3–4 benchmark on open models**~~ — done: see [experiments/phase3/RESULTS.md](experiments/phase3/RESULTS.md). Milestone 1's acceptance (all carriers, 100% precision, edits kept apart) holds on real Qwen3-14B agent traces.
 2. ~~**Robustness at $0**~~ — done: Qwen3-14B with thinking on (95%), Llama-3.1-8B (85%, tied with ContextCite on F1; see the writeup for why). Still open: `gen-open` cases (the carrier decides whether the agent acts at all) and the optional paid DeepSeek re-run of `experiments/phase2/run.py --only step5 step7` (~$1–$2).
-3. ~~**Publish `v0.2`**~~ — tagged `v0.2.0` on GitHub with the [technical writeup](docs/WRITEUP.md); PyPI upload pending.
+3. ~~**Publish `v0.2`**~~ — released as `v0.2.0` on [PyPI](https://pypi.org/project/ctxblame/) and GitHub, with the [technical writeup](docs/WRITEUP.md).
 
 ### `v0.3` — Zero-Setup Adoption & Prompt-Repair Workflow
 1. **Retroactive transcript importers (`ctxblame import`):** Reconstruct replayable `/v1/messages` and `/chat/completions` requests directly from local session logs already saved by **Claude Code** (`~/.claude/projects/**/*.jsonl`), **OpenCode**, and **Harbor**—eliminating the need to run a proxy *before* a surprise bug occurs.

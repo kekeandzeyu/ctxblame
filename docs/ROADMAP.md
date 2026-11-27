@@ -61,7 +61,7 @@ Make prefix-cache economics a first-class primitive in search ordering:
 | **4. Phase 3 Attribution Benchmark** | Done (`421cfb7`) | Qwen3-8B (53 cases) and Qwen3-14B-FP8 (48) × 3 seeds: `ctxblame` F1 94% / 95% vs. `ctxblame_uncond` 79/76, `contextcite` 71/84, `self_explain` 73/60, `loo` 34/39. | VM `vLLM --enable-prefix-caching`. | **$0** |
 | **4b. Phase 4 Real Traces & Long Prompts** | Done (`cda7ab5`, `f301833`) | 15 real Qwen3-14B agent runs (13 valid cases): F1 92% vs. ≤60% for every baseline. ~35k-char prompts: stratified vs. flat 95% vs. 90% F1, −34% uncached input. See `experiments/phase3/RESULTS.md`. | VM `vLLM`. | **$0** |
 | **5. Robustness on Open Models** | Done (`b1a2afb`, `8c82670`, `c9cdb56`) | Qwen3-14B thinking on: F1 95%. Llama-3.1-8B: 85%, tied with ContextCite (84%) but still the only method separating preconditions (76%) and answering negatives (100%); its OR bundles pick up neutral lines that pass stricter vetting (`--strict-restore`, `--member-controls`: no gain), i.e. real interactions. Open: `gen-open`; the paid DeepSeek regression is optional. | VM `vLLM`. | **$0** |
-| **6. `v0.2` Release** | Done (tag `v0.2.0`) | GitHub release + [writeup](WRITEUP.md); `uvx --from git+https://github.com/kekeandzeyu/ctxblame@v0.2.0 ctxblame`. PyPI upload pending. | – | **$0** |
+| **6. `v0.2` Release** | Done (tag `v0.2.0`) | PyPI + GitHub release + [writeup](WRITEUP.md); `uvx ctxblame`. | – | **$0** |
 
 ---
 

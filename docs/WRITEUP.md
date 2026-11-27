@@ -159,7 +159,7 @@ frontier-model session.
 ## Try it
 
 ```sh
-uvx --from git+https://github.com/kekeandzeyu/ctxblame@v0.2.0 ctxblame --help
+uvx ctxblame --help                                     # or: pip install ctxblame
 ctxblame record --upstream https://api.deepseek.com      # then point your agent at it
 ctxblame steps traces/<trace>.jsonl
 ctxblame why traces/<trace>.jsonl --step 5 --key-arg 'command~^python -m pytest'
