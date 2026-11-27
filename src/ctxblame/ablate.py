@@ -343,6 +343,84 @@ def validate(fmt: str, body: dict) -> list[str]:
     return problems
 
 
+# --------------------------------------------------------- prompt caching
+
+MAX_BREAKPOINTS = 4  # Anthropic allows at most 4 cache_control breakpoints per request
+_NO_CACHE_MARK = ("thinking", "redacted_thinking")
+
+
+def _blocks(body: dict) -> list[tuple[tuple, dict | str]]:
+    """Every cacheable block of an Anthropic request in prompt order (tools,
+    system, messages) as (path, block); string system / content is one block."""
+    out: list[tuple[tuple, dict | str]] = [(("tools", i), t) for i, t in enumerate(body.get("tools") or [])]
+    s = body.get("system")
+    if isinstance(s, str):
+        out.append((("system",), s))
+    elif isinstance(s, list):
+        out += [(("system", i), b) for i, b in enumerate(s)]
+    for i, m in enumerate(body.get("messages") or []):
+        c = m.get("content")
+        if isinstance(c, str):
+            out.append((("messages", i, "content"), c))
+        elif isinstance(c, list):
+            out += [(("messages", i, "content", j), b) for j, b in enumerate(c)]
+    return out
+
+
+def _bare(b) -> object:
+    return {k: v for k, v in b.items() if k != "cache_control"} if isinstance(b, dict) else b
+
+
+def pin_cache_breakpoints(original: dict, ablated: dict, limit: int = MAX_BREAKPOINTS) -> dict:
+    """Anthropic ``cache_control`` for an ablated replay of ``original``.
+
+    The ablated request shares a byte-identical prefix with the original up to
+    the first changed block. Breakpoints after that point would only write cache
+    entries for a body that changes from test to test, so they are removed; one
+    is pinned on the last unchanged block (the frozen prefix every test shares),
+    in the style of the recorded ones (e.g. a ``ttl``), keeping at most ``limit``.
+    Requests recorded without prompt caching are returned unchanged."""
+    orig = _blocks(original)
+    marks = [b["cache_control"] for _, b in orig if isinstance(b, dict) and "cache_control" in b]
+    if not marks:
+        return ablated
+    b = copy.deepcopy(ablated)
+    new = _blocks(b)
+    k = 0
+    while k < min(len(orig), len(new)) and _bare(orig[k][1]) == _bare(new[k][1]):
+        k += 1
+    if k == len(orig) == len(new):  # nothing removed
+        return b
+
+    def node(path: tuple):
+        o = b
+        for p in path[:-1]:
+            o = o[p]
+        return o, path[-1]
+
+    for path, blk in new[k:]:  # stale breakpoints in the changed region
+        if isinstance(blk, dict) and "cache_control" in blk:
+            parent, key = node(path)
+            parent[key] = _bare(blk)
+    pin = next((i for i in range(k - 1, -1, -1)
+                if not (isinstance(new[i][1], dict) and new[i][1].get("type") in _NO_CACHE_MARK)
+                and not (isinstance(new[i][1], str) and not new[i][1].strip())), None)
+    if pin is not None:
+        path, blk = new[pin]
+        style = next((blk2["cache_control"] for _, blk2 in reversed(new[:pin + 1])
+                      if isinstance(blk2, dict) and "cache_control" in blk2), marks[-1])
+        parent, key = node(path)
+        if isinstance(blk, str):  # string system / content: one text block carrying the mark
+            parent[key] = [{"type": "text", "text": blk, "cache_control": dict(style)}]
+        else:
+            parent[key] = {**blk, "cache_control": dict(style)}
+    marked = [p for p, blk in _blocks(b) if isinstance(blk, dict) and "cache_control" in blk]
+    for path in marked[:max(0, len(marked) - limit)]:  # over the limit: drop the earliest
+        parent, key = node(path)
+        parent[key] = _bare(parent[key])
+    return b
+
+
 # --------------------------------------------------------------------- text
 
 def text_fields(fmt: str, body: dict) -> list[tuple[tuple, str]]:

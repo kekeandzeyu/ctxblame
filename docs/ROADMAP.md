@@ -1,82 +1,211 @@
-# ctxblame — Technical Audit, Bug Diagnosis & Algorithmic Roadmap
+# `ctxblame` Roadmap (`v0.2` → paper & `v0.3`)
 
-## 1. Technical Audit: Idea Novelty vs. Algorithmic Novelty
+This is the single canonical plan. Experiment phases continue the repository's
+numbering (Phases 0–4 are done; see [WRITEUP.md](WRITEUP.md) and
+[experiments/phase3/RESULTS.md](../experiments/phase3/RESULTS.md)), so new runs go
+under `experiments/phase5/` … `experiments/phase8/`, and engine changes that
+alter numbers are re-run under a fresh `results/<tag>/`, never over the `v0.2`
+directories.
 
-### What Already Works Well
-* **Idea & Positioning:** Model-agnostic `"git blame"` for black-box multi-turn agent tool calls over both Anthropic Messages (`/v1/messages`) and OpenAI Chat Completions (`/chat/completions`), requiring no token logprobs or white-box weights.
-* **Solid Systems Pieces:**
-  * Streaming/non-streaming recording proxy (`src/ctxblame/proxy.py`, `sse.py`) that strips auth headers on disk.
-  * Sequential replay tester with Wilson confidence intervals (`decide()` in `src/ctxblame/blame.py#L322-L332`) and a hard USD spend ledger (`src/ctxblame/pricing.py`).
-  * Structure-preserving JSON ablation (`apply_chunks` in `src/ctxblame/blame.py#L236-L288`, `ablate.py`) that pairs `tool_use` + `tool_result` removals and rotates `tool_use` IDs when stripping `thinking` blocks.
-* **Three Empirical Findings Already Demonstrated (`experiments/phase1/README.md`):**
-  1. **Undocumented server-side reasoning cache:** On DeepSeek's Anthropic endpoint in thinking mode, removing both an `AGENTS.md` rule and earlier `thinking` text still produced the rule-driven call `17/20` times—until `tool_use` IDs were rotated, proving the server cached and restored reasoning keyed by call ID.
-  2. **Redundant multi-carrier backup is the norm:** Rules in `AGENTS.md`, examples in tool parameter schemas, and the agent's own earlier tool calls act as OR-backups. Single-chunk leave-one-out assigns near-zero weight to each carrier because the remaining backups hold the decision at `~100%` (0% F1 on real Qwen3-14B traces, Phase 4). *Correction (Phase 3):* `ContextCite` does **not** collapse here: its random multi-chunk ablations remove backups together, so it recalls 88–96% of carriers. It fails instead on preconditions (blames the edit in 92–100% of cases), on negatives (0%: it always names something), on precision in real traces (23%), and it needs prompt logprobs.
-  3. **Self-reinforcing history:** By step 5–7 of a run, deleting a rule from `AGENTS.md` has zero effect (`20/20`) because the agent copies its own step-1 tool invocation.
+## 1. Where `v0.2.0` stands
 
-### Where Current Technical Novelty Stops (and Breaks)
-Under the hood, `src/ctxblame/blame.py#L405-L429` currently runs **Zeller's classical 1999 `ddmin` algorithm** against an unconditional target rate `P(target)`. Phase 2 validation (`experiments/phase2/results/results.md`) exposed two concrete algorithmic failures of unconditional `ddmin` on multi-turn agent traces:
+- **Engine:** auth-stripping recording proxy; structure-preserving ablation
+  (tool-call/result pairing, id rotation on reasoning removal); conditional blame
+  $P(A \mid E)$ that keeps workflow preconditions apart from choice carriers;
+  suffix-first delta debugging; leave-one-in pruning of OR bundles; random
+  same-size controls.
+- **Evidence (open models, vLLM, $0, 3 seeds):** F1 85–95% on generated cases,
+  92% vs ≤60% on 13 real Qwen3-14B steps; preconditions separated in 76–100%
+  (all baselines 0%); habit-only negatives 97–100% (ContextCite 0%). Suffix-first
+  search: −23…27% replays, −34…38% uncached input on 14k–35k-char prompts, no
+  saving on short ones.
+- **Known weaknesses:** Llama-3.1-8B ties ContextCite (neutral lines join OR
+  bundles and pass every vetting check); one real failure (`real/run4/step21`,
+  diffuse precondition); real-trace evidence is one task, one convention, one
+  model; the upgraded engine was never run on a paid API.
 
-1. **Bug 1 — Workflow Precondition vs. Choice Confounding (`0%` precision on `step7`, `60%` on `step5`):**
-   * In `p1/pytest/anthropic/step7`, `ctxblame` found **`0/3` planted carriers (`0%` precision)** and blamed `turn 6 edit_file({"path": "src/ctxblame/formats.py", ...})` (`0/20`).
-   * In `p1/pytest/openai/step5`, precision dropped to **`60%`**, lumping `turn 4 edit_file(...)` together with the actual `pytest` style carriers.
-   * **Root cause:** Removing `edit_file` makes the agent *go back and edit the file* instead of running tests at all. Because `Tester` scores unconditional `P(bash command matches python -m pytest -q)`, *not running tests* looks identical to *switching test runners* (`0/20` matches). `ddmin` immediately locks onto `edit_file` (a single-chunk flip!) and stops, completely missing the 3 redundant carriers that actually controlled `python -m pytest -q` vs. `uv run pytest`.
-2. **Bug 2 — Immediate Byte-0 Prefix-Cache Invalidation (`$2.42` on one step):**
-   * `everything = await test(frozenset(remaining))` (`src/ctxblame/blame.py#L460`) and complement slices (`comp`, `src/ctxblame/blame.py#L421`) strip `tools` and `system` at offset `0` right at the start of search.
-   * Mutating byte `0` invalidates the provider's KV prefix cache across the entire 20k+ token request (`$1.32/M` uncached vs. `$0.044/M` cached on `deepseek-v4-pro`; `$0.30/M` vs. `$0.006/M` on `deepseek-flash`), costing `$2.417` on `p1/pytest/openai/step5` alone.
+## 2. Audit: what must change before a paper
 
----
+Verified against the code (line numbers as of `v0.2.0`):
 
-## 2. Algorithmic Upgrade Plan (Making `ctxblame` Technically Novel)
+| # | Problem | Where | Consequence |
+|---|---|---|---|
+| 1 | The "task" is the **last** user message with any text; a later `tool_result` turn carrying a `<system-reminder>` text block becomes the task, and the real prompt in `messages[0]` becomes removable. The task message is also exempt as a whole, hiding `CLAUDE.md` injected into it. | `blame.py:115-119`, `:185` | Wrong chunks on every Claude Code–style trace. |
+| 2 | Precondition handling ends the whole search: at `max_preconditions` (`blame.py:873-874`) and on a diffuse precondition (`len(s) > max_members`, `:879-882`). *Corrected in Phase 5:* on `real/run4/step21` the stratified search stops at the **first** of these in all 3 seeds (three single read-output lines found, each revealing another); the diffuse `break` is what the flat search hits. | `blame.py:873-882` | `real/run4/step21`: preconditions reported, carriers never searched. |
+| 3 | Confirmation reuses search samples (`old = self.samples[key]`), and each test peeks every batch of 5 at a fixed-n Wilson interval. | `blame.py:493`, `:499-541` | No valid error-rate statement for reported causes. |
+| 4 | A rule that both triggers $E$ and picks $A$ (`e_coupled`, 0–15 oracle cases per model) collapses $P(E)$ when removed, so it is reported as a precondition only. | `blame.py:941-950`, `oracle.py:152` | Positivity violation: $P(A \mid E, do(\neg S))$ is undefined. |
+| 5 | The oracle reuses ctxblame's own `resolve_given` and 0.5× thresholds and drops 30–41% of cases (incl. AND and E-coupled ones). | `oracle.py:94-152` | Ground truth shares the method's assumptions; selection bias. |
+| 6 | Baselines are not steelmanned: ContextCite scores the whole tool-call JSON unconditionally and selects `w ≥ 0.25·max w` (it can almost never return "nothing"); self-explanation sees each chunk cut to 320 chars. | `contextcite.py:143`, `benchmark.py:259` | Part of the margin may be baseline handicap. |
+| 7 | Anthropic `cache_control` breakpoints are not managed; tail removals can strip them. | `ablate.py`, `blame.py` | Cache economics unmeasured on the API that needs them most. |
 
-### Milestone 1: Conditional / Contrastive Blame (`P(A | E)` via `--given`) — Implemented (`65d1387`)
-Separate **Stage Preconditions** (*why take action family `E` now?*) from **Choice Carriers** (*given `E`, why choose variant `A` over alternatives?*):
-* Introduce conditioning matcher `E` (`--given <spec>`, defaulting when `--key-arg` is used to *"calls the same tool / intent category"*, e.g. *"runs any `pytest` command"* while target `A` is *"uses `python -m pytest -q`"*).
-* Track `(k_target, k_given, n_ok)` in `Outcome`:
-  * **Precondition collapse:** If removing subset `S` drops `k_given / n_ok` significantly below baseline `P(E)`, `S` contains a **workflow precondition** (such as `turn 6 edit_file`). Isolate and auto-protect that precondition (reporting it separately under `Preconditions`), rather than reporting it as a cause of `A`.
-  * **Choice flip:** Score `ddmin` flips on the conditional Wilson interval of `k_target / k_given` while `P(E)` remains intact.
-* **Acceptance test:** Verified locally via end-to-end HTTP simulation (`tests/test_blame_cli.py`). **Met on open models (Phase 4):** on real Qwen3-14B agent traces, all planted carriers with `100%` precision on all 12 cases with an `edit_file` precondition, preconditions reported separately in 100%, over 3 seeds (`experiments/phase3/RESULTS.md`). The original `p1` step5/step7 cases can't be re-run on Qwen (`python -m pytest -q` is its habit, so the carriers don't drive it); the paid DeepSeek re-run is optional, not required.
+### Correction to the earlier theory plan
 
-### Milestone 2: Explicit AND-Preconditions vs. OR-Carriers (Minimal Hitting-Set Duality) — Implemented (`ba1b402`)
-Formalize multi-carrier attribution beyond single-subset `ddmin`:
-* **AND-context (necessary chunks):** Chunks whose individual removal collapses `P(E)` or `P(A | E)`.
-* **OR-carrier bundles (minimal hitting sets):** Minimal sets $C = \{c_1, \dots, c_m\}$ where removing *all* $c \in C$ flips $P(A \mid E)$ below threshold, **and** holding $C \setminus \{c_i\}$ removed proves each $c_i$ alone restores $P(A \mid E)$ (filtering out hitchhiking non-carriers that `ddmin` kept by chance).
+The previous roadmap planned to prove that uniform-mask surrogates need
+$\Omega(4^k \log d)$ queries versus $O(k \log d)$ for adaptive search under
+$k$-way OR redundancy. **Drop that claim.** "The decision survives iff any
+carrier is kept" is exactly *group testing* (a test is the kept set; it is
+positive iff it contains a carrier). The $2^{-(k-1)}$ dilution is an artefact of
+keep-probability $q = 1/2$: Bernoulli($q \approx 1/k$) non-adaptive designs
+recover $k$ carriers among $d$ chunks with $O(k \log d)$ tests, and
+$\Omega(k \log(d/k))$ is a lower bound for *every* method, adaptive or not
+(Aldridge, Johnson & Scarlett, *Group Testing: An Information-Theoretic
+Perspective*, 2019). An informed reviewer would reject the separation as stated.
 
-### Milestone 3: KV-Cache-Stratified Suffix-First Search — Implemented (`ba1b402`), Measured (Phase 4)
-**Measured:** the original 5–10× target was not reached. On short (2–6k-char) requests it saves nothing; on real 14–26k-char traces it uses −23% replays and −38% simulated uncached input, and on ~35k-char requests −27% replays and −34% uncached input with *higher* F1 (95% vs 90%) than the flat search (`--no-stratify`).
+What remains defensible and is ctxblame's actual structure:
 
-Make prefix-cache economics a first-class primitive in search ordering:
-1. Partition chunks by byte offset into tiers: `Tier 3: Tail History` → `Tier 2: Early History` → `Tier 1: System Prompt` → `Tier 0: Tool Schemas`.
-2. Probe suffix tiers first while keeping bytes `0 .. tier_start` **byte-identical**, preserving 70%–95% KV cache hit rates (`30×–50×` cheaper input tokens on DeepSeek, `10×` on Anthropic).
-3. Only include earlier prefix tiers when suffix-only removal fails to flip `P(A | E)` (which naturally signals an upstream redundant carrier in `system` or `tools`, and narrows search to `suffix_suspects ∪ prefix_tier`).
-4. Replace upfront `everything = test(all_chunks)` with incremental suffix-widening (`tail` → `history + system` → `all`), avoiding unnecessary byte-0 cache misses when tail context alone drives the step.
+- **The precondition gate.** With $m$ precondition chunks that must stay for
+  $E$ to happen at all, a Bernoulli($q$) design keeps all of them with
+  probability $q^m$; every other test is uninformative about $P(A \mid E)$. Small
+  $q$ (good for OR recovery) and large $q$ (good for keeping the gate open)
+  conflict; an adaptive search that finds and protects the gate first does not
+  pay this. This is the separation to prove and to measure (Phase 7).
+- **Calibrated "nothing in the context"** and a post-selection error guarantee
+  (Phase 5), which surrogate methods do not provide.
+- **Cache-aware test ordering** as an engineering result (measured ~1.5×, not
+  a headline).
 
----
+### Scope guardrails
 
-## 3. Validation Plan ($0 on open models; the ~$1–$2 DeepSeek check is optional)
+- Benchmarks use **wire-exact proxy recordings only**; `ctxblame import` stays a
+  CLI convenience marked `reconstructed (not wire-verified)`.
+- No automated prompt repair (`ctxblame patch`) as a contribution; use a
+  deterministic single-shot fix-verification study instead.
+- No individual-level PNS claims; report interventional bundle necessity and
+  leave-one-in sufficiency, which are point-identified from replays.
+- `--chain` (backward traversal over attributed earlier calls) stays a short
+  formulation plus 2–3 case studies.
+- Report the sampling settings with every number: attributions are properties
+  of $P(\cdot)$ at a given temperature (the `v0.2` runs used 0.7 for Qwen with
+  thinking off, 0.6 for Qwen thinking and Llama; exact `extra_body` is in each
+  `results/<tag>/oracle_all.json`).
 
-| Step | Status | Scope | Compute / Pricing Strategy | Est. Spend |
-| :--- | :--- | :--- | :--- | :--- |
-| **0. Colab / Self-Hosted Support** | Done (`65d1387`, `6389eb2`) | `--free`, `--model`, `--max-tokens`, `--no-thinking-param`, optional local API key, `notebooks/colab_vllm.ipynb`. | Local tests + Colab `vLLM`. | **$0** |
-| **1–3. Core Algorithmic Upgrades** | Done (`65d1387`, `ba1b402`) | Conditional `--given`, `C \ {c_i}` hitchhiker pruning & AND/OR duality, KV-cache-stratified suffix-first search, 99 unit/CLI tests. | Local mock models. | **$0** |
-| **4. Phase 3 Attribution Benchmark** | Done (`421cfb7`) | Qwen3-8B (53 cases) and Qwen3-14B-FP8 (48) × 3 seeds: `ctxblame` F1 94% / 95% vs. `ctxblame_uncond` 79/76, `contextcite` 71/84, `self_explain` 73/60, `loo` 34/39. | VM `vLLM --enable-prefix-caching`. | **$0** |
-| **4b. Phase 4 Real Traces & Long Prompts** | Done (`cda7ab5`, `f301833`) | 15 real Qwen3-14B agent runs (13 valid cases): F1 92% vs. ≤60% for every baseline. ~35k-char prompts: stratified vs. flat 95% vs. 90% F1, −34% uncached input. See `experiments/phase3/RESULTS.md`. | VM `vLLM`. | **$0** |
-| **5. Robustness on Open Models** | Done (`b1a2afb`, `8c82670`, `c9cdb56`) | Qwen3-14B thinking on: F1 95%. Llama-3.1-8B: 85%, tied with ContextCite (84%) but still the only method separating preconditions (76%) and answering negatives (100%); its OR bundles pick up neutral lines that pass stricter vetting (`--strict-restore`, `--member-controls`: no gain), i.e. real interactions. Open: `gen-open`; the paid DeepSeek regression is optional. | VM `vLLM`. | **$0** |
-| **6. `v0.2` Release** | Done (tag `v0.2.0`) | PyPI + GitHub release + [writeup](WRITEUP.md); `uvx ctxblame`. | – | **$0** |
+## 3. Plan
 
----
+Each phase has an exit gate; the next one starts only when it is met.
 
-## 4. Independent Positioning, Practical Warnings & `v0.3` Adoption Plan
+### Phase 5 — Engine correctness and valid statistics ($0, offline + one re-run)
 
-### Positioning & Prior Art Checklist (For Writeup / Paper)
-* **Cite upfront:** **ContextCite** (Cohen-Wang et al., NeurIPS 2024) for surrogate ablation attribution on text generation, and **Counterfactual Trace Auditing (CTA)** (2026) for whole-trajectory skill/tool comparisons.
-* **Defensible novelty boundary:** `ctxblame` solves **logprob-free, single-step discrete tool-call attribution** under (a) redundant `OR`-carriers (`AGENTS.md` + tool schema + history backups where LOO/linear surrogates collapse), (b) workflow precondition confounding (`P(A | E)` via `--given`), and (c) provider prefix-cache economics + server-side `thinking` cache invalidation.
+Details and results: [experiments/phase5/README.md](../experiments/phase5/README.md).
 
-### Real-World Adoption Bottlenecks to Address Next (`v0.3`)
-1. **The "Proxy Chicken-and-Egg" Bottleneck:**
-   * *Problem:* Unlike `git blame`, which works retroactively on any git repo, `ctxblame v0.2` only works if the user already had `ctxblame record` running *before* the agent failed. Most developers will not keep a local proxy wired 24/7.
-   * *`v0.3` Fix — Retroactive Log Importers (`src/ctxblame/importers/`):* Parse on-disk session transcripts already written by **Claude Code** (`~/.claude/projects/**/*.jsonl`), **OpenCode**, and **Harbor**, pair them with workspace `CLAUDE.md` / `AGENTS.md` + tool definitions, and emit a standard `ctxblame` trace so `uvx ctxblame why --last-claude --step N` works immediately *after* any bad turn.
-   * *`v0.3` Helper — Zero-Config Wrapper (`ctxblame wrap -- <cmd>`):* Spawn coding CLIs with an ephemeral port and `ANTHROPIC_BASE_URL` / `OPENAI_BASE_URL` pre-configured when exact wire-format SSE capture is needed.
-2. **Frontier Replay Cost & Latency Expectations:**
-   * *Warning:* ~160 replays is near-free on `vLLM` / `deepseek-flash`, but on 60k–100k token Claude Opus/Sonnet sessions even cached replays take 1–2 minutes and multiple dollars. Always frame `ctxblame` as an **on-demand diagnostic MRI** for broken steps (and keep `--budget` visible by default), never as an always-on per-turn hook.
-3. **Closing the Loop from Diagnosis to Verified Fix (`--replace`):**
-   * *Upgrade:* Add `--replace <chunk_id_or_text> <new_text>` (or `ctxblame verify`) so once `ctxblame why` isolates a bad instruction in `CLAUDE.md` or a tool schema, the developer can verify in 10 cached replays (~3 seconds) that their rewritten prompt fixes the decision before re-running a full 40-turn task.
+- [x] **5.1 Block-level user-turn chunking** (audit #1). The task is the latest
+  user turn with text the user wrote; `<system-reminder>`, `<environment_details>`
+  and `<context>` blocks in any user turn (string or block content, both wire
+  formats) are removable `injected` chunks with line children. Chunking of every
+  existing benchmark case is byte-identical to `v0.2` (5,090 chunks), so the
+  `v0.2` numbers are unaffected.
+- [x] **5.2 Stabilizer instead of stopping** (audit #2). When preconditions run
+  out (`max_preconditions`) or one is diffuse, a minimal stabilizer $K$ of $E$
+  (removing everything else keeps $E$; prefix kept first, so its probes stay
+  cache-friendly) is protected once, reported as `diffuse_preconditions`, and the
+  choice search continues. `--no-stabilize` restores `v0.2`. Mock-model tests
+  reproduce the `run4/step21` shape. *Acceptance on the real case: 5.5.*
+- [x] **5.3 Search / audit split** (audit #3). After the search, every finding
+  is audited on `--audit-n` (default 20) fresh replays per test that the search
+  never sees: bundle flip + each leave-one-in restore (exact one-sided binomial
+  tests at the search's thresholds), intersection–union within a bundle, Holm
+  across findings at `--alpha` (0.05); uncertified findings move to
+  `uncertified`. **Result (null simulation, real `Tester` + simulated model, 500
+  runs):** with a bundle member at the boundary, `v0.2` reports a false bundle
+  in 93% of runs (its leave-one-in check counts "not clearly flipped" as
+  "restores"); with the audit 1.6% [0.8, 3.1] ≤ α, at 99% power on a true
+  bundle and +60–75 replays per run.
+- [x] **5.4 `cache_control` pinning** (audit #7): on Anthropic requests recorded
+  with prompt caching, stale breakpoints after the first changed block are
+  removed and one is pinned on the last unchanged block (recorded style kept,
+  never on reasoning, ≤ 4). Requests recorded without caching are replayed as
+  recorded.
+- [ ] **5.5 Re-run on GPU** (`experiments/phase5/run_p5.sh`), same oracle-valid
+  cases as `v0.2`:
+  1. `p5-repro-real`: `--audit-n 0 --no-stabilize` on `real` — must reproduce
+     `v0.2` (92% F1) within its CI, which checks the VM matches the original setup.
+  2. `p5-real` and `p5-gen`: the Phase 5 engine (defaults), ctxblame and
+     ctxblame `--given none`, 3 seeds.
+
+**Gate:** offline suite green; type-I simulation within α; re-run F1 within
+the `v0.2` CI (or a documented reason why not); `run4/step21` finds a carrier or
+reports `diffuse_precondition` with the search continuing.
+
+### Phase 6 — Ground truth independent of the method (Tier 1, $0)
+
+- [ ] **6.1 Exhaustive coalition tables.** For each case, enumerate all $2^m$
+  removals of its planted elements ($m \le 5$: carriers, precondition, plus 1–2
+  *neutral probe lines*), fixed $N = 50$ replays each. Truth = the estimated
+  Boolean function of $(P(E), P(A \mid E))$; nothing is dropped, cases are
+  labelled by regime: single, OR, AND, precondition-gated, E-coupled,
+  conflict/override, habit-negative, and *non-monotone / interaction*.
+- [ ] **6.2 Pilot first.** 10 cases on Qwen3-14B to measure throughput, then
+  size the suite (target 200–300 cases; ~1,600 replays per case at $m = 5$).
+- [ ] **6.3 Settle the Llama question.** The neutral probes say directly whether
+  Llama's neutral lines are real interactions (they appear in the table) or
+  ctxblame false positives (they do not).
+- [ ] **6.4 E-coupled cases** (audit #4). Estimate the coupled effect with a
+  matched intervention: compare $P(A \mid do(E), do(\neg S))$ against the
+  equally forced baseline $P(A \mid do(E))$ — never against unforced
+  $P(A \mid E)$. `tool_choice` forces a tool name only, so this applies where
+  $E$ is a tool; intent-level $E$ (a Bash command family) is reported as not
+  identifiable rather than forced. Then classify `precondition` vs
+  `triggers_and_steers` in the engine.
+
+**Gate:** ≥ 200 labelled cases on ≥ 2 models; ctxblame scored on all of them
+(per regime), with the oracle-dropped subset reported separately for comparison
+with `v0.2`.
+
+### Phase 7 — Steelmanned baselines and theory ($0)
+
+- [ ] **7.1 Baselines at matched replay budgets** ($M \in \{64, 128, 256\}$):
+  - *ContextCite-contrastive*: target-span log-likelihood given the tool-call
+    prefix (conditional on $E$), with a permutation-null threshold so it can
+    answer "nothing".
+  - *Black-box group testing / Lasso / Banzhaf* on binary $\mathbb{I}[A]$ given
+    $E$, **sweeping the keep-probability** $q \in \{1/2, 1/4, 1/k\}$. This is the
+    decisive comparison: if a tuned non-adaptive design matches ctxblame on
+    choice carriers, the contribution is the gate handling, not the search.
+  - *Self-explain-full*: no 320-char truncation, $(A, E)$ stated in the prompt.
+- [ ] **7.2 Theory section:**
+  1. Noisy group-testing formulation and the $\Omega(k \log(d/k))$ lower bound;
+     delta debugging / binary splitting meets it adaptively.
+  2. Gate proposition: non-adaptive Bernoulli($q$) designs waste a $1 - q^m$
+     fraction of tests under $m$ preconditions; adaptive protection removes the
+     $q^{-m}$ factor. Verified empirically on Phase 6 cases by varying $m$.
+  3. Audit theorem for Phase 5.3 (IUT + Holm, fresh draws).
+  4. Diagnostic: total influence of the estimated Boolean function per model
+     (from Phase 6 tables) as a measurable "noisy model" property that predicts
+     when monotone search assumptions break.
+
+**Gate:** baseline table on Phase 6 suite; propositions written with proofs and
+matched by the measured curves. **Venue decision here:** if the gate separation
+holds against tuned group testing → main track (method + theory); otherwise →
+NeurIPS Datasets & Benchmarks with `AgentBlame-Bench` as the contribution.
+
+### Phase 8 — External validity: wild traces and one closed API
+
+- [ ] **8.1 `ctxblame wrap -- <cmd>`** (prerequisite): ephemeral proxy port and
+  `ANTHROPIC_BASE_URL` / `OPENAI_BASE_URL` injection.
+- [ ] **8.2 Tier 2 wild steps.** 50–100 wire-captured steps from 2 harnesses
+  (start with one open-model harness, e.g. OpenHands, then Claude Code) on a
+  SWE-bench Verified subset, with **decision types beyond the test command**:
+  which file to edit, whether to run a check before a risky command, which tool
+  to use.
+- [ ] **8.3 Ground-truth-free metrics** on held-out fresh replays: conditional
+  flip rate of the blamed set (↑), precondition collateral damage (↓),
+  leave-one-in member sufficiency (↑), flips vs. replays/tokens.
+- [ ] **8.4 `ctxblame verify --replace-text`** and the single-shot fix study:
+  editing the full minimal OR bundle vs. the top-1 LOO / surrogate chunk.
+- [ ] **8.5 Closed API (needs explicit approval, est. $25–40 under `--budget`):**
+  30 stratified steps on one Claude model with `cache_control` pinning and one
+  OpenAI/DeepSeek model; real billed cost and cache-read share.
+
+**Gate:** wild results reported with CIs; paid spend logged in the ledger.
+
+### After the paper — `v0.3` adoption
+
+`ctxblame import` for Claude Code / OpenCode transcripts (best effort, marked
+reconstructed), `--chain` case studies, and release notes.
+
+## 4. Order of work
+
+Phase 5 first: 5.1 corrupts every Claude Code trace, and 5.3 is required
+before any accuracy number can carry an error guarantee. Phases 6 and 7 can
+overlap once the Phase 6 pilot fixes the case format. Phase 8 waits for the
+Phase 7 venue decision, because it is the most expensive and its framing
+depends on it.

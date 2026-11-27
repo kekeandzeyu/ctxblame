@@ -149,6 +149,12 @@ def test_why_conditional_separates_precondition_from_redundant_carriers_on_free_
     assert rep["causes"][0]["relation"] == "or_carriers"
     assert sorted(rep["causes"][0]["restored"]) == cause_ids
     assert "cache_stats" in rep and rep["cache_stats"]["input_uncached"] > 0
+    # audit stage: the bundle flip and each leave-one-in restore on 20 fresh replays, then Holm
+    c, pre = rep["causes"][0], rep["preconditions"][0]
+    assert c["certified"] is True and pre["certified"] is True and rep["uncertified"] == []
+    assert sorted(c["audit"]) == sorted(cause_ids + ["together"]) and c["audit"]["together"]["n_total"] == 20
+    assert c["p_adjusted"] <= 0.05 and "certified on fresh replays" in out
+    assert sum(1 for t in rep["tests"] if t.get("audit")) == 1 + 3 + 1
 
 
 def test_why_given_none_preserves_unconditional_behavior(tmp_path, monkeypatch):

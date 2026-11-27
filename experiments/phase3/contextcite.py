@@ -14,9 +14,11 @@ For one case:
 3. Fit a Lasso linear surrogate  logp ~ w . mask + b  and report the chunks
    with w_i >= ``rel`` * max(w) (and w_i > 0) as the cause set.
 
-A linear surrogate gives each of k redundant carriers only part of the effect
-(the reply survives while any backup is present), which is the failure mode
-ctxblame's set search is built for; this baseline measures it directly.
+We expected a linear surrogate to give each of k redundant carriers only part
+of the effect (the reply survives while any backup is present). Measured, it
+does not: random multi-chunk masks remove backups together, so it recalls most
+carriers (RESULTS.md). It fails instead on preconditions and negatives (the
+relative threshold above almost never selects nothing).
 """
 
 from __future__ import annotations

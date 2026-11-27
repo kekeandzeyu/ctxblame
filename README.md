@@ -122,10 +122,25 @@ How it works:
    hitchhikers and distinguishing single necessary `AND` chunks from minimal
    `OR` hitting sets). Each surviving member is refined to the lines that
    matter.
-5. **Check.** Each finding is confirmed with more replays, and compared with
-   random removals of the same size. Findings that random removals reproduce
-   too are reported as *context the decision needs (not specific)*, not as
-   causes.
+5. **Check.** Each finding is compared with random removals of the same size.
+   Findings that random removals reproduce too are reported as *context the
+   decision needs (not specific)*, not as causes.
+6. **Audit.** The search decides *what* to report; fresh replays it never saw
+   decide *whether* to report it. For each finding: `--audit-n` (default 20) new
+   replays of the removal, plus 20 of each leave-one-in restore, are tested with
+   exact one-sided binomial tests (intersection-union inside a bundle). Holm's
+   correction across findings then holds the family-wise error at `--alpha`
+   (default 0.05). Findings that fail are listed as `uncertified`.
+   `--audit-n 0` turns the audit off (the v0.2 behaviour).
+
+If whether the agent acts at all depends on context spread over many chunks
+(every precondition found reveals another), the search keeps a minimal set
+that keeps it acting (*diffuse context*), then keeps searching for what
+decides the choice. Context a harness injects into user turns
+(`<system-reminder>`, `<environment_details>`, `<context>`) is removable like
+any other chunk; only the user's own text is protected. Anthropic
+`cache_control` breakpoints are moved to the unchanged prefix of each ablated
+request.
 
 Each test replays in batches of 5 until the rate is clearly above or below
 half the baseline rate (a flip needs at least 10 replays). By default a reply
@@ -190,19 +205,14 @@ Phase 3 attribution benchmark at **$0 API cost**.
 - **Upfront proxy capture (until `v0.3` log import):** `ctxblame` currently requires recording traffic through `ctxblame record` before the failure happens; retroactive import from existing local CLI transcripts is scheduled next (`v0.3`).
 - **High-entropy / coin-flip turns:** If the unablated step already splits ~50/50 across decisions on replay, there is no stable decision for context ablation to explain (`ctxblame` detects this on baseline replay and stops early).
 
-## Next Steps
+## Roadmap
 
-See [docs/ROADMAP.md](docs/ROADMAP.md) for the full technical audit, bottleneck analysis, and milestone details. Milestones 1–3 (`--given` conditional blame, `C \ {c_i}` hitchhiker pruning & AND/OR duality, KV-cache-stratified suffix-first search, and `$0` local/Colab vLLM support) are implemented and unit-tested.
+See [docs/ROADMAP.md](docs/ROADMAP.md) for the audit, the theory plan and the exit gate of each phase:
 
-### `v0.2` — Empirical Validation & Initial Release (Released)
-1. ~~**Phase 3–4 benchmark on open models**~~ — done: see [experiments/phase3/RESULTS.md](experiments/phase3/RESULTS.md). Milestone 1's acceptance (all carriers, 100% precision, edits kept apart) holds on real Qwen3-14B agent traces.
-2. ~~**Robustness at $0**~~ — done: Qwen3-14B with thinking on (95%), Llama-3.1-8B (85%, tied with ContextCite on F1; see the writeup for why). Still open: `gen-open` cases (the carrier decides whether the agent acts at all) and the optional paid DeepSeek re-run of `experiments/phase2/run.py --only step5 step7` (~$1–$2).
-3. ~~**Publish `v0.2`**~~ — released as `v0.2.0` on [PyPI](https://pypi.org/project/ctxblame/) and GitHub, with the [technical writeup](docs/WRITEUP.md).
-
-### `v0.3` — Zero-Setup Adoption & Prompt-Repair Workflow
-1. **Retroactive transcript importers (`ctxblame import`):** Reconstruct replayable `/v1/messages` and `/chat/completions` requests directly from local session logs already saved by **Claude Code** (`~/.claude/projects/**/*.jsonl`), **OpenCode**, and **Harbor**—eliminating the need to run a proxy *before* a surprise bug occurs.
-2. **One-command CLI wrapper (`ctxblame wrap -- claude`):** Auto-assign an ephemeral local proxy port and inject `ANTHROPIC_BASE_URL` / `OPENAI_BASE_URL` in one command when full wire-level SSE capture is wanted.
-3. **3-second counterfactual fix verification (`--replace-text` / `ctxblame verify`):** Once `ctxblame why` blames a specific line in `CLAUDE.md`, `AGENTS.md`, or a tool schema, replay that frozen step (`-n 10`) with the user's edited wording to verify the fix flips the tool call before launching a new full session.
+- **Phase 5, engine correctness:** split `<system-reminder>` blocks inside user turns into removable chunks, keep searching past diffuse preconditions, audit every reported cause on fresh replays (intersection-union + Holm), pin Anthropic `cache_control` breakpoints.
+- **Phase 6, ground truth independent of the method:** exhaustive $2^m$ removal tables per case (no oracle dropping), neutral probe lines, matched `tool_choice` interventions for rules that both trigger and steer the action.
+- **Phase 7, steelmanned baselines and theory:** contrastive ContextCite, black-box group testing over keep-probabilities, full-context self-explanation; a group-testing formulation with the precondition gate as the separating structure.
+- **Phase 8, external validity:** `ctxblame wrap`, wire-captured steps from real harnesses on SWE-bench, `ctxblame verify` fix study, one approved closed-API run. `ctxblame import` (best effort, marked reconstructed) follows in `v0.3`.
 
 ## Tests
 

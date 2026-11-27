@@ -1,0 +1,65 @@
+# Phase 5 — engine correctness and valid statistics
+
+Plan and exit gate: [docs/ROADMAP.md](../../docs/ROADMAP.md#phase-5--engine-correctness-and-valid-statistics-0-offline--one-re-run).
+
+| Item | Status | Where |
+|---|---|---|
+| 5.1 injected `<system-reminder>` blocks are chunks; only the user's own text is the task | done, offline | `blame.py:chunk_request`, `tests/test_blame.py` |
+| 5.2 stabilizer instead of stopping when preconditions run out or are diffuse | done offline; real-case acceptance in 5.5 | `blame.py:_stabilizer`, `search` |
+| 5.3 search/audit split with FWER control | done, null simulation below | `blame.py:Tester.audit`, `audit_findings`, `stats.py`, `null_sim.py` |
+| 5.4 Anthropic `cache_control` pinning | done, offline | `ablate.py:pin_cache_breakpoints` |
+| 5.5 GPU re-run of Qwen3-14B | pending | `run_p5.sh` |
+
+## 5.1: chunking is unchanged on every existing case
+
+Chunk ids, spans, units, children and texts are byte-identical to `v0.2` for all
+5,090 chunks of the `core`, `gen`, `gen-open`, `gen-long` and `real` suites, so
+5.1 cannot move any `v0.2` number; it changes only requests that contain
+injected blocks (Claude Code, Cline).
+
+## 5.2: what actually stopped `real/run4/step21`
+
+The `v0.2` reports show the stratified search never reached the diffuse
+`break`: in all 3 seeds it isolated three one-line preconditions in `read_file`
+outputs (removing any of several scattered lines stops the agent from testing),
+hit `max_preconditions = 3`, and stopped before the choice search. The fix
+covers both exits.
+
+## 5.3: type-I error under least-favourable nulls
+
+`null_sim.py` runs the real `search` and `Tester` (sequential tests,
+`apply_chunks`, audit) against a simulated model (baseline 0.9, threshold 0.45).
+500 runs per row, seed 0
+([results/null-sim-v1/null_sim.json](results/null-sim-v1/null_sim.json)):
+
+| scenario | audit | P(any false cause) [95% CI] | power | replays/run |
+|---|---|---:|---:|---:|
+| single cause at the boundary | off (v0.2) | 0.4% [0.1, 1.4] | – | 40 |
+| single cause at the boundary | n=20, α=0.05 | 0.0% [0.0, 0.8] | – | 41 |
+| bundle with a member at the boundary | off (v0.2) | **93.0%** [90.4, 94.9] | – | 160 |
+| bundle with a member at the boundary | n=20, α=0.05 | **1.6%** [0.8, 3.1] | – | 234 |
+| true 2-way OR bundle | off (v0.2) | 0.0% | 100% | 79 |
+| true 2-way OR bundle | n=20, α=0.05 | 0.0% | 99% | 139 |
+
+The `v0.2` failure is not sample reuse but a definition: its leave-one-in check
+counts "removing the others does not clearly flip it" as "this member restores
+the decision", so a member whose presence brings the rate back only to the
+threshold passes. The audit tests restoration itself (rate above the threshold).
+The guarantee is conditional on the baseline replays, which set the threshold
+and are not reused.
+
+```sh
+uv run python experiments/phase5/null_sim.py --runs 500 --out experiments/phase5/results/<tag>/null_sim.json
+```
+
+## 5.5: GPU re-run
+
+On a GPU box with vLLM (48 GB is enough for Qwen3-14B-FP8):
+
+```sh
+MODEL=/models/Qwen3-14B-FP8 PY=.venv/bin/python VLLM=/path/to/vllm experiments/phase5/run_p5.sh
+uv run --with numpy python experiments/phase3/analyze.py experiments/phase3/results/p5-real-qwen3-14b
+```
+
+`repro` must reproduce `v0.2` (`real`: 92% F1 [77, 100]) before the Phase 5 runs
+are compared with it.
