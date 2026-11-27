@@ -148,3 +148,23 @@ Every seed matches `v0.2` (seed F1 92 / 92 / 92).
   - seeds 0 and 2: the search stopped right after the stabilizer (the 5.2b bug
     above).
   - The case costs 1,270–2,460 replays (v0.2: about 600).
+
+### `gen` with the Phase 5 engine (pre-fix code, one-stage audit)
+
+[p5-gen-qwen3-14b](../phase3/results/p5-gen-qwen3-14b/summary.md): 48 oracle-valid
+`core` + generated cases (same as `v0.2`'s `qwen3-14b-fp8`), 3 seeds.
+
+| | F1 [95% CI] | Precond. blamed | Negatives correct | Replays/case |
+|---|---:|---:|---:|---:|
+| `v0.2` | 95% [87, 99] | 4% | 100% | 189 |
+| Phase 5, one-stage audit | **90% [80, 98]** | 2% | 97% | 230 |
+
+**A regression, and what causes it.** In every seed, two of the misses are bundles
+the one-stage audit rejected whole, each holding a true carrier plus a hitchhiker
+(`p0/tool_result_sentence_config`, `gen/0-013/ruff/doc+user`). The two-stage
+audit above targets these; `p5b-gen` measures it.
+`gen/0-037/ruff/tooldesc+doc` is threshold-sensitive, not a regression: the
+search is identical to `v0.2`'s, but removing the bundle keeps E only about half
+the time (15/30 and 13/30 here; 23/40 and 20/20 in `v0.2`), right at the 0.5
+threshold for E. One negative (`gen/0-052/uv/neg`) reports a precondition, which
+the scoring counts as wrong even though no cause is blamed.
