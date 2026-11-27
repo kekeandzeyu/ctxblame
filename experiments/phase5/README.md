@@ -94,3 +94,22 @@ on the same 13 oracle-valid `real` cases with 3 seeds.
 | repro (p5-repro-real-qwen3-14b) | 92% | 92% | 92% [77, 100] | 100% | 0% | 531 |
 
 Every seed matches `v0.2` (seed F1 92 / 92 / 92).
+
+### `real` with the Phase 5 engine (pre-5.2b code, 6bf5394)
+
+[p5-real-qwen3-14b](../phase3/results/p5-real-qwen3-14b/summary.md): defaults
+(`--audit-n 20 --alpha 0.05`, stabilizer on), same 13 cases, 3 seeds.
+
+| | F1 [95% CI] | precondition_or (n=12) | or_redundant (`run4/step21`) | Precond. blamed | Replays/case |
+|---|---:|---:|---:|---:|---:|
+| `v0.2` | 92% [77, 100] | 100% | 0% | 0% | 545 |
+| Phase 5 | **95% [85, 100]** | 100% | 33% (1 of 3 seeds) | 0% | 722 (+32%) |
+
+- **The audit cost nothing on the 12 clean cases.** Every finding there was
+  certified (24–26 per seed). All 7 uncertified findings are noisy preconditions
+  in `run4/step21` (p = 0.13 to 0.99).
+- **`run4/step21` per seed:**
+  - seed 1: all 3 carriers found and certified as one bundle (Holm p < 1e-4).
+  - seeds 0 and 2: the search stopped right after the stabilizer (the 5.2b bug
+    above).
+  - The case costs 1,270–2,460 replays (v0.2: about 600).
