@@ -25,6 +25,24 @@ outputs (removing any of several scattered lines stops the agent from testing),
 hit `max_preconditions = 3`, and stopped before the choice search. The fix
 covers both exits.
 
+**5.2b, found by the GPU run** (`p5-real-qwen3-14b`, seed 0). The stabilizer
+worked: it kept 9 `read_file` lines, and with them kept, removing the other 41
+chunks left E intact and flipped the choice (0 of 8 calls kept `--tb=line`). The
+loop then restarted its suffix-tier probe. Removing only the last 14-chunk tier
+**stopped** E, because E is non-monotone in what is removed (a late output
+without the history that explains it). With the stabilizer already used, the
+search stopped before any choice test, and the audit then correctly rejected all
+three noisy preconditions (p = 0.59 to 0.99).
+
+The fix: after a stabilizer, the choice search runs over the whole rest as one
+region, so it starts from the removal the stabilizer showed keeps E, and ddmin
+counts partial removals that stop E as "not flipped". The report now says
+`none_found` rather than `not_in_context` when removing everything stopped E
+instead of keeping the decision. Regression test:
+`test_search_after_stabilizer_searches_the_whole_rest_for_the_choice`.
+`p5-real` and `p5-gen` ran the pre-fix engine. `p5b-real-qwen3-14b` re-runs
+`real` with the fix.
+
 ## 5.3: type-I error under least-favourable nulls
 
 `null_sim.py` runs the real `search` and `Tester` (sequential tests,

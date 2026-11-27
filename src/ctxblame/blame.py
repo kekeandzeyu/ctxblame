@@ -1057,8 +1057,11 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
     async def stabilize_rest(why_: str) -> bool:
         """Protect a minimal stabilizer of E among ``remaining``; False = stop searching."""
         nonlocal remaining, stabilized
-        if not stabilize or stabilized:
+        if not stabilize:
             notes.append(why_)
+            return False
+        if stabilized:
+            notes.append(why_ + " again with the stabilizer kept; stopped")
             return False
         stabilized = True
         keep = await _stabilizer(list(remaining), test)
@@ -1074,8 +1077,12 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
 
     while remaining and len(causes) < max_causes:
         # stratify=False (ablation): one tier, i.e. remove everything first and
-        # delta-debug over all chunks, as before the KV-cache-stratified search
-        tiers = partition_tiers(remaining, by_id) if stratify else [list(remaining)]
+        # delta-debug over all chunks, as before the KV-cache-stratified search.
+        # After a stabilizer, also one tier: the stabilizer showed that removing
+        # all the rest keeps E, but a partial (suffix-tier) removal need not, since
+        # E can be non-monotone in what is removed (a late output without the
+        # history that explains it). ddmin then counts collapses as "not flipped".
+        tiers = partition_tiers(remaining, by_id) if stratify and not stabilized else [list(remaining)]
         probe, hit_idx = await _widen_suffix(tiers, test, frozenset(), is_hit)
         last_probe = probe
         region = tiers[hit_idx:] if hit_idx >= 0 else []
@@ -1487,7 +1494,7 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
         f"{cache_note} (ledger ${ledger.total:.4f} of ${args.budget:.2f})")
     result = ("causes" if causes else
               "preconditions_only" if preconditions and everything and not everything.flipped else
-              "not_in_context" if everything and not everything.flipped else
+              "not_in_context" if everything and everything.verdict == "kept" else
               "none_found")
     report.update(result=result,
                   causes=_serialize_findings(causes, by_id),

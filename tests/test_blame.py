@@ -325,6 +325,22 @@ def test_search_goes_on_when_preconditions_keep_appearing(stabilize):
         assert stabs == [] and causes == [] and any("more than 3 preconditions" in n for n in notes)
 
 
+def test_search_after_stabilizer_searches_the_whole_rest_for_the_choice():
+    # like real/run4/step21 on the GPU (p5-real seed 0): with the stabilizer kept,
+    # removing all the rest keeps E and flips the choice, but removing only the
+    # tail tier stops E (a recent output without the history that explains it).
+    # The suffix-tier probe then stopped the search before any choice test.
+    chunks = [C(x) for x in ("tool_bash", "sys_rule", "hist_pytest", "r1", "r2", "x1", "x2", "c1")]
+    t = fake_cond(collapse_rule=lambda r: bool(r & {"r1", "r2"}) or (bool(r & {"x1", "x2"})
+                                                                      and "hist_pytest" not in r),
+                  flip_rule=lambda r: CARRIERS <= r)
+    preconds, stabs, notes = [], [], []
+    _, causes = asyncio.run(search(chunks, t, n_controls=0, preconditions=preconds, stabilizers=stabs,
+                                   notes=notes, max_preconditions=0))
+    assert stabs == [["r1", "r2"]]
+    assert [sorted(c.members) for c in causes] == [sorted(CARRIERS)]
+
+
 def test_search_keeps_a_minimal_stabilizer_of_a_diffuse_precondition():
     # the agent tests as long as it still sees any 3 of the 8 reads: the smallest
     # removal that stops it has 6 chunks (> max_members), and no one read matters
