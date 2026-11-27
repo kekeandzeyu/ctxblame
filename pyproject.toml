@@ -1,6 +1,6 @@
 [project]
 name = "ctxblame"
-version = "0.1.0"
+version = "0.2.0"
 description = "git blame for LLM agent decisions: find which context chunk caused a tool call"
 readme = "README.md"
 license = "MIT"

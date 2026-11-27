@@ -3,7 +3,15 @@
 "git blame" for LLM agent decisions: replay one recorded LLM request with
 pieces of context removed and report which chunk caused the decision.
 Works with any model: the evidence comes from replays, not from the model's
-own explanation. Status: early; the blame engine works on the validation cases below, not yet on PyPI.
+own explanation. Status: v0.2, validated on open models (see
+[docs/WRITEUP.md](docs/WRITEUP.md)); not yet on PyPI.
+
+```sh
+uvx --from git+https://github.com/kekeandzeyu/ctxblame@v0.2.0 ctxblame --help
+```
+
+The examples below use `uv run ctxblame` from a checkout; with the line above,
+use `uvx --from git+https://github.com/kekeandzeyu/ctxblame@v0.2.0 ctxblame`.
 
 Two wire formats are supported, which covers most models: Anthropic Messages
 (`/v1/messages`) and OpenAI Chat Completions (`/chat/completions`).
@@ -187,10 +195,10 @@ Phase 3 attribution benchmark at **$0 API cost**.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the full technical audit, bottleneck analysis, and milestone details. Milestones 1–3 (`--given` conditional blame, `C \ {c_i}` hitchhiker pruning & AND/OR duality, KV-cache-stratified suffix-first search, and `$0` local/Colab vLLM support) are implemented and unit-tested.
 
-### `v0.2` — Empirical Validation & Initial Release (In Progress)
+### `v0.2` — Empirical Validation & Initial Release (Released)
 1. ~~**Phase 3–4 benchmark on open models**~~ — done: see [experiments/phase3/RESULTS.md](experiments/phase3/RESULTS.md). Milestone 1's acceptance (all carriers, 100% precision, edits kept apart) holds on real Qwen3-14B agent traces.
-2. **Robustness at $0:** a second model family (Llama-3.1-8B or Mistral), Qwen3 with thinking on, and cases where the carrier decides whether the agent acts at all (`gen-open`). The paid DeepSeek re-run of `experiments/phase2/run.py --only step5 step7` (~$1–$2) is now optional.
-3. **Publish `v0.2`:** Commit benchmark tables, package `ctxblame` (`uvx ctxblame`) on PyPI, and publish the technical writeup (highlighting server-side reasoning-cache restoration, `OR`-carrier redundancy, and `--given` precondition isolation).
+2. ~~**Robustness at $0**~~ — done: Qwen3-14B with thinking on (95%), Llama-3.1-8B (85%, tied with ContextCite on F1; see the writeup for why). Still open: `gen-open` cases (the carrier decides whether the agent acts at all) and the optional paid DeepSeek re-run of `experiments/phase2/run.py --only step5 step7` (~$1–$2).
+3. ~~**Publish `v0.2`**~~ — tagged `v0.2.0` on GitHub with the [technical writeup](docs/WRITEUP.md); PyPI upload pending.
 
 ### `v0.3` — Zero-Setup Adoption & Prompt-Repair Workflow
 1. **Retroactive transcript importers (`ctxblame import`):** Reconstruct replayable `/v1/messages` and `/chat/completions` requests directly from local session logs already saved by **Claude Code** (`~/.claude/projects/**/*.jsonl`), **OpenCode**, and **Harbor**—eliminating the need to run a proxy *before* a surprise bug occurs.
