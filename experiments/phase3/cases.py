@@ -409,6 +409,10 @@ def all_cases(suite: str = "core", gen_n: int = 64, gen_seed: int = 0) -> list[B
         from gen_cases import generated_cases
         style = {"gen-open": "open", "gen-long": "long"}.get(suite, "direct")
         out += generated_cases(gen_n, gen_seed, style=style)
+    if suite == "phase6":  # Phase 6 coalition-table cases (no oracle filter: the table is the truth)
+        sys.path.insert(0, str(REPO / "experiments" / "phase6"))
+        from cases6 import phase6_cases
+        out += [tc.case for tc in phase6_cases(gen_n, gen_seed)]
     if suite == "real":
         sys.path.insert(0, str(REPO / "experiments" / "phase4"))
         from real_cases import real_cases

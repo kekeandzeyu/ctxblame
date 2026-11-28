@@ -12,14 +12,15 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$HERE/../.." && pwd)
 LOGS=${LOGS:-$REPO/../logs}
 RES=$REPO/experiments/phase3/results
+RES6=$REPO/experiments/phase6/results
 P=${1:-}
 
 up() { "$@" > /dev/null 2>&1 && echo up || echo DOWN; }
-job=$(up pgrep -f "run_model.sh|run_p5.sh")
-bench=$(up pgrep -f "benchmark.py|oracle.py")
+job=$(up pgrep -f "run_model.sh|run_p5.sh|run_p6.sh")
+bench=$(up pgrep -f "benchmark.py|oracle.py|tables.py")
 vllm=$(up curl -sf -m 10 http://127.0.0.1:8000/v1/models)
 gpu=$(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -d ' ')
-berr=$(cat "$LOGS"/bench_"$P"*.log "$LOGS"/oracle_"$P"*.log 2>/dev/null | grep -ciE "traceback|exception|error")
+berr=$(cat "$LOGS"/bench_"$P"*.log "$LOGS"/oracle_"$P"*.log "$LOGS"/tables_"$P"*.log 2>/dev/null | grep -ciE "traceback|exception|error")
 # a malformed tool call from the model is logged by vLLM's tool parser as an ERROR
 # traceback but returned as text (HTTP 200, scored as "no tool call"): count apart
 verr=$(cat "$LOGS"/vllm_"$P"*.log 2>/dev/null | grep -E "ERROR|Traceback" | grep -vc "tool_parser")
@@ -28,19 +29,25 @@ echo "job=$job bench=$bench vllm=$vllm gpu=${gpu:-none} benchErr=$berr vllmErr=$
 
 echo "-- seeds finished (benchmark.json) / cases started per running log"
 incomplete=0
-for d in "$RES"/"$P"*/; do
+for d in "$RES"/"$P"*/ "$RES6"/"$P"*/; do
   [ -d "$d" ] || continue
   t=$(basename "$d"); done_=$(ls "$d"/seed*/benchmark.json 2>/dev/null | wc -l)
   # a tag this box started (it has a bench log here) but has not summarized
-  ls "$LOGS"/bench_"$t"_*.log > /dev/null 2>&1 && [ ! -f "$d/summary.md" ] && incomplete=1
-  printf "%-32s seeds_done=%s%s\n" "$t" "$done_" "$([ -f "$d/summary.md" ] && echo " summary")"
+  ls "$LOGS"/bench_"$t"_*.log "$LOGS"/tables_"$t".log > /dev/null 2>&1 && [ ! -f "$d/summary.md" ] && incomplete=1
+  tabs=$(ls "$d"/tables/*.json 2>/dev/null | wc -l)
+  printf "%-32s seeds_done=%s%s%s\n" "$t" "$done_" "$([ "$tabs" -gt 0 ] && echo " tables=$tabs")" \
+    "$([ -f "$d/summary.md" ] && echo " summary")"
 done
 for f in "$LOGS"/bench_"$P"*.log; do
   [ -f "$f" ] && printf "%-40s cases_started=%s\n" "$(basename "$f")" "$(grep -c '^== ' "$f")"
 done
+for f in "$LOGS"/tables_"$P"*.log; do
+  [ -f "$f" ] && printf "%-40s tables_done=%s errors=%s\n" "$(basename "$f")" "$(grep -c '^done ' "$f")" \
+    "$(grep -c '^ERROR ' "$f")"
+done
 echo "-- driver log tails"
-for f in "$LOGS"/p5.log "$LOGS"/run_*.log; do [ -f "$f" ] && { echo "[$f]"; tail -n 3 "$f"; }; done
-[ "$berr$verr" != "00" ] && { echo "-- errors"; grep -iE "traceback|exception|error" "$LOGS"/bench_"$P"*.log "$LOGS"/oracle_"$P"*.log 2>/dev/null | tail -5; grep -E "ERROR|Traceback" "$LOGS"/vllm_"$P"*.log 2>/dev/null | grep -v tool_parser | tail -5; }
+for f in "$LOGS"/p5.log "$LOGS"/p6.log "$LOGS"/run_*.log; do [ -f "$f" ] && { echo "[$f]"; tail -n 3 "$f"; }; done
+[ "$berr$verr" != "00" ] && { echo "-- errors"; grep -iE "traceback|exception|error" "$LOGS"/bench_"$P"*.log "$LOGS"/oracle_"$P"*.log "$LOGS"/tables_"$P"*.log 2>/dev/null | tail -5; grep -E "ERROR|Traceback" "$LOGS"/vllm_"$P"*.log 2>/dev/null | grep -v tool_parser | tail -5; }
 
 bad=0
 if [ "$berr" -gt 0 ] || [ "$verr" -gt 0 ]; then bad=1; fi
