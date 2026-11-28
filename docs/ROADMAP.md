@@ -184,6 +184,16 @@ reports `diffuse_precondition` with the search continuing.
   `triggers_and_steers suspected` notes are the engine's first, conservative
   version: check them against the 6.1 tables, and add line-level stabilizing for
   the `run4/step21` tool description.
+  *Offline part done (2026-11-28), GPU scoring pending
+  ([experiments/phase6/README.md](../experiments/phase6/README.md#64-e-forced-by-tool_choice)):*
+  - The 5.6 flags, checked against the tables, are unreliable: 9 of 23 planted
+    `coupled` members are table-neutral, and `triggers_and_steers suspected` never fired.
+  - The engine forces a tool-level E. Each precondition is classified as
+    `steers` (a forced cause, audited) or a pure precondition. A `coupled` member
+    gets a forced restore test. A stabilizer gets a forced line search.
+  - The truth gets forced cells for the gated cases (`tables.py --forced`).
+  - Null simulation v4: the boundary steering null gives 0.2% false claims at
+    100% power, and the forced coupled boundary 3.8% (≤ α, the same as unforced).
 
 **Gate:** ≥ 200 labelled cases on ≥ 2 models; ctxblame scored on all of them
 (per regime), with the oracle-dropped subset reported separately for comparison

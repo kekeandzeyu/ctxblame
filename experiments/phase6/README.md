@@ -7,7 +7,7 @@ Plan and exit gate: [docs/ROADMAP.md](../../docs/ROADMAP.md#phase-6--ground-trut
 | 6.1 exhaustive coalition tables | **done**: 250 cases × 2 models, scored per regime | [results/qwen3-14b](results/qwen3-14b/summary.md), [results/llama3.1-8b](results/llama3.1-8b/summary.md) |
 | 6.2 pilot (10 cases, Qwen3-14B and Llama-3.1-8B) | **done**: about 1 h of tables per model for 250 cases | [results/pilot-qwen3-14b](results/pilot-qwen3-14b/summary.md), [results/pilot-llama3.1-8b](results/pilot-llama3.1-8b/summary.md) |
 | 6.3 Llama's neutral lines | **answered**: real interactions (a probe is a carrier in 14% of cases), ctxblame blames table-neutral probes in 1% of rows | `score6.py` (`neutral probe blamed`, regime `probe_interaction`) |
-| 6.4 E-coupled cases | truth side done (`triggers_and_steers` roles in the tables); engine side open: ctxblame F1 46% (Qwen) / 14% (Llama) on `e_coupled` | `truth.py` |
+| 6.4 E-coupled cases | **offline done, GPU scoring pending**: E forced by `tool_choice` in the engine and in the truth (below) | `blame.py` (`force_tool_choice`, `Cause.steers`), `tables.py --forced`, `truth.py` |
 
 ## Method
 
@@ -109,6 +109,105 @@ planted elements, as the scorer's own docstring says for precision.
 members stay in their own column, and every other column is unchanged. So the
 `habit_negative` design is not a habit for Qwen: the role line carries the
 choice, and Phase 7 cases should plant it as an element.
+
+## 6.4: E forced by `tool_choice` (offline done; GPU scoring pending)
+
+**Why.** On the 250-case tables, ctxblame scores 46% (Qwen) and 14% (Llama) F1 on
+`e_coupled` cases. Reading the rows:
+- **About half of Qwen's `e_coupled` rows have no carrier in the truth.** The planted
+  rule is only in a precondition set. Removing it stops E, so the unforced table
+  cannot say whether it also steers the choice. ctxblame mostly reports it as a
+  cause there. Neither side is measured: the truth needs forcing as much as the engine.
+- **The 5.6 `coupled` flag does not hold up against the tables.** Of the 23 coupled
+  members that map to a planted element, 11 are carriers, 9 are table-neutral and
+  3 are preconditions (43 more are unplanted). `triggers_and_steers suspected`
+  never fired on the suite.
+- **Other misses are outside 6.4.** For example, `0-1026`'s 3-way OR bundle needs 6
+  chunks, more than `max_members`, so the search stops as "diffuse".
+
+**Feasibility, on the GPU (2026-11-28).** vLLM 0.34 honours a named `tool_choice` with
+both the `hermes` (Qwen) and `llama3_json` parsers. On `0-1002` with `c1`+`c2`
+removed:
+- Qwen unforced: 15× `bash git status`, 5× `read_file`.
+- Qwen forced: 20× `bash git status`, so P(A | do(E), do(-S)) = 0/20 against a
+  forced baseline of 20/20.
+
+**Engine** (`blame.py`, default on, `--no-force` for v0.2.1 behaviour):
+- **When E can be forced.** Only when E is a tool name among the request's tools,
+  and not on Anthropic with extended thinking. Otherwise the report says why.
+- **Forced baseline.** P(A | do(E)) is measured once (`max_n` replays). Forced
+  tests use half of it as their threshold. If forcing changes the choice even with
+  the whole context (below 0.5), or the provider ignores `tool_choice`, nothing is
+  forced.
+- **Preconditions.** Each confirmed precondition is replayed with E forced. A flip
+  makes it a cause *with E forced* (`Cause.forced`), audited on fresh forced replays
+  (`forced_flip` / `forced_restore` tests, in the same Holm family). If that cause
+  survives the audit, the precondition is `steers: true` (`triggers_and_steers`);
+  if the forced choice is kept, `steers: false`.
+- **`coupled` members.** A member whose leave-one-in test stops E gets its
+  restoration tested with E forced. If it restores, stage 2 tests that; if the
+  choice clearly does not come back, it is dropped. Otherwise the 5.6 collapse
+  test is kept.
+- **Stabilizers.** A forced removal that flips starts a forced search for the
+  steering lines. This is the `run4/step21` tool description.
+
+**Truth** (`tables.py --forced --base-tables <finished tables/>`, written to a
+**new** results dir, `<tag>/forced/`):
+- Every removal of each gated case (a case with a precondition set) is replayed with
+  E forced.
+- `truth.label(forced=…)` marks a precondition element `triggers_and_steers` if it
+  is in a minimal *steer set* (a minimal removal whose forced cell flips).
+- Carriers outside every precondition set keep their unforced definition.
+- Forced cells are not used if the forced base is below 0.5 or has fewer than 10
+  replies in E.
+- Relabelling all 520 committed tables without forced cells reproduces them
+  exactly.
+
+**Null simulation v4**
+([results/null-sim-v4](../phase5/results/null-sim-v4/null_sim.json), 500 runs, the
+real `Tester` and `search` with a simulated model that honours `tool_choice`):
+
+| scenario | audit off | audit on (n=20, α=0.05) | replays/run |
+|---|---:|---:|---:|
+| `tas_power` (X triggers and steers), power | 100% | **100%** | 120 → 160 |
+| `pure_precondition`, any false cause | 0.0% | **0.0%** | 107 → 127 |
+| `boundary_tas` (forced choice at the threshold), any false cause | 3.2% | **0.2%** [0.0, 1.1] | 122 → 143 |
+| `coupled_power`, power (unforced, as v3) | 100% | 97% | 90 → 210 |
+| `coupled_forced`, power | 100% | **97%** | 90 → 244 |
+| `boundary_coupled`, any false cause (unforced, as v3) | 98.2% | 3.8% | 187 → 334 |
+| `boundary_coupled_forced`, any false cause | 98.2% | **3.8%** [2.4, 5.9] | 187 → 335 |
+
+The unforced rows reproduce v3 exactly, so the default path without a tool-level E
+is unchanged.
+
+On these two coupled scenarios, forcing neither gains nor loses on power or error:
+the simulated coupled member restores the choice with E forced. Its purpose is the
+other case, a member that only looks coupled (like the 9 table-neutral ones). There
+the forced test drops it (`tests/test_stats.py`). Whether that happens on real
+models is what the GPU run measures.
+
+**GPU runs, about 2 h on the 2 × 5090 box.** Each driver line below is launched as in
+`AGENTS.md`.
+
+```sh
+# GPU 0 and GPU 1 side by side: forced tables of the gated cases, ctxblame on all 250, scores
+CUDA_VISIBLE_DEVICES=0 PORT=8000 FORCED_FROM=qwen3-14b MODEL=/root/autodl-tmp/models/Qwen3-14B-FP8 \
+  NAME=Qwen3-14B TAG=p64-qwen3-14b experiments/phase6/run_p6.sh
+CUDA_VISIBLE_DEVICES=1 PORT=8001 FORCED_FROM=llama3.1-8b MODEL=/root/autodl-tmp/models/Llama-3.1-8B-Instruct \
+  NAME=Llama-3.1-8B TAG=p64-llama3.1-8b TOOL_PARSER=llama3_json \
+  SERVE_ARGS="--chat-template experiments/phase6/llama31_tool_template.jinja" \
+  EXTRA_BODY='{"temperature": 0.6, "top_p": 0.9}' experiments/phase6/run_p6.sh
+# then on GPU 0: the v0.2 cases with forcing on (regression against p5d)
+SKIP_SERVE=1 MODEL=/root/autodl-tmp/models/Qwen3-14B-FP8 RUNS="real64 gen64" experiments/phase5/run_p5.sh
+```
+
+The Phase 6 runs write three summaries:
+- `summary.md`: the new engine on the forced truth.
+- `summary_<base>_engine.md`: the committed 5.6 engine on the forced truth.
+- `summary_unforced_truth.md`: the new engine on the unforced truth.
+
+So the change in F1 can be split into the part that comes from the engine and the
+part that comes from the truth.
 
 ## 6.2 pilot (2026-11-28)
 

@@ -134,6 +134,16 @@ How it works:
    correction across findings then holds the family-wise error at `--alpha`
    (default 0.05). Findings that fail are listed as `uncertified`.
    `--audit-n 0` turns the audit off (the v0.2 behaviour).
+7. **Forced action (unreleased, `main`).** When E is a tool (`--given bash`), a
+   precondition is also replayed with that tool forced by `tool_choice`. The
+   choice rate there is compared with the equally forced baseline, never with
+   the unforced one. If removing the precondition still changes the choice, it
+   is reported as *triggers and steers*: it makes the agent act and also picks
+   what it does. It is then listed as a cause "with E forced" and audited like
+   any finding. `coupled` bundle members get the same forced test of whether
+   they restore the choice. With an intent-level E, or Anthropic extended
+   thinking, E cannot be forced and the report says so. `--no-force` gives the
+   v0.2.1 behaviour.
 
 If whether the agent acts at all depends on context spread over many chunks
 (every precondition found reveals another), the search keeps a minimal set
