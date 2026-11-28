@@ -34,7 +34,8 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent / "phase3"))
 
 from ctxblame.ablate import AblationError  # noqa: E402
-from ctxblame.blame import apply_chunks, chunk_request, resolve_given  # noqa: E402
+from ctxblame.blame import apply_chunks, chunk_request, force_tool_choice, resolve_given  # noqa: E402
+from ctxblame.match import Matcher  # noqa: E402
 from ctxblame.formats import extract_decision  # noqa: E402
 from ctxblame.pricing import Ledger  # noqa: E402
 from ctxblame.replay import (Replayer, build_headers, estimate_cost, parse_extra_body,  # noqa: E402
@@ -115,6 +116,45 @@ async def table(tc: TableCase, args, rp: Replayer) -> dict:
             "replays": sum(r["n"] + r["errors"] for r in rows.values())}
 
 
+async def forced_table(tc: TableCase, args, rp: Replayer, base: dict) -> dict:
+    """6.4: every removal of ``base`` (a finished table of this case) again, with E
+    forced by tool_choice; the case's truth is recomputed from both tables."""
+    case = tc.case
+    step = with_model_override(case.step, args.model, args.max_tokens, args.no_thinking_param, args.extra_body)
+    fmt = step.fmt
+    key_args = [case.argv[i + 1] for i, a in enumerate(case.argv) if a == "--key-arg"]
+    matcher = matcher_for(step, "args" if key_args else "intent", key_args or None, any_call=True)
+    target, tool = base["target"], base["given"]
+    given = Matcher("name", any_call=True)
+    el = resolve_elements(tc, chunk_request(fmt, step.body, case.protect))
+    names = list(tc.elements)
+    t0 = time.time()
+
+    async def cell(s: frozenset) -> tuple[frozenset, dict]:
+        try:
+            body = apply_chunks(fmt, step.body, [c for e in s for c in el[e]]) if s else step.body
+        except AblationError as e:
+            return s, {"n": 0, "k_given": 0, "k": 0, "errors": 0, "ablation_error": str(e)}
+        return s, count(await rp.run(force_tool_choice(fmt, body, tool), args.n, matcher), matcher, given, tool,
+                        target)
+
+    rows = dict(await asyncio.gather(*(cell(s) for s in subsets(names))))
+    unforced = {frozenset(c["removed"]): Cell(frozenset(c["removed"]), c["n"], c["k_given"], c["k"])
+                for c in base["cells"]}
+    forced = {s: Cell(s, r["n"], r["k_given"], r["k"]) for s, r in rows.items()}
+    truth = label(names, tc.kinds, unforced, forced=forced)
+    return {"case": tc.name, "design": tc.design, "target": target, "given": tool, "n": args.n,
+            "forced_cells": [{"removed": sorted(s), **rows[s]} for s in subsets(names)],
+            "truth": truth.to_json(), "unforced_truth": base["truth"], "seconds": round(time.time() - t0, 1),
+            "replays": sum(r["n"] + r["errors"] for r in rows.values())}
+
+
+def needs_forcing(base: dict) -> bool:
+    """A case whose unforced truth has a precondition set: only there can forcing
+    change a role (an element whose removal collapses E may also steer)."""
+    return bool(base["truth"]["precondition_sets"])
+
+
 def _fname(name: str) -> str:
     return name.replace("/", "__") + ".json"
 
@@ -125,7 +165,12 @@ async def main_async(args) -> int:
         cases = [c for c in cases if any(o in c.name or o == c.design for o in args.only)]
     if args.limit:
         cases = cases[:args.limit]
-    out = args.out / "tables"
+    bases: dict[str, dict] = {}
+    if args.forced:  # forced cells next to finished tables, in a new results dir
+        bases = {c.name: json.loads((args.base_tables / _fname(c.name)).read_text()) for c in cases
+                 if (args.base_tables / _fname(c.name)).exists()}
+        cases = [c for c in cases if c.name in bases and (args.forced_all or needs_forcing(bases[c.name]))]
+    out = args.out / ("forced" if args.forced else "tables")
     out.mkdir(parents=True, exist_ok=True)
     todo = [c for c in cases if not (out / _fname(c.name)).exists()]
     print(f"{len(cases)} cases, {len(cases) - len(todo)} done, {len(todo)} to run", flush=True)
@@ -143,7 +188,7 @@ async def main_async(args) -> int:
         nonlocal done
         async with sem:
             try:
-                r = await table(tc, args, rp)
+                r = await (forced_table(tc, args, rp, bases[tc.name]) if args.forced else table(tc, args, rp))
             except Exception as e:  # noqa: BLE001 - one bad case must not stop the suite
                 print(f"ERROR {tc.name}: {type(e).__name__}: {e}", flush=True)
                 return
@@ -179,7 +224,15 @@ def main(argv=None) -> int:
     ap.add_argument("--budget", type=float, default=5.0)
     ap.add_argument("--ledger", type=Path, default=REPO / ".ctxblame" / "phase6_spend.jsonl")
     ap.add_argument("--out", type=Path, required=True)
-    return asyncio.run(main_async(ap.parse_args(argv)))
+    ap.add_argument("--forced", action="store_true",
+                    help="6.4: replay every removal with E forced by tool_choice, for the cases of "
+                         "--base-tables whose truth has a precondition set; writes <out>/forced/")
+    ap.add_argument("--base-tables", type=Path, default=None, help="--forced: the finished tables/ dir")
+    ap.add_argument("--forced-all", action="store_true", help="--forced: every tabled case, not only gated ones")
+    a = ap.parse_args(argv)
+    if a.forced and a.base_tables is None:
+        ap.error("--forced needs --base-tables")
+    return asyncio.run(main_async(a))
 
 
 if __name__ == "__main__":

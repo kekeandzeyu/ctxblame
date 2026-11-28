@@ -14,6 +14,7 @@
 #   gen5b  p5b-gen-qwen3-14b       : gen again with the same fixes (not default)
 #   real5c / gen5c  p5c-*          : the 5.5 engine (not default)
 #   real5d / gen5d  p5d-*          : with the 5.6 audit (not default; RUNS="real5d gen5d")
+#   real64 / gen64  p64-*          : with E forced by tool_choice (6.4, the engine default)
 set -euo pipefail
 : "${MODEL:?path or HF id of Qwen3-14B-FP8}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -47,6 +48,9 @@ for r in $RUNS; do
     # 5.6: coupled bundle members kept, every bundle re-audited on new replays
     real5d) run p5d-real-qwen3-14b real real-qwen3-14b "ctxblame" "" ;;
     gen5d)  run p5d-gen-qwen3-14b all qwen3-14b-fp8 "ctxblame" "" ;;
+    # 6.4: preconditions tested for also steering the choice with E forced (tool_choice)
+    real64) run p64-real-qwen3-14b real real-qwen3-14b "ctxblame" "" ;;
+    gen64)  run p64-gen-qwen3-14b all qwen3-14b-fp8 "ctxblame" "" ;;
     *) echo "unknown run $r"; exit 2 ;;
   esac
 done

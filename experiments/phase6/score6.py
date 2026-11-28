@@ -112,9 +112,10 @@ def tables_summary(tables: dict[str, dict], wall: float | None = None, suite: in
     rate = replays / wall if wall else None
     per_case = replays / len(ts) if ts else 0
     return {"cases": len(ts), "replays": replays, "replays_per_case": per_case,
-            "cells_per_case": mean(len(t["cells"]) for t in ts),
+            "cells_per_case": mean(len(t.get("cells") or t.get("forced_cells") or []) for t in ts),
             "ambiguous_cells_per_case": mean(t["truth"]["ambiguous"] for t in ts),
-            "oracle_valid": sum(oracle_valid(t) for t in ts), "regimes": dict(sorted(regimes.items())),
+            "oracle_valid": sum(oracle_valid(t) for t in ts if "cells" in t),
+            "regimes": dict(sorted(regimes.items())),
             "wall_seconds": wall, "replays_per_second": rate,
             "suite": suite, "suite_hours": per_case * suite / rate / 3600 if rate else None}
 
@@ -142,8 +143,16 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path, default=None)
     ap.add_argument("--wall-seconds", type=float, default=None, help="tables-only: wall time of tables.py")
     ap.add_argument("--suite", type=int, default=250, help="tables-only: suite size to estimate the run time for")
+    ap.add_argument("--forced", type=Path, default=None,
+                    help="6.4: a forced/ dir from tables.py --forced; its cases are scored on the truth "
+                         "recomputed with E forced")
     a = ap.parse_args(argv)
     tables = {json.loads(p.read_text())["case"]: json.loads(p.read_text()) for p in a.tables.glob("*.json")}
+    if a.forced:
+        for p in a.forced.glob("*.json"):
+            f = json.loads(p.read_text())
+            if f["case"] in tables:
+                tables[f["case"]] = {**tables[f["case"]], "truth": f["truth"], "forced_truth": True}
     if not a.bench:
         if not tables:
             print(f"no tables in {a.tables}")
