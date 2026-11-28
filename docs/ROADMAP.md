@@ -108,18 +108,28 @@ Details and results: [experiments/phase5/README.md](../experiments/phase5/README
   runs):** with a bundle member at the boundary, `v0.2` reports a false bundle
   in 93% of runs (its leave-one-in check counts "not clearly flipped" as
   "restores"); with the audit 1.6% [0.8, 3.1] ≤ α, at 99% power on a true
-  bundle and +60–75 replays per run.
+  bundle and +60–75 replays per run. *Two-stage audit* (found by `p5-gen`):
+  members that do not restore are dropped and the smaller bundle is re-audited
+  on new replays (sample splitting), 3.0% [1.8, 4.9] ≤ α.
 - [x] **5.4 `cache_control` pinning** (audit #7): on Anthropic requests recorded
   with prompt caching, stale breakpoints after the first changed block are
   removed and one is pinned on the last unchanged block (recorded style kept,
   never on reasoning, ≤ 4). Requests recorded without caching are replayed as
   recorded.
-- [ ] **5.5 Re-run on GPU** (`experiments/phase5/run_p5.sh`), same oracle-valid
+- [x] **5.5 Re-run on GPU** (`experiments/phase5/run_p5.sh`), same oracle-valid
   cases as `v0.2`:
-  1. `p5-repro-real`: `--audit-n 0 --no-stabilize` on `real` — must reproduce
-     `v0.2` (92% F1) within its CI, which checks the VM matches the original setup.
-  2. `p5-real` and `p5-gen`: the Phase 5 engine (defaults), ctxblame and
-     ctxblame `--given none`, 3 seeds.
+  1. `p5-repro-real`: `--audit-n 0 --no-stabilize` on `real` reproduces `v0.2`
+     exactly (92% F1 [77, 100], every seed).
+  2. `p5-real` and `p5-gen`: the Phase 5 engine (defaults), 3 seeds. They found
+     5.2b (after a stabilizer the suffix probe stopped on an E collapse; fixed by
+     probing for the first flip over the same tiers) and the hitchhiker bundles
+     that led to the two-stage audit.
+  3. `p5c-real` / `p5c-gen`, the final engine: **92% [77, 100]** and
+     **93% [84, 100]** (`v0.2`: 92% / 95% [87, 99]), all findings audited.
+     `run4/step21` continues past the stabilizer but stays unsolved
+     (`triggers_and_steers`: the `bash` description is both precondition and
+     carrier). The gen misses are E-coupled bundles where stage 1 drops a
+     member on an E-collapsed restore test (→ 6.4).
 
 **Gate:** offline suite green; type-I simulation within α; re-run F1 within
 the `v0.2` CI (or a documented reason why not); `run4/step21` finds a carrier or
@@ -144,7 +154,10 @@ reports `diffuse_precondition` with the search continuing.
   $P(A \mid E)$. `tool_choice` forces a tool name only, so this applies where
   $E$ is a tool; intent-level $E$ (a Bash command family) is reported as not
   identifiable rather than forced. Then classify `precondition` vs
-  `triggers_and_steers` in the engine.
+  `triggers_and_steers` in the engine. From 5.5: report E-coupled bundles
+  (a member whose leave-one-in restore test collapses E) as coupled instead of
+  letting audit stage 1 drop that member, and stabilize at line level (the
+  `run4/step21` tool description); set both rules against the 6.1 tables.
 
 **Gate:** ≥ 200 labelled cases on ≥ 2 models; ctxblame scored on all of them
 (per regime), with the oracle-dropped subset reported separately for comparison

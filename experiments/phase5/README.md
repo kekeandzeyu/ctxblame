@@ -8,7 +8,7 @@ Plan and exit gate: [docs/ROADMAP.md](../../docs/ROADMAP.md#phase-5--engine-corr
 | 5.2 stabilizer instead of stopping when preconditions run out or are diffuse | done offline; real-case acceptance in 5.5 | `blame.py:_stabilizer`, `search` |
 | 5.3 search/audit split with FWER control | done, null simulation below | `blame.py:Tester.audit`, `audit_findings`, `stats.py`, `null_sim.py` |
 | 5.4 Anthropic `cache_control` pinning | done, offline | `ablate.py:pin_cache_breakpoints` |
-| 5.5 GPU re-run of Qwen3-14B | repro passes; `real`, `gen` running | `run_p5.sh` |
+| 5.5 GPU re-run of Qwen3-14B | done: gate met (final table below) | `run_p5.sh`, `p5c-*` results |
 
 ## 5.1: chunking is unchanged on every existing case
 
@@ -69,12 +69,13 @@ case:
 - stabilize at line level, so the example line can separate from the rest of
   the description;
 - report `triggers_and_steers` explicitly when the stabilizer contains a
-  recorded carrier. The report now says
-`none_found` rather than `not_in_context` when removing everything stopped E
-instead of keeping the decision. Regression test:
+  recorded carrier.
+
+The report now says `none_found` rather than `not_in_context` when removing
+everything stopped E instead of keeping the decision. Regression test:
 `test_search_after_stabilizer_searches_the_whole_rest_for_the_choice`.
-`p5-real` and `p5-gen` ran the pre-fix engine. `p5b-real-qwen3-14b` re-runs
-`real` with the fix.
+`p5-real` and `p5-gen` ran the pre-fix engine; `p5b-real` (seed 0) the replaced
+first fix; `p5c-*` the final engine.
 
 ## 5.3: type-I error under least-favourable nulls
 
@@ -195,9 +196,76 @@ Every seed matches `v0.2` (seed F1 92 / 92 / 92).
 **A regression, and what causes it.** In every seed, two of the misses are bundles
 the one-stage audit rejected whole, each holding a true carrier plus a hitchhiker
 (`p0/tool_result_sentence_config`, `gen/0-013/ruff/doc+user`). The two-stage
-audit above targets these; `p5b-gen` measures it.
+audit above targets these; `p5c-gen` below measures it.
 `gen/0-037/ruff/tooldesc+doc` is threshold-sensitive, not a regression: the
 search is identical to `v0.2`'s, but removing the bundle keeps E only about half
 the time (15/30 and 13/30 here; 23/40 and 20/20 in `v0.2`), right at the 0.5
 threshold for E. One negative (`gen/0-052/uv/neg`) reports a precondition, which
 the scoring counts as wrong even though no cause is blamed.
+
+### `gen` with the final engine (two-stage audit, c2c0a96)
+
+[p5c-gen-qwen3-14b](../phase3/results/p5c-gen-qwen3-14b/summary.md): same 48
+cases, 3 seeds (seed F1 92 / 95 / 92; `v0.2` 95 / 96 / 93).
+
+| | F1 [95% CI] | Precond. blamed | Negatives correct | Replays/case |
+|---|---:|---:|---:|---:|
+| `v0.2` | 95% [87, 99] | 4% | 100% | 189 |
+| Phase 5, one-stage audit (`p5-gen`) | 90% [80, 98] | 2% | 97% | 230 |
+| Phase 5, final engine (`p5c-gen`) | **93% [84, 100]** | 7% | 97% | 237 |
+
+Only six cases differ between the three runs (F1 per seed):
+
+| case | `v0.2` | `p5-gen` | `p5c-gen` |
+|---|---|---|---|
+| `p0/tool_result_sentence_config` | 1 / 1 / 1 | 0 / 0 / 0 | 0 / 0 / 0 |
+| `gen/0-013/ruff/doc+user` | .67 / .8 / .8 | 0 / 0 / 0 | 0 / **1** / 0 |
+| `gen/0-037/ruff/tooldesc+doc` | 1 / 1 / 0 | 0 / 0 / 1 | 1 / 1 / 1 |
+| `gen/0-045/ruff/history+pre/long` | .5 / .5 / .5 | 1 / 1 / 1 | 1 / 1 / 1 |
+| `p3/precond_2or_pnpm` (precondition blamed) | 2 of 3 seeds | 1 of 3 | 3 of 3 |
+| `gen/0-052/uv/neg` (negative correct) | 3 of 3 | 2 of 3 | 2 of 3 |
+
+`gen/0-037` came back as predicted (threshold noise). The two-stage audit
+recovered `gen/0-013` in one seed only, and `p0` in none. Both misses have the
+same cause, and it is not a hitchhiker.
+
+**The stage-1 drop acts on uninformative tests.** In `p0`, the bundle is the
+`ls` output line `server.yaml` (`toolu_21.8`) plus the true carrier, the
+`server.yaml` read whose result says "this file is no longer read"
+(`toolu_22`). Removing both flips the choice with E intact (0/20). The restore
+test for `toolu_22` removes only `toolu_21.8`, and that **stops E** (0 of 20
+replays still call `Read`), so it says nothing about restoration. Stage 1 counted
+it as "does not restore" (p = 1), dropped the true carrier, and re-audited the
+`ls` line alone, whose removal alone also stops E. `gen/0-013` seed 2 is the
+same: after dropping the file listing `call_13_2` (restore test E-collapsed),
+removing just the two carriers kept E in only 3 of 20 replays (p = 0.125). In
+`p3/precond_2or_pnpm`, stage 1 dropped `read_pkg` on an E-collapsed test and
+certified `edit_pkg`, which the case labels a precondition: this is the whole
+rise from 4% to 7%.
+
+These are E-coupled bundles: leave-one-in cannot separate their members,
+because removing one member without the other changes E itself. `v0.2`
+"found" `p0` only through the lax check that the null simulation showed gives a
+93% false-bundle rate. The validity guarantee is unaffected (stage 2 always tests
+on new replays). A rule that drops a member only when its restore test keeps E
+and fails would revert `p3` and leave `p0` rejected rather than certifying its
+wrong member. It would probably also lose `gen/0-013` seed 1. Such bundles
+should be reported as coupled (`triggers_and_steers`, Phase 6.4), not certified
+or silently dropped. That rule is deliberately not tuned on these three cases;
+Phase 6's coalition tables give independent ground truth to set it.
+
+### Phase 5.5 summary
+
+| run | engine | suite | F1 [95% CI] | `v0.2` |
+|---|---|---|---:|---:|
+| `p5-repro-real` | `v0.2` behaviour | real (13) | 92% [77, 100] | 92% [77, 100] |
+| `p5-real` | Phase 5, pre-5.2b | real (13) | 95% [85, 100] | 92% |
+| `p5c-real` | final | real (13) | 92% [77, 100] | 92% |
+| `p5-gen` | Phase 5, one-stage audit | core + gen (48) | 90% [80, 98] | 95% [87, 99] |
+| `p5c-gen` | final | core + gen (48) | 93% [84, 100] | 95% [87, 99] |
+
+**Gate:** offline suite green; type-I error 3.0% [1.8, 4.9] ≤ α under the
+least-favourable null; final-engine F1 inside the `v0.2` CI on both suites, now
+with audited findings (Holm, α = 0.05) at +25–40% replays; on `run4/step21` the
+search continues after the stabilizer in every seed (it stays unsolved, a
+`triggers_and_steers` coupling).
