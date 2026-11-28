@@ -9,6 +9,12 @@ directories.
 
 ## 1. Where `v0.2.0` stands
 
+*`v0.2.1` (2026-11-28) ships the Phase 5 engine below, after checks on the GPU:*
+- *chunking of injected user-turn blocks;*
+- *the stabilizer;*
+- *the search/audit split with the 5.6 coupled-member audit;*
+- *`cache_control` pinning.*
+
 - **Engine:** auth-stripping recording proxy; structure-preserving ablation
   (tool-call/result pairing, id rotation on reasoning removal); conditional blame
   $P(A \mid E)$ that keeps workflow preconditions apart from choice carriers;

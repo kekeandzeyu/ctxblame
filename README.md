@@ -3,8 +3,10 @@
 "git blame" for LLM agent decisions: replay one recorded LLM request with
 pieces of context removed and report which chunk caused the decision.
 Works with any model: the evidence comes from replays, not from the model's
-own explanation. Status: v0.2, validated on open models (see
-[docs/WRITEUP.md](docs/WRITEUP.md)).
+own explanation. Status: v0.2.1, validated on open models (see
+[docs/WRITEUP.md](docs/WRITEUP.md)). v0.2.1 adds correct chunking of Claude
+Code–style traces, and it audits reported causes on fresh replays (family-wise
+error ≤ α).
 
 ```sh
 uvx ctxblame --help        # or: pip install ctxblame
