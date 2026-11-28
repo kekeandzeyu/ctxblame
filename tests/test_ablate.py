@@ -1,3 +1,4 @@
+import copy
 import random
 
 import pytest
@@ -200,3 +201,68 @@ def test_removing_thinking_gives_its_calls_fresh_ids(fmt):
     assert "'A'" not in s and "ctxb0000" in s  # call and result both renamed
     assert "'B'" in s  # calls of messages that keep their reasoning keep their ids
     assert validate(fmt, out) == []
+
+
+# ------------------------------------------------------------- prompt caching
+
+EPH = {"type": "ephemeral"}
+
+
+def _cached_body():
+    """Claude Code-like: breakpoints on the last system block, the first user turn and the last turn."""
+    b = anth_body()
+    b["system"] = [{"type": "text", "text": "You are a coding agent."},
+                   {"type": "text", "text": f"{PLANT} Be concise.", "cache_control": dict(EPH)}]
+    b["messages"][0]["content"] = [{"type": "text", "text": "The build fails. Fix it.", "cache_control": dict(EPH)}]
+    b["messages"][-1]["content"][-1]["cache_control"] = dict(EPH)
+    return b
+
+
+def _marks(body):
+    from ctxblame.ablate import _blocks
+    return [p for p, blk in _blocks(body) if isinstance(blk, dict) and "cache_control" in blk]
+
+
+def test_cache_breakpoint_pinned_at_frozen_prefix_and_stale_ones_stripped():
+    from ctxblame.ablate import pin_cache_breakpoints
+    b = _cached_body()
+    out = pin_cache_breakpoints(b, remove_units(ANTHROPIC, b, ["pair:B"]))
+    # msg[0..2] are unchanged; the change starts in msg[3]: pin on msg[2]'s last block, drop the tail mark
+    assert _marks(out) == [("system", 1), ("messages", 0, "content", 0), ("messages", 2, "content", 0)]
+    assert validate(ANTHROPIC, out) == []
+    # a change in the second system block: the prefix ends with the first one
+    assert _marks(pin_cache_breakpoints(b, remove_text(ANTHROPIC, b, PLANT))) == [("system", 0)]
+    # a change in the first system block: the frozen prefix ends at the last tool
+    assert _marks(pin_cache_breakpoints(b, remove_units(ANTHROPIC, b, ["system[0]"]))) == [("tools", 1)]
+
+
+def test_cache_breakpoints_untouched_without_caching_and_limited_to_four():
+    from ctxblame.ablate import pin_cache_breakpoints
+    plain = anth_body()
+    abl = remove_units(ANTHROPIC, plain, ["pair:B"])
+    assert pin_cache_breakpoints(plain, abl) == abl  # recorded without caching: replay as recorded
+    b = _cached_body()
+    b["tools"][0]["cache_control"] = dict(EPH)
+    b["messages"][1]["content"][0]["cache_control"] = {"type": "ephemeral", "ttl": "1h"}
+    out = pin_cache_breakpoints(b, remove_units(ANTHROPIC, b, ["pair:B"]))
+    assert len(_marks(out)) == 4 and ("tools", 0) not in _marks(out)  # the earliest one goes
+    assert out["messages"][2]["content"][0]["cache_control"] == {"type": "ephemeral", "ttl": "1h"}
+
+
+def test_cache_breakpoint_on_string_content_and_never_on_thinking():
+    from ctxblame.ablate import pin_cache_breakpoints
+    b = _cached_body()
+    b["messages"][0]["content"] = "The build fails. Fix it."
+    b["messages"][1]["content"].insert(0, {"type": "thinking", "thinking": "hm", "signature": "s"})
+    out = pin_cache_breakpoints(b, remove_units(ANTHROPIC, b, ["msg[1]"]))
+    # msg[1] is gone (its pair too), so the prefix ends with msg[0]: a string, now one marked text block
+    assert out["messages"][0]["content"] == [{"type": "text", "text": "The build fails. Fix it.",
+                                              "cache_control": EPH}]
+    # the last unchanged block is reasoning, which cannot carry a mark: pin the block before it
+    b2 = _cached_body()
+    b2["messages"][1]["content"] = [{"type": "thinking", "thinking": "hm", "signature": "s"},
+                                    b2["messages"][1]["content"][1]]
+    abl = copy.deepcopy(b2)
+    abl["messages"][1]["content"][1]["input"] = {"command": "ls -la"}
+    out = pin_cache_breakpoints(b2, abl)
+    assert _marks(out) == [("system", 1), ("messages", 0, "content", 0)]

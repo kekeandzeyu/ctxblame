@@ -31,11 +31,12 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Awaitable, Callable
 
-from .ablate import (AblationError, _cut, _segments, _short, _thinking_text, remove_units, text_fields,
-                     validate)
+from .ablate import (AblationError, _cut, _segments, _short, _thinking_text, pin_cache_breakpoints, remove_units,
+                     text_fields, validate)
 from .formats import ANTHROPIC, Decision, ToolCall, extract_decision
 from .match import MODES, Matcher, intent
 from .pricing import Ledger, resolve_model
+from .stats import binom_cdf, binom_sf, holm
 from .replay import (FatalReplayError, Replayer, Sample, build_headers, estimate_cost, resolve_api_key,
                      parse_extra_body, sample_decision, summarize, wilson, with_model_override)
 from .trace import Step, get_step, load_trace, matcher_for
@@ -105,17 +106,51 @@ def _paragraphs(s: str) -> list[tuple[int, int]]:
     return spans
 
 
+# Context a harness injects into user turns (Claude Code's <system-reminder>,
+# Cline's <environment_details>, ...): not written by the user, so removable.
+INJECTED_TAGS = ("system-reminder", "environment_details", "context")
+_INJECTED = re.compile(r"<(" + "|".join(INJECTED_TAGS) + r")(?:\s[^>]*)?>(.*?)</\1>", re.S)
+
+
+def injected_blocks(s: str) -> list[re.Match]:
+    """Harness-injected ``<tag>...</tag>`` blocks in a user text, in order."""
+    return list(_INJECTED.finditer(s))
+
+
+def _own_text(s: str) -> str:
+    """The user's own text: ``s`` without injected blocks."""
+    return _INJECTED.sub("", s).strip()
+
+
+def _gaps(s: str, blocks: list[re.Match]) -> list[tuple[int, int]]:
+    """Spans of ``s`` outside ``blocks`` that hold non-blank text."""
+    out, at = [], 0
+    for m in blocks + [None]:
+        end = m.start() if m else len(s)
+        if s[at:end].strip():
+            out.append((at, end))
+        at = m.end() if m else at
+    return out
+
+
 def chunk_request(fmt: str, body: dict, protect: list[str] = (), tool_descs: bool = True) -> list[Chunk]:
-    """Coarse chunks (with line-level children), in prompt order. The text of
-    the task message and any text in ``protect`` are left out."""
+    """Coarse chunks (with line-level children), in prompt order. The user's own
+    text in the task message and any text in ``protect`` are left out; context
+    blocks a harness injects into user turns (``<system-reminder>`` etc.) are
+    chunks of kind ``injected``, wherever they are."""
     msgs = body.get("messages") or []
     fields = text_fields(fmt, body)
-    # the task = the latest user message with text of its own (in an agent's tool
-    # loop that is the first one; in a chat it is the current request)
+
+    def is_result(p: tuple) -> bool:
+        return len(p) >= 4 and isinstance(msgs[p[1]].get("content"), list) and \
+            msgs[p[1]]["content"][p[3]].get("type") == "tool_result"
+
+    # the task = the latest user message with text the user wrote (in an agent's
+    # tool loop that is the first one; in a chat it is the current request); a
+    # tool-result turn that only carries injected reminders is not a task
     task_i = None
     for p, s in fields:
-        if p[0] == "messages" and msgs[p[1]].get("role") == "user" and s.strip() and not (
-                len(p) >= 4 and msgs[p[1]]["content"][p[3]].get("type") == "tool_result"):
+        if p[0] == "messages" and msgs[p[1]].get("role") == "user" and _own_text(s) and not is_result(p):
             task_i = p[1]
 
     # rough prompt positions: tools, then system, then messages
@@ -182,16 +217,43 @@ def chunk_request(fmt: str, body: dict, protect: list[str] = (), tool_descs: boo
 
     for i, m in enumerate(msgs):
         role = m.get("role")
-        if i == task_i or role in ("system", "developer"):
+        if role in ("system", "developer"):
             continue
         t = turns[i]
+        # injected context blocks inside user turns (the task's included)
+        if role == "user":
+            for p, s in fields:
+                if p[0] != "messages" or p[1] != i or is_result(p):
+                    continue
+                where = f"b{p[3]}" if len(p) >= 4 else "s"
+                for k, mt in enumerate(injected_blocks(s), 1):
+                    inner = mt.group(2)
+                    if not inner.strip() or protected(inner):
+                        continue
+                    cid = f"inj:msg[{i}].{where}#{k}"
+                    label = f"turn {t} user message <{mt.group(1)}> {k}"
+                    kids = _line_chunks(cid, label, p, inner, mt.start(2), pos[p] + mt.start(2))
+                    out.append(Chunk(cid, "injected", label, inner.strip(), pos[p] + mt.start(),
+                                     spans=((p, mt.start(), mt.end()),),
+                                     children=kids if len(kids) > 1 else []))
+        if i == task_i:
+            continue
         # plain text of user / assistant messages
         for p, s in fields:
             if p[0] != "messages" or p[1] != i or not s.strip() or protected(s):
                 continue
-            if role == "tool" or (len(p) >= 4 and m["content"][p[3]].get("type") == "tool_result"):
+            if role == "tool" or is_result(p):
                 continue
             if role not in ("user", "assistant"):
+                continue
+            blocks = injected_blocks(s) if role == "user" else []
+            if blocks:  # the user's own text around injected blocks, one chunk per stretch
+                label = f"turn {t} user message"
+                for st, en in _gaps(s, blocks):
+                    cid = f"text:{'.'.join(map(str, p[1:]))}@{st}"
+                    kids = _line_chunks(cid, label, p, s[st:en], st, pos[p] + st)
+                    out.append(Chunk(cid, role, label, s[st:en].strip(), pos[p] + st, spans=((p, st, en),),
+                                     children=kids if len(kids) > 1 else []))
                 continue
             only_text = isinstance(m.get("content"), str) and not m.get("tool_calls") or (
                 isinstance(m.get("content"), list) and all(b.get("type") == "text" for b in m["content"])
@@ -472,6 +534,11 @@ class Tester:
         self.replays = 0
         self.usage = {"input_uncached": 0, "input_cache_read": 0, "input_cache_write": 0, "output": 0}
 
+    def ablated(self, chunks: list[Chunk]) -> dict:
+        """The request without ``chunks``; Anthropic cache breakpoints pinned at the frozen prefix."""
+        body = apply_chunks(self.step.fmt, self.step.body, chunks)
+        return pin_cache_breakpoints(self.step.body, body) if self.step.fmt == ANTHROPIC else body
+
     def replayer(self) -> Replayer:
         rec = self.step.record["request"]
         return Replayer(self.step.fmt, self.base + rec["path"], build_headers(self.step.fmt, rec.get("headers"),
@@ -485,7 +552,7 @@ class Tester:
         if key in self.cache and not fresh:
             return self.cache[key]
         try:
-            body = apply_chunks(self.step.fmt, self.step.body, [self.chunks[i] for i in removed] + list(extra))
+            body = self.ablated([self.chunks[i] for i in removed] + list(extra))
         except AblationError as e:
             out = Outcome(0, 0, "error", note=str(e))
             self.cache[key] = out
@@ -545,6 +612,68 @@ class Tester:
         self.log.append({"removed": sorted(key), "fresh": fresh, "outcome": asdict(out)})
         return out
 
+    async def audit(self, removed: frozenset, n: int) -> Outcome:
+        """``n`` fresh replays of this removal, decided once with no peeking. Never
+        cached and never read by the search, so the search cannot have selected on them."""
+        try:
+            body = self.ablated([self.chunks[i] for i in removed])
+        except AblationError as e:
+            return Outcome(0, 0, "error", note=str(e))
+        if self.ledger.remaining() < self.est * n:
+            raise BudgetStop(f"budget left ${self.ledger.remaining():.3f}")
+        try:
+            samples = await self.replayer().run(body, n, self.matcher)
+        except FatalReplayError as e:
+            return Outcome(0, 0, "rejected", note=str(e)[:300])
+        self.replays += len(samples)
+        for s in samples:
+            for k_u in self.usage:
+                self.usage[k_u] += (s.usage or {}).get(k_u) or 0
+        ok = [s for s in samples if s.ok]
+        cost = sum(s.cost for s in samples)
+        dist = Counter(x for s in ok for x in set(s.keys or [s.key])).most_common(4)
+        same = lambda s: self.matcher.same(None, self.target, s.key, s.keys or [s.key])  # noqa: E731
+        if self.given_matcher is not None and self.given_target is not None:
+            given = [s for s in ok if self.given_matcher.same(sample_decision(s), self.given_target)]
+            k_t = sum(same(s) for s in given)
+            v, gv = decide_conditional(k_t, len(given), len(ok), self.threshold, self.given_threshold or 0.5,
+                                       len(ok), 1) if ok else ("error", None)
+            out = Outcome(k_t, len(given), "unclear" if v == "more" else v, cost, dist, k_given=len(given),
+                          n_total=len(ok), given_verdict="unclear" if gv == "more" else gv)
+        else:
+            k = sum(same(s) for s in ok)
+            v = decide(k, len(ok), self.threshold, len(ok), 1) if ok else "error"
+            out = Outcome(k, len(ok), "unclear" if v == "more" else v, cost, dist)
+        self.log.append({"removed": sorted(removed), "audit": True, "outcome": asdict(out)})
+        return out
+
+    def p_value(self, o: Outcome, kind: str) -> float:
+        return audit_p(o, kind, self.threshold, self.given_threshold or 0.5)
+
+
+def audit_p(o: Outcome, kind: str, threshold: float, given_threshold: float) -> float:
+    """One-sided exact binomial p-value of an audit outcome, at the search's own thresholds.
+
+    flip     H0: P(A | E, removal) >= threshold   (the removal does not flip the choice)
+    restore  H0: P(A | E, removal) <= threshold   (keeping the member does not restore it)
+    collapse H0: P(E | removal) >= given_threshold
+    intact   H0: P(E | removal) <= given_threshold  (keeping the member does not restore E)
+
+    The thresholds come from the baseline replays, which the audit does not reuse,
+    so the tests are exact conditional on the baseline.
+    """
+    if o.verdict in ("error", "rejected"):
+        return 1.0
+    if kind == "flip":
+        return binom_cdf(o.k, o.n, threshold)
+    if kind == "restore":
+        return binom_sf(o.k, o.n, threshold)
+    if kind == "collapse":
+        return binom_cdf(o.k_given or 0, o.n_total or 0, given_threshold)
+    if kind == "intact":
+        return binom_sf(o.k_given or 0, o.n_total or 0, given_threshold)
+    raise ValueError(kind)
+
 
 # ------------------------------------------------------------------ search
 
@@ -586,6 +715,12 @@ class Cause:
     restored: dict[str, Outcome] = field(default_factory=dict)  # C \ {c_i}: keeping c_i alone restores
     controls: list[tuple[str, Outcome]] = field(default_factory=list)
     role: str = "cause"  # cause | precondition
+    removal: list[str] = field(default_factory=list)  # what is removed to confirm it (default: members)
+    # audit stage (fresh replays): outcome per test, IUT p-value, Holm-adjusted p-value
+    audit: dict[str, Outcome] = field(default_factory=dict)
+    p_value: float | None = None
+    p_adjusted: float | None = None
+    certified: bool | None = None  # None = not audited
 
     @property
     def relation(self) -> str:
@@ -803,6 +938,33 @@ async def _vet_members(members: list[str], restored: dict[str, Outcome], by_id: 
     return keep, {k: v for k, v in restored.items() if k in keep}
 
 
+def _intact(o: Outcome) -> bool:
+    """The action family E clearly survived this removal."""
+    return o.given_verdict == "intact"
+
+
+async def _stabilizer(items: list[str], test) -> list[str] | None:
+    """A minimal set K of ``items`` such that removing ``items \\ K`` keeps the
+    action family E intact (None if even removing nothing does not).
+
+    Used when what makes the agent act at all is spread over many chunks (each
+    found precondition reveals another): instead of stopping, K is protected and
+    the choice search goes on over the rest. K is sufficient, not necessary, so it
+    is reported as diffuse context, not as a precondition. The search keeps
+    prefix chunks first, so its removals are suffixes (prefix-cache friendly)."""
+    full = frozenset(items)
+
+    async def keep(kept: frozenset) -> Outcome:
+        return await test(full - kept)
+
+    if not _intact(await keep(full)):
+        return None
+    if _intact(await keep(frozenset())):
+        return []
+    kept = await ddmin(list(reversed(items)), keep, pred=_intact)
+    return [x for x in items if x in set(kept)]
+
+
 async def _refine_members(members: list[str], by_id: dict[str, Chunk], test,
                           pred: Callable[[Outcome], bool]) -> list[str]:
     refined: list[str] = []
@@ -819,23 +981,81 @@ async def _refine_members(members: list[str], by_id: dict[str, Chunk], test,
     return refined
 
 
+async def audit_findings(findings: list[Cause], auditor, n: int, alpha: float) -> None:
+    """Certify each finding on ``n`` fresh replays per test (search/audit split).
+
+    A cause C is certified when removing C flips the choice *and* (for a bundle)
+    keeping each member alone restores it: the composite null is a union, so the
+    intersection-union test takes the max of the one-sided p-values with no
+    multiplicity penalty inside the bundle (Berger, 1982). A precondition is
+    tested the same way on P(E). Holm's step-down across all findings then
+    controls the family-wise error rate at ``alpha``, conditional on the
+    baseline and on the search's choice of hypotheses (which saw none of these
+    replays).
+
+    Two stages for a bundle: when its removal flips but some members do not
+    restore (a hitchhiker the search could not prune), those members are dropped
+    and the smaller bundle is audited again on new fresh replays. Stage 1 only
+    chooses the hypothesis; the p-value comes from stage 2 alone, which is
+    independent of it (sample splitting), so the family Holm controls is still
+    one final hypothesis per finding. Stage-1 outcomes are kept as ``stage1:*``."""
+    async def run(members: list[str], removal: frozenset, kinds: tuple[str, str]):
+        audit = {"together": await auditor.audit(removal, n)}
+        p_main = auditor.p_value(audit["together"], kinds[0])
+        p_members: dict[str, float] = {}
+        if len(members) > 1:
+            for cid in members:
+                audit[cid] = await auditor.audit(removal - {cid}, n)
+                p_members[cid] = auditor.p_value(audit[cid], kinds[1])
+        return audit, p_main, p_members
+
+    for f in findings:
+        removal = frozenset(f.removal or f.members)
+        kinds = ("collapse", "intact") if f.role == "precondition" else ("flip", "restore")
+        audit, p_main, p_members = await run(f.members, removal, kinds)
+        drop = [cid for cid, p in p_members.items() if p > alpha]
+        if p_main <= alpha and drop and len(drop) < len(f.members):
+            stage1 = {f"stage1:{k}": o for k, o in audit.items()}
+            f.members = [m for m in f.members if m not in drop]
+            f.removal = [m for m in (f.removal or []) if m not in drop]
+            removal = removal - set(drop)
+            audit, p_main, p_members = await run(f.members, removal, kinds)
+            audit = {**stage1, **audit}
+        f.audit = audit
+        f.p_value = max([p_main, *p_members.values()])
+    for f, p in zip(findings, holm([f.p_value for f in findings])):
+        f.p_adjusted = p
+        f.certified = p <= alpha
+
+
 async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = True,
                  n_controls: int = 2, rng: random.Random | None = None,
                  control_pool: list[Chunk] = (), max_members: int = 5,
                  notes: list[str] | None = None,
                  preconditions: list[Cause] | None = None,
                  max_preconditions: int = 3, stratify: bool = True,
-                 strict_restore: bool = False, member_controls: int = 0) -> tuple[Outcome, list[Cause]]:
+                 strict_restore: bool = False, member_controls: int = 0,
+                 stabilize: bool = True, stabilizers: list[list[str]] | None = None,
+                 audit_n: int = 0, alpha: float = 0.05, uncertified: list[Cause] | None = None
+                 ) -> tuple[Outcome, list[Cause]]:
     """KV-cache-stratified suffix-first search.
 
     Probes suffix tiers before prefix tiers to preserve KV prompt-cache hits,
     isolates and auto-protects workflow preconditions (collapsing action family E),
     and prunes noisy hitchhikers via leave-one-in restoration checks (C \\ {c_i}).
+    When preconditions keep appearing (``max_preconditions`` reached) or one is
+    diffuse (more than ``max_members`` chunks), a minimal stabilizer of E is
+    protected instead (once) and the choice search continues (``stabilize``).
+
+    With ``audit_n`` > 0, every finding is then certified on fresh replays
+    (``audit_findings``); findings that fail move to ``uncertified``.
 
     Returns ``(probe_outcome, causes)``; isolated preconditions are appended to
-    ``preconditions`` and search explanations to ``notes``."""
+    ``preconditions``, stabilizers to ``stabilizers`` and search explanations to
+    ``notes``."""
     notes = notes if notes is not None else []
     preconds = preconditions if preconditions is not None else []
+    stabs = stabilizers if stabilizers is not None else []
     rng = rng or random.Random(0)
     by_id = {c.id: c for c in coarse}
     for c in coarse:
@@ -852,16 +1072,45 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
     causes: list[Cause] = []
     first_flip: Outcome | None = None
     last_probe = Outcome(0, 0, "kept")
+    stabilized = False
+
+    async def stabilize_rest(why_: str) -> bool:
+        """Protect a minimal stabilizer of E among ``remaining``; False = stop searching."""
+        nonlocal remaining, stabilized
+        if not stabilize:
+            notes.append(why_)
+            return False
+        if stabilized:
+            notes.append(why_ + " again with the stabilizer kept; stopped")
+            return False
+        stabilized = True
+        keep = await _stabilizer(list(remaining), test)
+        if keep is None:
+            notes.append(why_ + "; no stabilizer found (removing nothing does not keep the action family)")
+            return False
+        stabs.append(keep)
+        protected_ids.update(keep)
+        remaining = [x for x in remaining if x not in set(keep)]
+        notes.append(why_ + f"; kept a minimal stabilizer of the action family ({len(keep)} chunk(s)) "
+                     "and searched the rest for the choice")
+        return bool(remaining)
 
     while remaining and len(causes) < max_causes:
         # stratify=False (ablation): one tier, i.e. remove everything first and
         # delta-debug over all chunks, as before the KV-cache-stratified search
         tiers = partition_tiers(remaining, by_id) if stratify else [list(remaining)]
-        probe, hit_idx = await _widen_suffix(tiers, test, frozenset(), is_hit)
+        # After a stabilizer, widen past tiers whose removal stops E and stop at the
+        # first flip: the stabilizer showed that removing all the rest keeps E, but a
+        # partial removal need not (E is non-monotone in what is removed: a late
+        # output without the history that explains it), and there are no more
+        # preconditions to protect. The stratified ddmin then counts collapses as
+        # "not flipped" and keeps the tier structure that separates the carriers.
+        hit = is_flipped if stabilized else is_hit
+        probe, hit_idx = await _widen_suffix(tiers, test, frozenset(), hit)
         last_probe = probe
         region = tiers[hit_idx:] if hit_idx >= 0 else []
         if hit_idx < 0:
-            alt = await _fallback_window(tiers, test, frozenset(), is_hit)
+            alt = await _fallback_window(tiers, test, frozenset(), hit)
             if alt is None:
                 break
             probe, window = alt
@@ -871,14 +1120,17 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
 
         if probe.collapsed:
             if len(raw_preconds) >= max_preconditions:
+                if await stabilize_rest(f"more than {max_preconditions} preconditions"):
+                    continue
                 break
             s = await _stratified_ddmin(region, test, is_collapsed)
             s, _ = await _prune_bundle(s, by_id, test, is_collapsed, notes)
             if not (await test(frozenset(s))).collapsed:
                 break
             if len(s) > max_members:
-                notes.append(f"diffuse precondition: the smallest removal that stops the action family "
-                             f"has {len(s)} chunks")
+                if await stabilize_rest(f"diffuse precondition: the smallest removal that stops the action "
+                                        f"family has {len(s)} chunks"):
+                    continue
                 break
             members = await _refine_members(list(s), by_id, test, is_collapsed) if refine else list(s)
             members, restored = await _prune_bundle(members, by_id, test, is_collapsed, notes)
@@ -954,6 +1206,7 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
             cause.members = await _refine_members(cause.members, by_id, test, is_flipped)
         cause.members, cause.restored = await _prune_bundle(cause.members, by_id, test, is_flipped, notes)
         removal = list(cause.members)  # what is removed to confirm the flip
+        cause.removal = removal
         if strict_restore or member_controls:
             # vetted-out members stay in the confirming removal (the flip may need
             # them gone too), but are not reported as carriers
@@ -973,6 +1226,20 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
             cause.controls.append((" / ".join(_short(c.text, 40) for c in ctl),
                                    await test(frozenset(), extra=ctl)))
     causes = [c for c in causes if c.together and c.together.flipped]
+    if audit_n:
+        await audit_findings(causes + preconds, test, audit_n, alpha)
+        for c in causes + preconds:
+            if "stage1:together" in c.audit:
+                notes.append(f"audit dropped member(s) that did not restore it; {c.role} re-audited on new "
+                             f"fresh replays as {', '.join(c.members)}")
+        failed = [c for c in causes + preconds if not c.certified]
+        for c in failed:
+            notes.append(f"not certified on {audit_n} fresh replays per test ({c.role}: {', '.join(c.members)}; "
+                         f"p = {c.p_value:.3g}, Holm-adjusted {c.p_adjusted:.3g} > {alpha})")
+        if uncertified is not None:
+            uncertified.extend(failed)
+        causes = [c for c in causes if c.certified]
+        preconds[:] = [p for p in preconds if p.certified]
     causes.sort(key=lambda c: c.specific is False)  # specific causes first
     everything = first_flip if first_flip is not None else last_probe
     return everything, causes
@@ -1030,6 +1297,14 @@ def add_args(ap) -> None:
     ap.add_argument("--member-controls", type=int, default=0, metavar="N",
                     help="each OR-bundle member must still restore the decision when N random same-size "
                          "runs of other lines are removed too (default 0 = off); for noisy models")
+    ap.add_argument("--no-stabilize", action="store_true",
+                    help="ablation: stop when preconditions run out or are diffuse, instead of keeping a "
+                         "minimal stabilizer of the action family and searching on")
+    ap.add_argument("--audit-n", type=int, default=20, metavar="N",
+                    help="certify each finding on N fresh replays per test, never seen by the search "
+                         "(intersection-union within a bundle, Holm across findings); 0 = off (v0.2 behaviour)")
+    ap.add_argument("--alpha", type=float, default=0.05,
+                    help="family-wise error rate for the audit (default 0.05)")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--base-url", default=None)
     ap.add_argument("--model", default=None, help="override the model name in the replayed request")
@@ -1057,7 +1332,16 @@ def _serialize_findings(findings: list[Cause], by_id: dict[str, Chunk]) -> list[
              "specific": c.specific,
              "alone": {k: asdict(v) for k, v in c.alone.items()},
              "restored": {k: asdict(v) for k, v in c.restored.items()},
-             "controls": [{"removed": t, **asdict(o)} for t, o in c.controls]} for c in findings]
+             "controls": [{"removed": t, **asdict(o)} for t, o in c.controls],
+             "certified": c.certified, "p_value": c.p_value, "p_adjusted": c.p_adjusted,
+             "audit": {k: asdict(v) for k, v in c.audit.items()}} for c in findings]
+
+
+def _certificate(c: Cause) -> str:
+    if c.certified is None:
+        return ""
+    o = c.audit.get("together")
+    return f"  certified on fresh replays: {o} (p = {c.p_value:.2g}, Holm {c.p_adjusted:.2g})"
 
 
 async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
@@ -1145,13 +1429,19 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
     # 3-5. search
     pool = [k for c in coarse for k in (c.children or [c]) if c.kind != "thinking" and k.spans]
     preconditions: list[Cause] = []
+    stabilizers: list[list[str]] = []
+    uncertified: list[Cause] = []
     try:
         everything, causes = await search(coarse, test, args.max_causes, not args.no_refine, args.controls,
                                           random.Random(args.seed), pool, notes=notes,
                                           preconditions=preconditions,
                                           stratify=not getattr(args, "no_stratify", False),
                                           strict_restore=getattr(args, "strict_restore", False),
-                                          member_controls=getattr(args, "member_controls", 0))
+                                          member_controls=getattr(args, "member_controls", 0),
+                                          stabilize=not getattr(args, "no_stabilize", False),
+                                          stabilizers=stabilizers,
+                                          audit_n=getattr(args, "audit_n", 0),
+                                          alpha=getattr(args, "alpha", 0.05), uncertified=uncertified)
         stopped = None
     except BudgetStop as e:
         everything, causes, stopped = None, [], str(e)
@@ -1184,6 +1474,12 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
         if p.controls:
             say("  controls (random same-size removals): " + ", ".join(str(o) for _, o in p.controls)
                 + ("" if p.specific else "  -> NOT specific: random removals stop it too"))
+        if p.certified is not None:
+            say(_certificate(p))
+    for keep in stabilizers:
+        say(f"\nDiffuse context the action family needs (kept while searching the choice; {len(keep)} chunk(s)):")
+        for cid in keep:
+            say(f"  - {by_id[cid].label}: {_short(by_id[cid].text, 90)!r}")
     for n, c in enumerate(causes, 1):
         together = c.together
         what = "Cause" if c.specific is not False else "Context it needs (not specific)"
@@ -1202,6 +1498,8 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
         if c.controls:
             say("  controls (random same-size removals): " + ", ".join(str(o) for _, o in c.controls)
                 + ("" if c.specific else "  -> NOT specific: random removals flip it too"))
+        if c.certified is not None:
+            say(_certificate(c))
     if not causes and everything is not None and everything.flipped and any("reasoning" in n for n in notes):
         notes.append("removing all removable context flips the decision, but no small set does: the "
                      "reasoning that cannot be removed probably carries it too")
@@ -1223,11 +1521,15 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
         f"{cache_note} (ledger ${ledger.total:.4f} of ${args.budget:.2f})")
     result = ("causes" if causes else
               "preconditions_only" if preconditions and everything and not everything.flipped else
-              "not_in_context" if everything and not everything.flipped else
+              "not_in_context" if everything and everything.verdict == "kept" else
               "none_found")
     report.update(result=result,
                   causes=_serialize_findings(causes, by_id),
                   preconditions=_serialize_findings(preconditions, by_id),
+                  uncertified=_serialize_findings(uncertified, by_id),
+                  audit={"n": getattr(args, "audit_n", 0), "alpha": getattr(args, "alpha", 0.05)},
+                  diffuse_preconditions=[[{"id": m, "kind": by_id[m].kind, "label": by_id[m].label,
+                                           "text": by_id[m].text} for m in keep] for keep in stabilizers],
                   cache_stats=cache_stats,
                   notes=notes, stopped=stopped, tests=test.log, cost=cost,
                   replays=test.replays + len(samples))

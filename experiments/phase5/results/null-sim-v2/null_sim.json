@@ -1,0 +1,111 @@
+{
+ "b": 0.9,
+ "tau": 0.45,
+ "seed": 0,
+ "results": [
+  {
+   "scenario": "boundary_single",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.004,
+   "fwer_ci": [
+    0.0010976075412372681,
+    0.014466014041418871
+   ],
+   "power": null,
+   "replays_mean": 40.19
+  },
+  {
+   "scenario": "boundary_single",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": null,
+   "replays_mean": 40.59
+  },
+  {
+   "scenario": "boundary_bundle",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.93,
+   "fwer_ci": [
+    0.9042022712346763,
+    0.9492405568287469
+   ],
+   "power": null,
+   "replays_mean": 159.89
+  },
+  {
+   "scenario": "boundary_bundle",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.03,
+   "fwer_ci": [
+    0.018263049234083534,
+    0.04890409218496562
+   ],
+   "power": null,
+   "replays_mean": 285.57
+  },
+  {
+   "scenario": "power_bundle",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": 1.0,
+   "replays_mean": 78.81
+  },
+  {
+   "scenario": "power_bundle",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": 0.988,
+   "replays_mean": 138.89
+  },
+  {
+   "scenario": "hitchhiker",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.004,
+   "fwer_ci": [
+    0.0010976075412372681,
+    0.014466014041418871
+   ],
+   "power": 0.97,
+   "replays_mean": 111.0
+  },
+  {
+   "scenario": "hitchhiker",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": 0.97,
+   "replays_mean": 130.48
+  }
+ ]
+}

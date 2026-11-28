@@ -1,0 +1,949 @@
+{
+ "model": "Qwen3-14B",
+ "extra_body": {
+  "chat_template_kwargs": {
+   "enable_thinking": false
+  },
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20
+ },
+ "n": 20,
+ "suite": "real",
+ "gen_n": 64,
+ "gen_seed": 0,
+ "valid": [
+  "real/run1/step21",
+  "real/run2/step19",
+  "real/run3/step24",
+  "real/run4/step21",
+  "real/run6/step24",
+  "real/run8/step14",
+  "real/run9/step14",
+  "real/run9/step20",
+  "real/run9/step29",
+  "real/run13/step14",
+  "real/run13/step17",
+  "real/run15/step24",
+  "real/run15/step27"
+ ],
+ "rows": [
+  {
+   "case": "real/run1/step1",
+   "category": "or_redundant",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    }
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'e.g. `python -m pytest -q -x --tb=line`' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "real/run1/step21",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-9b6b7e2afe3fc3d6": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run2/step19",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-bf5cea976308e4d4": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run3/step24",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-ad6118550dcb4683": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run4/step21",
+   "category": "or_redundant",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-98d3ee5433cee069": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run6/step24",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-81bf41f532717907": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run8/step14",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-8c2f02fb72789667": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run9/step14",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-9cea2332a5100dd0": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run9/step20",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-9cea2332a5100dd0": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-a9378fc1bf5838bd": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run9/step29",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-9cea2332a5100dd0": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-a9378fc1bf5838bd": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-bdb3e706d7992510": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run13/step14",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-b5c75dd837908ef6": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run13/step17",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-b5c75dd837908ef6": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-814dabd864522b69": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run13/step21",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 0,
+     "k": 0,
+     "p_given": 0.0,
+     "p_cond": null,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-b5c75dd837908ef6": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-814dabd864522b69": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-b240011f772f28e2": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": false,
+   "why": "removing all carriers does not flip (0/0); removing all carriers collapses the action family; carrier alone does not restore: 'Run the test suite with `python -m pytest -q -x --' (0/0); carrier alone does not restore: 'e.g. `python -m pytest -q -x --tb=line`' (0/0)",
+   "e_coupled": true
+  },
+  {
+   "case": "real/run15/step24",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-ad05f23cd75dcc06": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  },
+  {
+   "case": "real/run15/step27",
+   "category": "precondition_or",
+   "target": "bash({\"command~--tb=line\": true})",
+   "given": "run pytest",
+   "base": {
+    "n": 20,
+    "k_given": 20,
+    "k": 20,
+    "p_given": 1.0,
+    "p_cond": 1.0,
+    "errors": 0
+   },
+   "all_off": {
+    "n": 20,
+    "k_given": 20,
+    "k": 0,
+    "p_given": 1.0,
+    "p_cond": 0.0,
+    "errors": 0
+   },
+   "only": {
+    "Run the test suite with `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "e.g. `python -m pytest -q -x --tb=line`": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-ad05f23cd75dcc06": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    },
+    "pair:chatcmpl-tool-9aa6fbea340240d3": {
+     "n": 20,
+     "k_given": 20,
+     "k": 20,
+     "p_given": 1.0,
+     "p_cond": 1.0,
+     "errors": 0
+    }
+   },
+   "pre_off": {
+    "n": 20,
+    "k_given": 0,
+    "k": 0,
+    "p_given": 0.0,
+    "p_cond": null,
+    "errors": 0
+   },
+   "valid": true,
+   "why": "",
+   "e_coupled": false
+  }
+ ]
+}

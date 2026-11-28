@@ -48,7 +48,7 @@ if [ ! -f "$OUT/oracle_all.json" ]; then
   "$PY" experiments/phase3/oracle.py --suite "$SUITE" "${COMMON[@]}" -n "${ORACLE_N:-20}" --max-tokens "$MAX_TOKENS" \
     --parallel-cases 8 --out "$OUT/oracle_all.json" > "$LOGS/oracle_$TAG.log" 2>&1
 fi
-tail -n 2 "$LOGS/oracle_$TAG.log"
+tail -n 2 "$LOGS/oracle_$TAG.log" 2>/dev/null || true  # absent when oracle_all.json was supplied
 
 for s in $SEEDS; do
   [ -f "$OUT/seed$s/benchmark.json" ] && continue

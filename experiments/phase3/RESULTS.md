@@ -1,7 +1,9 @@
 # Attribution benchmark results (Phases 3–4, open models, $0)
 
 All runs: vLLM with prefix caching on one RTX 4090 48GB, 3 seeds, thinking
-off unless noted. Only **oracle-valid** cases are scored: `oracle.py` first checks on
+off unless noted. Sampling: temperature 0.7 (Qwen, thinking off) or 0.6 (Qwen
+thinking on, Llama); the exact `extra_body` of each run is in
+`results/<tag>/oracle_all.json`. Only **oracle-valid** cases are scored: `oracle.py` first checks on
 the model under test that the base decision is stable, removing all planted
 carriers flips it, each carrier alone restores it, and removing the
 precondition collapses the action family `E`. F1 = mean over case × seed with

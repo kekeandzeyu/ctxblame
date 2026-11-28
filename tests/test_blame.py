@@ -151,6 +151,67 @@ def test_task_is_the_latest_user_text():
     assert "Context: we use pnpm." in texts and "Add lodash." not in texts
 
 
+TASK = "Fix the failing test in parser.py."
+RULE = "Use tox -e py312 to run tests."
+CLAUDE_MD = f"<system-reminder>\n# claudeMd\nContents of CLAUDE.md:\n\n{RULE}\nKeep diffs small.\n</system-reminder>"
+TODO = "<system-reminder>\nThe TodoWrite tool hasn't been used recently.\n</system-reminder>"
+
+
+def _claude_code_anth():
+    """Claude Code's wire shape: CLAUDE.md injected into the task message, and a
+    reminder appended to a later tool-result turn."""
+    return {"model": "m", "max_tokens": 100, "system": "You are Claude Code.",
+            "tools": [{"name": "Bash", "description": "Run a command.", "input_schema": {"type": "object"}}],
+            "messages": [
+                {"role": "user", "content": [{"type": "text", "text": CLAUDE_MD}, {"type": "text", "text": TASK}]},
+                {"role": "assistant", "content": [
+                    {"type": "tool_use", "id": "A", "name": "Bash", "input": {"command": "ls"}}]},
+                {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "A", "content": "parser.py"},
+                                             {"type": "text", "text": TODO}]}]}
+
+
+def _claude_code_oai(list_content: bool):
+    first = CLAUDE_MD + "\n" + TASK
+    return {"model": "m", "messages": [
+        {"role": "system", "content": "You are an agent."},
+        {"role": "user", "content": [{"type": "text", "text": first}] if list_content else first},
+        {"role": "assistant", "content": None, "tool_calls": [
+            {"id": "A", "type": "function", "function": {"name": "Bash", "arguments": '{"command":"ls"}'}}]},
+        {"role": "tool", "tool_call_id": "A", "content": "parser.py"},
+        {"role": "user", "content": TODO}],
+        "tools": [{"type": "function", "function": {"name": "Bash", "description": "Run a command."}}]}
+
+
+@pytest.mark.parametrize("fmt,body", [(ANTHROPIC, _claude_code_anth()), (OPENAI, _claude_code_oai(False)),
+                                      (OPENAI, _claude_code_oai(True))])
+def test_injected_reminders_are_chunks_and_the_task_is_the_users_text(fmt, body):
+    chunks = chunk_request(fmt, body)
+    # the task is the user's text in messages[0], not the later reminder-only turn
+    assert not any(TASK in c.text for c in chunks)
+    inj = [c for c in chunks if c.kind == "injected"]
+    assert len(inj) == 2 and inj[0].id.startswith("inj:msg[1]" if fmt == OPENAI else "inj:msg[0]")
+    assert RULE in inj[0].text and "TodoWrite" in inj[1].text
+    rule = next(k for k in inj[0].children if k.text == RULE)
+    out = apply_chunks(fmt, body, [rule])
+    assert RULE not in str(out) and "Keep diffs small." in str(out) and TASK in str(out)
+    for c in chunks + [k for c in chunks for k in c.children]:
+        assert validate(fmt, apply_chunks(fmt, body, [c])) == []
+    out = apply_chunks(fmt, body, chunks)
+    assert validate(fmt, out) == [] and TASK in str(out) and "system-reminder" not in str(out)
+
+
+def test_users_own_text_around_reminders_in_an_earlier_turn_is_a_chunk():
+    b = {"model": "m", "max_tokens": 10, "messages": [
+        {"role": "user", "content": "Context: we use pnpm.\n" + TODO},
+        {"role": "assistant", "content": "ok"},
+        {"role": "user", "content": "Add lodash."}]}
+    chunks = chunk_request(ANTHROPIC, b)
+    assert {c.kind: c.text for c in chunks if c.kind in ("user", "injected")} == {
+        "user": "Context: we use pnpm.", "injected": TODO.split("\n")[1]}
+    out = apply_chunks(ANTHROPIC, b, [c for c in chunks if c.kind == "injected"])
+    assert out["messages"][0]["content"].strip() == "Context: we use pnpm."
+
+
 def test_further_cause_must_be_specific():
     chunks = [C(f"c{i}") for i in range(10)]
     pool = [C(f"l{i}") for i in range(40)]
@@ -241,6 +302,56 @@ def test_search_refines_precondition_line_without_hiding_sibling_choice_line():
     _, causes = asyncio.run(search(chunks, t, n_controls=0, preconditions=preconds))
     assert [p.members for p in preconds] == [["sys.1"]]
     assert [c.members for c in causes] == [["sys.2"]]
+
+
+READS = [f"read.{i}" for i in range(1, 9)]  # scattered lines of files the agent read
+CARRIERS = {"tool_bash", "sys_rule", "hist_pytest"}
+
+
+@pytest.mark.parametrize("stabilize", [True, False])
+def test_search_goes_on_when_preconditions_keep_appearing(stabilize):
+    # like real/run4/step21: removing any one read line stops the agent testing,
+    # so each precondition found reveals another; v0.2 stopped after three
+    chunks = [C(x) for x in ("tool_bash", "sys_rule", *READS[:6], "hist_pytest", "c1")]
+    t = fake_cond(collapse_rule=lambda r: bool(r & set(READS)), flip_rule=lambda r: CARRIERS <= r)
+    preconds, stabs, notes = [], [], []
+    _, causes = asyncio.run(search(chunks, t, n_controls=0, preconditions=preconds, stabilizers=stabs,
+                                   notes=notes, stabilize=stabilize))
+    assert len(preconds) == 3
+    if stabilize:
+        assert [sorted(s) for s in stabs] == [sorted(set(READS[:6]) - {m for p in preconds for m in p.members})]
+        assert [sorted(c.members) for c in causes] == [sorted(CARRIERS)]
+    else:
+        assert stabs == [] and causes == [] and any("more than 3 preconditions" in n for n in notes)
+
+
+def test_search_after_stabilizer_searches_the_whole_rest_for_the_choice():
+    # like real/run4/step21 on the GPU (p5-real seed 0): with the stabilizer kept,
+    # removing all the rest keeps E and flips the choice, but removing only the
+    # tail tier stops E (a recent output without the history that explains it).
+    # The suffix-tier probe then stopped the search before any choice test.
+    chunks = [C(x) for x in ("tool_bash", "sys_rule", "hist_pytest", "r1", "r2", "x1", "x2", "c1")]
+    t = fake_cond(collapse_rule=lambda r: bool(r & {"r1", "r2"}) or (bool(r & {"x1", "x2"})
+                                                                      and "hist_pytest" not in r),
+                  flip_rule=lambda r: CARRIERS <= r)
+    preconds, stabs, notes = [], [], []
+    _, causes = asyncio.run(search(chunks, t, n_controls=0, preconditions=preconds, stabilizers=stabs,
+                                   notes=notes, max_preconditions=0))
+    assert stabs == [["r1", "r2"]]
+    assert [sorted(c.members) for c in causes] == [sorted(CARRIERS)]
+
+
+def test_search_keeps_a_minimal_stabilizer_of_a_diffuse_precondition():
+    # the agent tests as long as it still sees any 3 of the 8 reads: the smallest
+    # removal that stops it has 6 chunks (> max_members), and no one read matters
+    chunks = [C(x) for x in ("tool_bash", "sys_rule", *READS, "hist_pytest")]
+    t = fake_cond(collapse_rule=lambda r: len(r & set(READS)) >= 6, flip_rule=lambda r: CARRIERS <= r)
+    preconds, stabs, notes = [], [], []
+    _, causes = asyncio.run(search(chunks, t, n_controls=0, preconditions=preconds, stabilizers=stabs,
+                                   notes=notes))
+    assert preconds == [] and len(stabs) == 1 and len(stabs[0]) == 3 and set(stabs[0]) <= set(READS)
+    assert [sorted(c.members) for c in causes] == [sorted(CARRIERS)]
+    assert any(n.startswith("diffuse precondition") and "stabilizer" in n for n in notes)
 
 
 def test_search_precondition_only_reports_precondition_and_no_causes():
@@ -463,3 +574,18 @@ def test_strict_restore_drops_member_whose_restoration_is_unclear():
     assert [sorted(c.members) for c in plain] == [["A", "B", "H"]]
     _, strict = asyncio.run(search(chunks, test, n_controls=0, strict_restore=True))
     assert [sorted(c.members) for c in strict] == [["A", "B"]]
+
+
+def test_tester_pins_cache_breakpoints_on_ablated_anthropic_requests(tmp_path):
+    from ctxblame.blame import Tester
+    from ctxblame.pricing import Ledger
+    from ctxblame.trace import Step
+    from test_ablate import _cached_body, _marks
+    b = _cached_body()
+    step = Step(1, {"format": ANTHROPIC, "upstream": "http://127.0.0.1:1", "request": {
+        "path": "/v1/messages", "headers": {}, "body": b}, "response": {"streamed": False, "body": {}}})
+    by_id = {c.id: c for c in chunk_request(ANTHROPIC, b)}
+    t = Tester(step, "http://127.0.0.1:1", "", Matcher("name"), "Bash", by_id, Ledger(tmp_path / "l", 1), 1.0,
+               free=True)
+    out = t.ablated([by_id["pair:B"]])
+    assert _marks(out)[-1] == ("messages", 2, "content", 0) and len(_marks(out)) == 3
