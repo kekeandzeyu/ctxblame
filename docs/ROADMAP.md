@@ -131,6 +131,23 @@ Details and results: [experiments/phase5/README.md](../experiments/phase5/README
      carrier). The gen misses are E-coupled bundles where stage 1 drops a
      member on an E-collapsed restore test (→ 6.4).
 
+- [x] **5.6 Audit for coupled bundles** (from `p5c-gen`), offline:
+  - Stage 1 drops a bundle member only when E stays intact and the choice is not
+    restored.
+  - A member whose leave-one-in test stops E is kept as `coupled`, and stage 2
+    tests that collapse.
+  - Every bundle is re-audited on new replays, so stage 1 is never evidence: the
+    v2 design allowed about 2α.
+  - Null simulation v3: boundary false-cause rates 1.4% and 3.8% ≤ α; power on
+    the `p0` coupled shape 0% → 97%.
+  - `triggers_and_steers suspected` is reported when the stabilizer keeps the
+    choice.
+  - GPU confirmation, done (`p5d-*`):
+    - real: 92% [77, 100], unchanged.
+    - gen: **97% [92, 100]** (`p5c` 93%, `v0.2` 95%). `p0` and `gen/0-013` are recovered in every seed.
+    - The remaining gen miss, `p3/precond_2or_pnpm`, is a design label: its "precondition"
+      `edit_pkg` is `triggers_and_steers`, measured by direct replays (→ 6.4).
+
 **Gate:** offline suite green; type-I simulation within α; re-run F1 within
 the `v0.2` CI (or a documented reason why not); `run4/step21` finds a carrier or
 reports `diffuse_precondition` with the search continuing.
@@ -143,8 +160,11 @@ reports `diffuse_precondition` with the search continuing.
   Boolean function of $(P(E), P(A \mid E))$; nothing is dropped, cases are
   labelled by regime: single, OR, AND, precondition-gated, E-coupled,
   conflict/override, habit-negative, and *non-monotone / interaction*.
-- [ ] **6.2 Pilot first.** 10 cases on Qwen3-14B to measure throughput, then
+- [x] **6.2 Pilot first.** 10 cases on Qwen3-14B to measure throughput, then
   size the suite (target 200–300 cases; ~1,600 replays per case at $m = 5$).
+  *Done (Qwen3-14B and Llama-3.1-8B):* 1,080 replays/case, 76–94 replays/s on one
+  RTX 5090, so the tables for 250 cases take about 1 h per model. The suite stays at 250.
+  [experiments/phase6/README.md](../experiments/phase6/README.md#62-pilot-2026-11-28).
 - [ ] **6.3 Settle the Llama question.** The neutral probes say directly whether
   Llama's neutral lines are real interactions (they appear in the table) or
   ctxblame false positives (they do not).
@@ -154,10 +174,10 @@ reports `diffuse_precondition` with the search continuing.
   $P(A \mid E)$. `tool_choice` forces a tool name only, so this applies where
   $E$ is a tool; intent-level $E$ (a Bash command family) is reported as not
   identifiable rather than forced. Then classify `precondition` vs
-  `triggers_and_steers` in the engine. From 5.5: report E-coupled bundles
-  (a member whose leave-one-in restore test collapses E) as coupled instead of
-  letting audit stage 1 drop that member, and stabilize at line level (the
-  `run4/step21` tool description); set both rules against the 6.1 tables.
+  `triggers_and_steers` in the engine. The audit's `coupled` members (5.6) and
+  `triggers_and_steers suspected` notes are the engine's first, conservative
+  version: check them against the 6.1 tables, and add line-level stabilizing for
+  the `run4/step21` tool description.
 
 **Gate:** ≥ 200 labelled cases on ≥ 2 models; ctxblame scored on all of them
 (per regime), with the oracle-dropped subset reported separately for comparison

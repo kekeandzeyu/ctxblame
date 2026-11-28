@@ -1,0 +1,22 @@
+{
+ "tables_summary": {
+  "cases": 10,
+  "replays": 10800,
+  "replays_per_case": 1080.0,
+  "cells_per_case": 21.6,
+  "ambiguous_cells_per_case": 1.8,
+  "oracle_valid": 5,
+  "regimes": {
+   "mixed": 2,
+   "negative": 1,
+   "non_monotone": 2,
+   "or": 5,
+   "probe_interaction": 2,
+   "single": 2
+  },
+  "wall_seconds": 115.0,
+  "replays_per_second": 93.91304347826087,
+  "suite": 250,
+  "suite_hours": 0.7986111111111112
+ }
+}

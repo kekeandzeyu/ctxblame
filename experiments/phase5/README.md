@@ -9,6 +9,7 @@ Plan and exit gate: [docs/ROADMAP.md](../../docs/ROADMAP.md#phase-5--engine-corr
 | 5.3 search/audit split with FWER control | done, null simulation below | `blame.py:Tester.audit`, `audit_findings`, `stats.py`, `null_sim.py` |
 | 5.4 Anthropic `cache_control` pinning | done, offline | `ablate.py:pin_cache_breakpoints` |
 | 5.5 GPU re-run of Qwen3-14B | done: gate met (final table below) | `run_p5.sh`, `p5c-*` results |
+| 5.6 audit: coupled members kept, every bundle re-audited | done: null-sim-v3, and `p5d-*` on the GPU (gen 97% F1) | `blame.py:audit_findings`, `null_sim.py`, `p5d-*` results |
 
 ## 5.1: chunking is unchanged on every existing case
 
@@ -131,9 +132,11 @@ a `hitchhiker` scenario:
 | carrier + weak line (hitchhiker) | off (v0.2) | 0.4% [0.1, 1.4] | 97% | 111 |
 | carrier + weak line (hitchhiker) | two-stage | 0.0% [0.0, 0.8] | 97% | 130 |
 
-The false-cause rate rises in the boundary scenario but stays below α, as theory
-predicts. When stage 1 drops the boundary member, stage 2 tests {X, Y}, which
-sits exactly on its null boundary and is rejected at most α of the time. The
+The false-cause rate rises in the boundary scenario but stays below α. *Correction
+(5.6):* the reason given here first, that stage 2 alone decides, was wrong for
+this design. Stage 2 ran only when stage 1 dropped a member; otherwise stage 1's
+own replays certified the bundle, so a false bundle had two chances and the bound
+was about 2α, not α. 5.6 removes the second chance. The
 simulated search rarely leaves the weak line in a bundle (real hitchhikers come
 from replay noise), so the hitchhiker scenario does not stress the fix.
 `test_audit_drops_a_hitchhiker_and_certifies_the_rest_on_new_replays` covers the
@@ -251,8 +254,111 @@ on new replays). A rule that drops a member only when its restore test keeps E
 and fails would revert `p3` and leave `p0` rejected rather than certifying its
 wrong member. It would probably also lose `gen/0-013` seed 1. Such bundles
 should be reported as coupled (`triggers_and_steers`, Phase 6.4), not certified
-or silently dropped. That rule is deliberately not tuned on these three cases;
-Phase 6's coalition tables give independent ground truth to set it.
+or silently dropped. 5.6 below does this. It sets no threshold, only the rule
+that a test which cannot see the choice is not evidence against a member. The
+coalition tables in Phase 6 check it against independent ground truth.
+
+### 5.6: coupled members and a strict sample split (offline; GPU results below)
+
+Two changes to `audit_findings`, both from the `p5c-gen` diagnosis above:
+
+1. **Stage 1 sorts the members of a choice bundle by what their leave-one-in test
+   showed**, instead of dropping every member whose test fails:
+   - restores: the choice comes back. Stage 2 tests restoration.
+   - hitchhiker: E is clearly intact and the choice does not come back. Dropped.
+   - coupled: E itself stops (collapse test at α). Kept; stage 2 tests the
+     collapse, and the report marks the member `coupled` (the certified claim
+     for it is "keeping it while removing the others stops E").
+   - undetermined: E is neither intact nor clearly stopped. Kept and tested as
+     restoring, so a member is never dropped on a test that says nothing about it.
+2. **Every bundle is re-audited on new replays**, even when stage 1 changes
+   nothing, so stage 1 is never evidence and P(false certificate) ≤ α by sample
+   splitting. A one-member finding has nothing to choose and is audited once.
+
+The search also notes `triggers_and_steers suspected` (and the report sets
+`triggers_and_steers_suspected`) when, with a stabilizer kept, removing all the
+rest keeps the choice: `real/run4/step21` seed 2's outcome.
+
+**Null simulation**
+([results/null-sim-v3](results/null-sim-v3/null_sim.json), 500 runs, seed 0).
+The unaudited rows and `boundary_single` / `hitchhiker` are unchanged from v2.
+Two new conditional scenarios have an action family E (P(E) = 0.95 at baseline):
+`coupled_power` is the `p0` shape and `boundary_coupled` is its least-favourable
+null.
+
+| scenario | v2 audit | 5.6 audit | replays/run (v2 → 5.6) |
+|---|---:|---:|---:|
+| bundle with a member at the boundary, P(false) | 3.0% [1.8, 4.9] | **1.4%** [0.7, 2.9] | 286 → 287 |
+| true 2-way OR bundle, power | 99% | 97% | 139 → 198 |
+| carrier + weak line, power | 97% | 97% | 130 → 130 |
+| coupled OR bundle (`p0` shape), power | **0%**¹ | **97%** | 170¹ → 210 |
+| coupled member at the boundary, P(false) | – | 3.8% [2.4, 5.9] | – → 334 |
+
+¹ 40 runs with the v2 audit code. It drops the coupled carrier, as on the GPU.
+Without any audit, the same null gives a false cause in 98.2% of runs.
+
+**Predicted effect on the GPU runs.** Applying the stage-1 rule to the recorded
+`p5c` audits, without new replays:
+- `p0/tool_result_sentence_config`: `toolu_22` is coupled in all 3 seeds, so
+  the bundle is kept rather than losing its true carrier.
+- `p3/precond_2or_pnpm`: `read_pkg` is undetermined in all 3, so the bundle
+  goes uncertified and the precondition is no longer blamed.
+- `gen/0-013` seed 1: `call_13_2` is coupled (bundle F1 0.8 instead of 1).
+  Seed 2: undetermined.
+- `gen/0-037` seed 1: one member is undetermined (E at its threshold), which
+  would lose a hit.
+- `real`: no bundle reached stage 1 with a failing member, so nothing changes.
+
+Whether the stage-2 replays then certify these bundles is what `p5d-gen` and
+`p5d-real` measure (`RUNS="real5d gen5d" run_p5.sh`).
+
+### 5.6 on the GPU (`p5d-*`, 2026-11-28)
+
+Setup:
+- The same oracle-valid cases as `v0.2`: the oracle files are byte-identical copies.
+- Qwen3-14B-FP8 on vLLM 0.34.0 and one RTX 5090. FlashInfer kernels were off on this box, so `Secs/case` is not comparable with `p5c`.
+- Defaults, 3 seeds. Results: [p5d-real](../phase3/results/p5d-real-qwen3-14b/summary.md) and [p5d-gen](../phase3/results/p5d-gen-qwen3-14b/summary.md).
+
+| run | F1 [95% CI] | precond. separated / blamed | negatives | replays/case | `p5c` | `v0.2` |
+|---|---:|---:|---:|---:|---:|---:|
+| `p5d-real` (13) | 92% [77, 100] | 100% / 0% | – | 837 (`p5c` 762) | 92% [77, 100] | 92% [77, 100] |
+| `p5d-gen` (48) | **97% [92, 100]** | 93% / 7% | 100% | 252 (`p5c` 237) | 93% [84, 100] | 95% [87, 99] |
+
+The predictions above against the outcome (F1 per seed, `p5c` → `p5d`):
+
+| case | prediction | outcome |
+|---|---|---|
+| `p0/tool_result_sentence_config` | coupled member kept | **0/0/0 → 1/1/1**, reported `coupled` in every seed |
+| `gen/0-013/ruff/doc+user` | coupled kept (F1 .8) | **0/1/0 → 1/1/1** |
+| `gen/0-037/ruff/tooldesc+doc` | may lose a hit | 1/1/1 → 1/1/1 |
+| `p3/precond_2or_pnpm` | bundle uncertified, precondition no longer blamed | **wrong**: still blamed in 3 of 3 seeds (see below) |
+| `gen/0-052/uv/neg` | – | negative correct 2/3 → 3/3 (threshold noise) |
+| `real/run4/step21` | – | still unsolved; `diffuse_preconditions` and the search continues in 3 of 3 seeds; `triggers_and_steers suspected` in 2 of 3 (`p5c`: 1) |
+
+**`p3/precond_2or_pnpm` is a label error, not an audit error.** In `p5d` the
+search finds `edit_pkg` alone. A one-member finding has no stage 1, and stage 2
+certifies it on fresh replays, so the prediction made from `p5c`'s two-member
+bundle did not apply. Direct replays on the same server (N = 40 each,
+diagnostic only, not committed) show why:
+
+| removed | replies |
+|---|---|
+| nothing | 40× `pnpm install --frozen-lockfile` |
+| rule + example (the planted carriers) | 40× `npm install` |
+| `edit_pkg` | 30× `edit_file` (redo the edit), 10× `pnpm add zod@3.23.0` |
+| `read_pkg` | 40× `pnpm install --frozen-lockfile` |
+| `read_pkg` + `edit_pkg` | 40× `pnpm add zod@3.23.0` |
+
+`edit_pkg` is `triggers_and_steers`, not a pure precondition:
+- It triggers E: without it, P(bash) falls to 25%.
+- It steers the choice given E: `pnpm add` instead of `pnpm install`, 10 of 10.
+
+The truth is (rule OR example) AND `edit_pkg`. ctxblame certifies the
+`edit_pkg` half. It misses the OR pair, because the 2-chunk rest "flips only in
+bulk" with no same-size control possible (the conservative control rule). The
+case's design label counts that half as a blamed precondition, so this is the
+whole 7%. The Phase 6 tables assign such roles from the data (6.4) instead of
+from the design.
 
 ### Phase 5.5 summary
 
@@ -263,6 +369,8 @@ Phase 6's coalition tables give independent ground truth to set it.
 | `p5c-real` | final | real (13) | 92% [77, 100] | 92% |
 | `p5-gen` | Phase 5, one-stage audit | core + gen (48) | 90% [80, 98] | 95% [87, 99] |
 | `p5c-gen` | final | core + gen (48) | 93% [84, 100] | 95% [87, 99] |
+| `p5d-real` | final + 5.6 audit | real (13) | 92% [77, 100] | 92% |
+| `p5d-gen` | final + 5.6 audit | core + gen (48) | 97% [92, 100] | 95% [87, 99] |
 
 **Gate:** offline suite green; type-I error 3.0% [1.8, 4.9] ≤ α under the
 least-favourable null; final-engine F1 inside the `v0.2` CI on both suites, now

@@ -721,6 +721,9 @@ class Cause:
     p_value: float | None = None
     p_adjusted: float | None = None
     certified: bool | None = None  # None = not audited
+    # bundle members coupled with E: keeping one while removing the rest of the
+    # bundle stops the action family, so whether it restores the choice is untestable
+    coupled: list[str] = field(default_factory=list)
 
     @property
     def relation(self) -> str:
@@ -938,6 +941,9 @@ async def _vet_members(members: list[str], restored: dict[str, Outcome], by_id: 
     return keep, {k: v for k, v in restored.items() if k in keep}
 
 
+TRIGGERS_AND_STEERS = "triggers_and_steers suspected: "
+
+
 def _intact(o: Outcome) -> bool:
     """The action family E clearly survived this removal."""
     return o.given_verdict == "intact"
@@ -993,34 +999,61 @@ async def audit_findings(findings: list[Cause], auditor, n: int, alpha: float) -
     baseline and on the search's choice of hypotheses (which saw none of these
     replays).
 
-    Two stages for a bundle: when its removal flips but some members do not
-    restore (a hitchhiker the search could not prune), those members are dropped
-    and the smaller bundle is audited again on new fresh replays. Stage 1 only
-    chooses the hypothesis; the p-value comes from stage 2 alone, which is
-    independent of it (sample splitting), so the family Holm controls is still
-    one final hypothesis per finding. Stage-1 outcomes are kept as ``stage1:*``."""
-    async def run(members: list[str], removal: frozenset, kinds: tuple[str, str]):
+    Two stages for every bundle (more than one member) whose stage-1 removal
+    flips: stage 1 only chooses the hypothesis (which members to keep and what to
+    test for each), and the p-value comes from stage 2 alone, on new fresh replays
+    (sample splitting). Stage 2 runs even when stage 1 changed nothing: letting
+    stage 1 certify when it changed nothing and stage 2 when it did gives two
+    chances at a false certificate (up to 2 alpha). The family Holm controls is
+    one final hypothesis per finding. Stage-1 outcomes are kept as ``stage1:*``.
+    A single-member finding needs no choice and is audited once.
+
+    Stage 1 sorts the members of a choice bundle by what their leave-one-in test
+    (remove the rest of the bundle, keep the member) showed:
+    - restores: P(A | E) back above the threshold.
+    - hitchhiker: E clearly intact but the choice not restored; dropped.
+    - coupled: E itself stops (collapse test at ``alpha``). The member's restoration
+      cannot be tested, because removing the rest of the bundle without it changes
+      E. It stays in the bundle, and stage 2 tests the collapse instead, so a
+      certified coupled member carries the claim "removing the others while
+      keeping it stops E" (``Cause.coupled``; ``triggers_and_steers``-style).
+    - undetermined (E neither intact nor clearly stopped): kept and tested as
+      restoring; a member is never dropped on a test that says nothing about it."""
+    async def run(members: list[str], removal: frozenset, kinds: tuple[str, str], coupled: set[str]):
         audit = {"together": await auditor.audit(removal, n)}
         p_main = auditor.p_value(audit["together"], kinds[0])
         p_members: dict[str, float] = {}
         if len(members) > 1:
             for cid in members:
                 audit[cid] = await auditor.audit(removal - {cid}, n)
-                p_members[cid] = auditor.p_value(audit[cid], kinds[1])
+                p_members[cid] = auditor.p_value(audit[cid], "collapse" if cid in coupled else kinds[1])
         return audit, p_main, p_members
 
     for f in findings:
         removal = frozenset(f.removal or f.members)
         kinds = ("collapse", "intact") if f.role == "precondition" else ("flip", "restore")
-        audit, p_main, p_members = await run(f.members, removal, kinds)
-        drop = [cid for cid, p in p_members.items() if p > alpha]
-        if p_main <= alpha and drop and len(drop) < len(f.members):
+        audit, p_main, p_members = await run(f.members, removal, kinds, set())
+        drop: list[str] = []
+        coupled: set[str] = set()
+        for cid, p in p_members.items():
+            if p <= alpha:
+                continue
+            o = audit[cid]
+            if f.role != "precondition" and o.n_total is not None:  # conditional blame: E observed
+                if auditor.p_value(o, "collapse") <= alpha:
+                    coupled.add(cid)
+                elif o.given_verdict == "intact":
+                    drop.append(cid)
+            else:
+                drop.append(cid)
+        if p_main <= alpha and len(f.members) > 1 and len(drop) < len(f.members):
             stage1 = {f"stage1:{k}": o for k, o in audit.items()}
             f.members = [m for m in f.members if m not in drop]
             f.removal = [m for m in (f.removal or []) if m not in drop]
             removal = removal - set(drop)
-            audit, p_main, p_members = await run(f.members, removal, kinds)
+            audit, p_main, p_members = await run(f.members, removal, kinds, coupled)
             audit = {**stage1, **audit}
+            f.coupled = [m for m in f.members if m in coupled]
         f.audit = audit
         f.p_value = max([p_main, *p_members.values()])
     for f, p in zip(findings, holm([f.p_value for f in findings])):
@@ -1112,6 +1145,10 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
         if hit_idx < 0:
             alt = await _fallback_window(tiers, test, frozenset(), hit)
             if alt is None:
+                if stabilized and not causes and probe.verdict == "kept":
+                    notes.append(TRIGGERS_AND_STEERS + "with the stabilizer kept, removing all the rest "
+                                 "keeps the choice, so the context that makes the agent act may also steer "
+                                 "it (the stabilizer is not split further)")
                 break
             probe, window = alt
             region = [window]
@@ -1229,9 +1266,15 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
     if audit_n:
         await audit_findings(causes + preconds, test, audit_n, alpha)
         for c in causes + preconds:
-            if "stage1:together" in c.audit:
-                notes.append(f"audit dropped member(s) that did not restore it; {c.role} re-audited on new "
-                             f"fresh replays as {', '.join(c.members)}")
+            dropped = [k[7:] for k in c.audit if k.startswith("stage1:") and k != "stage1:together"
+                       and k[7:] not in c.members]
+            if dropped:
+                notes.append(f"audit dropped {', '.join(dropped)} (did not restore it with the action family "
+                             f"intact); {c.role} re-audited on new fresh replays as {', '.join(c.members)}")
+            if c.coupled:
+                notes.append(f"audit: {', '.join(c.coupled)} coupled with the action family (keeping it while "
+                             "removing the rest of the bundle stops the action), so its restoring role is "
+                             "untestable; certified claim for it: that collapse")
         failed = [c for c in causes + preconds if not c.certified]
         for c in failed:
             notes.append(f"not certified on {audit_n} fresh replays per test ({c.role}: {', '.join(c.members)}; "
@@ -1334,6 +1377,7 @@ def _serialize_findings(findings: list[Cause], by_id: dict[str, Chunk]) -> list[
              "restored": {k: asdict(v) for k, v in c.restored.items()},
              "controls": [{"removed": t, **asdict(o)} for t, o in c.controls],
              "certified": c.certified, "p_value": c.p_value, "p_adjusted": c.p_adjusted,
+             "coupled": c.coupled,
              "audit": {k: asdict(v) for k, v in c.audit.items()}} for c in findings]
 
 
@@ -1494,6 +1538,8 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
                 extra_s += f"   alone: {c.alone[cid]}"
             if cid in c.restored:
                 extra_s += f"   restores: {c.restored[cid]}"
+            if cid in c.coupled:
+                extra_s += "   coupled: keeping it while removing the others stops the action family"
             say(f"  - {ch.label}: {_short(ch.text, 90)!r}{extra_s}")
         if c.controls:
             say("  controls (random same-size removals): " + ", ".join(str(o) for _, o in c.controls)
@@ -1530,6 +1576,7 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
                   audit={"n": getattr(args, "audit_n", 0), "alpha": getattr(args, "alpha", 0.05)},
                   diffuse_preconditions=[[{"id": m, "kind": by_id[m].kind, "label": by_id[m].label,
                                            "text": by_id[m].text} for m in keep] for keep in stabilizers],
+                  triggers_and_steers_suspected=any(n.startswith(TRIGGERS_AND_STEERS) for n in notes),
                   cache_stats=cache_stats,
                   notes=notes, stopped=stopped, tests=test.log, cost=cost,
                   replays=test.replays + len(samples))
