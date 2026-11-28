@@ -142,7 +142,11 @@ Details and results: [experiments/phase5/README.md](../experiments/phase5/README
     the `p0` coupled shape 0% → 97%.
   - `triggers_and_steers suspected` is reported when the stabilizer keeps the
     choice.
-  - GPU confirmation (`p5d-real`, `p5d-gen`) runs on the next VM before Phase 6.
+  - GPU confirmation, done (`p5d-*`):
+    - real: 92% [77, 100], unchanged.
+    - gen: **97% [92, 100]** (`p5c` 93%, `v0.2` 95%). `p0` and `gen/0-013` are recovered in every seed.
+    - The remaining gen miss, `p3/precond_2or_pnpm`, is a design label: its "precondition"
+      `edit_pkg` is `triggers_and_steers`, measured by direct replays (→ 6.4).
 
 **Gate:** offline suite green; type-I simulation within α; re-run F1 within
 the `v0.2` CI (or a documented reason why not); `run4/step21` finds a carrier or
@@ -156,8 +160,11 @@ reports `diffuse_precondition` with the search continuing.
   Boolean function of $(P(E), P(A \mid E))$; nothing is dropped, cases are
   labelled by regime: single, OR, AND, precondition-gated, E-coupled,
   conflict/override, habit-negative, and *non-monotone / interaction*.
-- [ ] **6.2 Pilot first.** 10 cases on Qwen3-14B to measure throughput, then
+- [x] **6.2 Pilot first.** 10 cases on Qwen3-14B to measure throughput, then
   size the suite (target 200–300 cases; ~1,600 replays per case at $m = 5$).
+  *Done (Qwen3-14B and Llama-3.1-8B):* 1,080 replays/case, 76–94 replays/s on one
+  RTX 5090, so the tables for 250 cases take about 1 h per model. The suite stays at 250.
+  [experiments/phase6/README.md](../experiments/phase6/README.md#62-pilot-2026-11-28).
 - [ ] **6.3 Settle the Llama question.** The neutral probes say directly whether
   Llama's neutral lines are real interactions (they appear in the table) or
   ctxblame false positives (they do not).

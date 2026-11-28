@@ -1,0 +1,12 @@
+10 cases, 0 done, 10 to run
+done p6/0-1001/hatch/tooldesc+doc+user                m=5 regimes=or carriers=[['c1', 'c2', 'c3']] pre=[] amb=0 1600 replays 22.8s (70.2/s) [1/10, 23s]
+done p6/0-1000/tox/doc                                m=3 regimes=single carriers=[['c1']] pre=[] amb=0 400 replays 27.0s (14.8/s) [2/10, 27s]
+done p6/0-1002/make/system+doc+user                   m=5 regimes=or,e_coupled,non_monotone carriers=[['c1', 'c2']] pre=[['c2', 'c3']] amb=1 1600 replays 46.1s (34.7/s) [3/10, 46s]
+done p6/0-1003/pnpm/system+tooldesc                   m=4 regimes=or carriers=[['c1', 'c2']] pre=[] amb=0 800 replays 56.3s (14.2/s) [4/10, 56s]
+done p6/0-1004/uv/system+tooldesc+user                m=5 regimes=or carriers=[['c1', 'c3']] pre=[] amb=0 1600 replays 57.6s (27.8/s) [5/10, 80s]
+done p6/0-1005/ruff/tooldesc                          m=3 regimes=single carriers=[['c1']] pre=[] amb=0 400 replays 59.3s (6.7/s) [6/10, 86s]
+done p6/0-1006/cargo/tooldesc+doc+user                m=5 regimes=or carriers=[['c2', 'c3']] pre=[] amb=0 1600 replays 59.7s (26.8/s) [7/10, 106s]
+done p6/0-1007/script/user                            m=3 regimes=and,probe_interaction carriers=[['c1'], ['p1']] pre=[] amb=0 400 replays 53.9s (7.4/s) [8/10, 110s]
+done p6/0-1009/hatch/system+doc                       m=4 regimes=or carriers=[['c1', 'c2']] pre=[] amb=0 800 replays 34.6s (23.1/s) [9/10, 121s]
+done p6/0-1008/tox/system+tooldesc+user               m=5 regimes=or carriers=[['c1', 'c3']] pre=[] amb=0 1600 replays 61.3s (26.1/s) [10/10, 142s]
+finished 10/10 in 142s

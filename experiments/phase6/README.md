@@ -5,7 +5,7 @@ Plan and exit gate: [docs/ROADMAP.md](../../docs/ROADMAP.md#phase-6--ground-trut
 | Item | Status | Where |
 |---|---|---|
 | 6.1 exhaustive coalition tables | code done, tested offline with a simulated model | `cases6.py`, `tables.py`, `truth.py` |
-| 6.2 pilot (10 cases, Qwen3-14B) | waiting for the GPU | `run_p6.sh` with `LIMIT=10` |
+| 6.2 pilot (10 cases, Qwen3-14B and Llama-3.1-8B) | **done**: about 1 h of tables per model for 250 cases | [results/pilot-qwen3-14b](results/pilot-qwen3-14b/summary.md), [results/pilot-llama3.1-8b](results/pilot-llama3.1-8b/summary.md) |
 | 6.3 Llama's neutral lines | probes in every case; needs the Llama run | `score6.py` (`neutral probe blamed`, regime `probe_interaction`) |
 | 6.4 E-coupled cases | `e_coupled` design cases and `triggers_and_steers` roles in the truth | `truth.py` |
 
@@ -35,14 +35,41 @@ The case designs, which are only used to stratify the suite (`cases6.py`, 250
 cases): single/or 40%, precondition-gated 20%, and 12%, e_coupled ("open" style)
 10%, conflict (a stale doc line names another command) 10%, habit-negative 8%.
 
+## 6.2 pilot (2026-11-28)
+
+The first 10 cases of the suite, tables only (N = 50, concurrency 128).
+- Box: one RTX 5090 per model.
+- vLLM 0.34.0, without FlashInfer or DeepGEMM kernels on this box (no `flashinfer-cubin`, nvcc 12.8).
+- Sampling as in `v0.2`.
+
+| model | replays | wall | replays/s | ambiguous cells/case | oracle-valid | est. tables for 250 cases |
+|---|---:|---:|---:|---:|---:|---:|
+| Qwen3-14B-FP8 | 10,800 | 142 s | 76 | 0.1 | 6/10 | 1.0 h |
+| Llama-3.1-8B | 10,800 | 115 s | 94 | 1.8 | 5/10 | 0.8 h |
+
+Sizing:
+- Tables are cheap, so the suite stays at 250 cases with N = 50.
+- The ctxblame seeds dominate the run time: about 35 min per seed at `p5c`'s 68 s/case and 8 cases in parallel.
+- A full model is about 3 h. Qwen and Llama run side by side, one per GPU (`CUDA_VISIBLE_DEVICES`, `PORT`).
+
+What the 10 tables already show (to be confirmed on 250):
+- 4 of 10 Qwen cases and 5 of 10 Llama cases fail the Phase 3 oracle's validity rule. `v0.2` would have dropped them.
+- The tables do not always match the case designs:
+  - `0-1004` (system+tooldesc+user): the tool-description line is not a carrier for Qwen.
+  - `0-1007` (one user carrier): Qwen needs a neutral probe together with the carrier (`and`, `probe_interaction`); for Llama it is a habit (negative).
+- **6.3, early signal.** Llama has `probe_interaction` in 2 of 10 cases (`0-1002`, `0-1004`: a probe in a minimal carrier set) and Qwen in 1. So some of Llama's "neutral" lines are real interactions, not only ctxblame false positives.
+
 ## Running
 
 On a GPU box with vLLM 0.34.0:
 
 ```sh
-# 6.2 pilot: 10 cases, tables only, to measure throughput
+# 6.2 pilot: 10 cases, tables only, to measure throughput. Writes summary.md with the
+# regimes, replays/s and the estimated hours for the CASES-case suite (score6.py, no benchmark.json)
 MODEL=/models/Qwen3-14B-FP8 NAME=Qwen3-14B TAG=pilot-qwen3-14b LIMIT=10 SEEDS= \
   PY=.venv/bin/python VLLM=.venv/bin/vllm experiments/phase6/run_p6.sh
+# on a 2-GPU box, a second run side by side: its own GPU and port
+CUDA_VISIBLE_DEVICES=1 PORT=8001 MODEL=... TAG=... experiments/phase6/run_p6.sh
 # full suite: tables, ctxblame (3 seeds) on the same cases, score
 MODEL=... NAME=Qwen3-14B TAG=qwen3-14b experiments/phase6/run_p6.sh
 uv run python experiments/phase6/score6.py experiments/phase6/results/qwen3-14b/tables \
