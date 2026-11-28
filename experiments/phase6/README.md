@@ -47,4 +47,15 @@ MODEL=/models/Qwen3-14B-FP8 NAME=Qwen3-14B TAG=pilot-qwen3-14b LIMIT=10 SEEDS= \
 MODEL=... NAME=Qwen3-14B TAG=qwen3-14b experiments/phase6/run_p6.sh
 uv run python experiments/phase6/score6.py experiments/phase6/results/qwen3-14b/tables \
   experiments/phase6/results/qwen3-14b/seed*/benchmark.json
+# Llama-3.1-8B (6.3): llama3_json parser, the committed patched template, v0.2 sampling
+MODEL=/models/Llama-3.1-8B-Instruct NAME=Llama-3.1-8B TAG=llama3.1-8b TOOL_PARSER=llama3_json \
+  SERVE_ARGS="--chat-template experiments/phase6/llama31_tool_template.jinja" \
+  EXTRA_BODY='{"temperature": 0.6, "top_p": 0.9}' experiments/phase6/run_p6.sh
 ```
+
+`llama31_tool_template.jinja` is vLLM v0.34.0's Llama 3.1 JSON tool template.
+The only change is that a history turn with several tool calls is rendered as
+`; `-separated calls instead of raising. The Phase 3 Llama run used a patched
+template that was not committed. This one is committed so the run can be
+reproduced; Phase 6 cases have no parallel calls, so the patch does not touch
+them.
