@@ -1,0 +1,239 @@
+{
+ "case": "p6/0-096/habit/neg",
+ "design": "habit_negative",
+ "category": "negative",
+ "target": "bash({\"command~\\\\bpytest\\\\b\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "p1": "pair:call_h96_1",
+  "p2": "- Documentation lives in docs/ and is written in Markdown.",
+  "p3": "- Use type annotations for all new public functions."
+ },
+ "kinds": {
+  "p1": "probe",
+  "p2": "probe",
+  "p3": "probe"
+ },
+ "chunks": {
+  "p1": [
+   "pair:call_h96_1"
+  ],
+  "p2": [
+   "sys@msg0.p2.4"
+  ],
+  "p3": [
+   "sys@msg0.p2.3"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 38,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": true})",
+     38
+    ],
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": false})",
+     12
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 39,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": true})",
+     39
+    ],
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": false})",
+     11
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 37,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": true})",
+     37
+    ],
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": false})",
+     13
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 35,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": true})",
+     35
+    ],
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": false})",
+     15
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 24,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": false})",
+     26
+    ],
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": true})",
+     24
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 42,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": true})",
+     42
+    ],
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": false})",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "p3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 35,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": true})",
+     35
+    ],
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": false})",
+     15
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "p3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 19,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": false})",
+     31
+    ],
+    [
+     "bash({\"command~\\\\bpytest\\\\b\": true})",
+     19
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "p1",
+   "p2",
+   "p3"
+  ],
+  "kinds": {
+   "p1": "probe",
+   "p2": "probe",
+   "p3": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "p3": "intact",
+   "p1+p2": "intact",
+   "p1+p3": "intact",
+   "p2+p3": "intact",
+   "p1+p2+p3": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "p3": "kept",
+   "p1+p2": "ambiguous",
+   "p1+p3": "kept",
+   "p2+p3": "kept",
+   "p1+p2+p3": "ambiguous"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [],
+  "roles": {
+   "p1": "neutral",
+   "p2": "neutral",
+   "p3": "neutral"
+  },
+  "regimes": [
+   "negative"
+  ],
+  "non_monotone": [],
+  "ambiguous": 2,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.76,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.38
+  }
+ },
+ "seconds": 15.4,
+ "replays": 400
+}

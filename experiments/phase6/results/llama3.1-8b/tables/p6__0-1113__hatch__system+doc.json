@@ -1,0 +1,443 @@
+{
+ "case": "p6/0-1113/hatch/system+doc",
+ "design": "or",
+ "category": "or_redundant",
+ "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Tests run only via `hatch run test:all`; do not invoke pytest or unittest yourself.",
+  "c2": "To test, use `hatch run test:all` from the repository root.",
+  "p1": "Keep pull requests under 400 changed lines.",
+  "p2": "Branch names: feature/<topic> or fix/<topic>."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.3"
+  ],
+  "c2": [
+   "pair:call_1113_2.3"
+  ],
+  "p1": [
+   "pair:call_1113_2.6"
+  ],
+  "p2": [
+   "pair:call_1113_2.5"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 35,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     35
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     15
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 47,
+   "k": 36,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     36
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     11
+    ],
+    [
+     "edit_file({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 7,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     43
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 40,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     40
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 37,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     37
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     13
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 43,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     43
+    ],
+    [
+     "edit_file({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 40,
+   "k": 34,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     34
+    ],
+    [
+     "edit_file({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     10
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 39,
+   "k": 39,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     39
+    ],
+    [
+     "edit_file({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     11
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 4,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     46
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 10,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     40
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 37,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     37
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     13
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 48,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     48
+    ],
+    [
+     "edit_file({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 42,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     42
+    ],
+    [
+     "edit_file({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 43,
+   "k": 41,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     41
+    ],
+    [
+     "edit_file({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     7
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 12,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     38
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     12
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 47,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     47
+    ],
+    [
+     "edit_file({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     3
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c1+c2+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "flipped",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+p1": "flipped",
+   "c2+p2": "flipped",
+   "p1+p2": "kept",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+p1+p2": "ambiguous",
+   "c1+c2+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c2"
+   ]
+  ],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "neutral",
+   "c2": "carrier",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "single"
+  ],
+  "non_monotone": [],
+  "ambiguous": 1,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.7,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.35
+  }
+ },
+ "seconds": 33.5,
+ "replays": 800
+}

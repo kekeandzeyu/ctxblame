@@ -1,0 +1,406 @@
+{
+ "case": "p6/0-1068/uv/system+doc/and",
+ "design": "and",
+ "category": "and",
+ "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Manage the Python environment with uv (`uv sync`).",
+  "c2": "Environment syncs must leave uv.lock untouched: always pass `--frozen`.",
+  "p1": "Keep pull requests under 400 changed lines.",
+  "p2": "pair:call_1068_2"
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.4"
+  ],
+  "c2": [
+   "pair:call_1068_3.3"
+  ],
+  "p1": [
+   "pair:call_1068_3.6"
+  ],
+  "p2": [
+   "pair:call_1068_2"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 29,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     29
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     21
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 36,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     36
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     14
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 35,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     35
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     15
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 3,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     47
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 44,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     44
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 39,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     39
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     11
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 8,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     42
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 42,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     42
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c1+c2+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "c2": "flipped",
+   "p1": "kept",
+   "p2": "flipped",
+   "c1+c2": "flipped",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "c2+p1": "flipped",
+   "c2+p2": "flipped",
+   "p1+p2": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+p2": "flipped",
+   "c2+p1+p2": "flipped",
+   "c1+c2+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ],
+   [
+    "c2"
+   ],
+   [
+    "p2"
+   ]
+  ],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "neutral",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "and",
+   "probe_interaction"
+  ],
+  "non_monotone": [],
+  "ambiguous": 0,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.58,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.29
+  }
+ },
+ "seconds": 25.0,
+ "replays": 800
+}

@@ -1,0 +1,211 @@
+{
+ "case": "p6/0-1007/script/user",
+ "design": "single",
+ "category": "single",
+ "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "Our standard check is `./scripts/ci.sh --quick`, just so you know.",
+  "p1": "pair:call_1007_2",
+  "p2": "- Write commit messages in the imperative mood."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "msg[1].3"
+  ],
+  "p1": [
+   "pair:call_1007_2"
+  ],
+  "p2": [
+   "sys@msg0.p2.3"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 3,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     47
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "p1+p2": "intact",
+   "c1+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "p1+p2": "kept",
+   "c1+p1+p2": "ambiguous"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "neutral",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "negative"
+  ],
+  "non_monotone": [],
+  "ambiguous": 7,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.0
+  }
+ },
+ "seconds": 41.3,
+ "replays": 400
+}

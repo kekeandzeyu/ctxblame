@@ -1,0 +1,387 @@
+{
+ "case": "p6/0-1161/hatch/system+doc/and",
+ "design": "and",
+ "category": "and",
+ "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Tests run only through hatch; do not invoke pytest or unittest yourself.",
+  "c2": "The hatch test script is `test:all` (`hatch run <script>`).",
+  "p1": "Branch names: feature/<topic> or fix/<topic>.",
+  "p2": "Every public function needs a docstring."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.4"
+  ],
+  "c2": [
+   "pair:call_1161_1.3"
+  ],
+  "p1": [
+   "pair:call_1161_1.5"
+  ],
+  "p2": [
+   "pair:call_1161_1.7"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 44,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     44
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 27,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     27
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     23
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 22,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     28
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     22
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 21,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     29
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     21
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 41,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     41
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     9
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c1+c2+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "ambiguous",
+   "c2": "flipped",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "c2+p1": "flipped",
+   "c2+p2": "flipped",
+   "p1+p2": "kept",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+p1+p2": "flipped",
+   "c1+c2+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c2"
+   ]
+  ],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "neutral",
+   "c2": "carrier",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "single"
+  ],
+  "non_monotone": [],
+  "ambiguous": 3,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.88,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.44
+  }
+ },
+ "seconds": 42.9,
+ "replays": 800
+}

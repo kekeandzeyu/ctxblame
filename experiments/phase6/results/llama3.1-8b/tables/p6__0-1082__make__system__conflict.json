@@ -1,0 +1,399 @@
+{
+ "case": "p6/0-1082/make/system/conflict",
+ "design": "conflict",
+ "category": "single",
+ "target": "bash({\"command~make\\\\s+check\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Verify every change with `make check` (lint + type check + tests).",
+  "x1": "Legacy note (2019): tests used to run with `python setup.py test`.",
+  "p1": "- Never commit secrets or credentials.",
+  "p2": "pair:call_1082_1"
+ },
+ "kinds": {
+  "c1": "carrier",
+  "x1": "conflict",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.4"
+  ],
+  "x1": [
+   "sys@msg0.p3"
+  ],
+  "p1": [
+   "sys@msg0.p2.5"
+  ],
+  "p2": [
+   "pair:call_1082_1"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 33,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     33
+    ],
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     17
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 28,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     28
+    ],
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     22
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 21,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     29
+    ],
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     21
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 4,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     46
+    ],
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 25,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     25
+    ],
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     25
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 21,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     29
+    ],
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     21
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 7,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     43
+    ],
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "x1",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "x1": "conflict",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "x1": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+x1": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "p1+x1": "intact",
+   "p2+x1": "intact",
+   "p1+p2": "intact",
+   "c1+p1+x1": "intact",
+   "c1+p2+x1": "intact",
+   "c1+p1+p2": "intact",
+   "p1+p2+x1": "intact",
+   "c1+p1+p2+x1": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "x1": "kept",
+   "p1": "ambiguous",
+   "p2": "flipped",
+   "c1+x1": "flipped",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "p1+x1": "kept",
+   "p2+x1": "ambiguous",
+   "p1+p2": "flipped",
+   "c1+p1+x1": "flipped",
+   "c1+p2+x1": "flipped",
+   "c1+p1+p2": "flipped",
+   "p1+p2+x1": "flipped",
+   "c1+p1+p2+x1": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ],
+   [
+    "p2"
+   ]
+  ],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "carrier",
+   "x1": "neutral",
+   "p1": "neutral",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "and",
+   "probe_interaction"
+  ],
+  "non_monotone": [],
+  "ambiguous": 2,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.66,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.33
+  }
+ },
+ "seconds": 36.6,
+ "replays": 800
+}

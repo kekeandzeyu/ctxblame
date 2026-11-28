@@ -1,0 +1,399 @@
+{
+ "case": "p6/0-1065/hatch/system+doc/and",
+ "design": "and",
+ "category": "and",
+ "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Tests run only through hatch; do not invoke pytest or unittest yourself.",
+  "c2": "The hatch test script is `test:all` (`hatch run <script>`).",
+  "p1": "- Prefer small, well-named functions.",
+  "p2": "- Never commit secrets or credentials."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.3"
+  ],
+  "c2": [
+   "pair:call_1065_1.6"
+  ],
+  "p1": [
+   "sys@msg0.p2.2"
+  ],
+  "p2": [
+   "sys@msg0.p2.5"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 37,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     37
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     13
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 36,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     36
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     14
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 40,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     40
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 44,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     44
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 40,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     40
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 37,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     37
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     13
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 43,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     43
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 31,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     31
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     19
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c1+c2+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "flipped",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+p1": "flipped",
+   "c2+p2": "flipped",
+   "p1+p2": "kept",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+p1+p2": "flipped",
+   "c1+c2+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c2"
+   ]
+  ],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "neutral",
+   "c2": "carrier",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "single"
+  ],
+  "non_monotone": [],
+  "ambiguous": 0,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.74,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.37
+  }
+ },
+ "seconds": 26.0,
+ "replays": 800
+}

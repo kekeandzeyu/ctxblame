@@ -1,0 +1,363 @@
+{
+ "case": "p6/0-1160/tox/system+doc/and",
+ "design": "and",
+ "category": "and",
+ "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Run the test suite with tox; never call pytest directly.",
+  "c2": "The tox environment for tests is named `py312`; always pass it with `-e`.",
+  "p1": "Open an issue before large changes.",
+  "p2": "Keep pull requests under 400 changed lines."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.2"
+  ],
+  "c2": [
+   "pair:call_1160_3.4"
+  ],
+  "p1": [
+   "pair:call_1160_3.3"
+  ],
+  "p2": [
+   "pair:call_1160_3.6"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c1+c2+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "kept",
+   "c2": "ambiguous",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+c2": "ambiguous",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+p1": "ambiguous",
+   "c2+p2": "ambiguous",
+   "p1+p2": "ambiguous",
+   "c1+c2+p1": "ambiguous",
+   "c1+c2+p2": "ambiguous",
+   "c1+p1+p2": "kept",
+   "c2+p1+p2": "ambiguous",
+   "c1+c2+p1+p2": "ambiguous"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "neutral",
+   "c2": "neutral",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "negative"
+  ],
+  "non_monotone": [],
+  "ambiguous": 12,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.0
+  }
+ },
+ "seconds": 63.4,
+ "replays": 800
+}

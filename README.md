@@ -210,7 +210,7 @@ Phase 3 attribution benchmark at **$0 API cost**.
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the audit, the theory plan and the exit gate of each phase:
 
 - **Phase 5, engine correctness:** split `<system-reminder>` blocks inside user turns into removable chunks, keep searching past diffuse preconditions, audit every reported cause on fresh replays (intersection-union + Holm), pin Anthropic `cache_control` breakpoints.
-- **Phase 6, ground truth independent of the method:** exhaustive $2^m$ removal tables per case (no oracle dropping), neutral probe lines, matched `tool_choice` interventions for rules that both trigger and steer the action.
+- **Phase 6, ground truth independent of the method:** exhaustive $2^m$ removal tables per case (no oracle dropping), neutral probe lines, matched `tool_choice` interventions for rules that both trigger and steer the action. *Tables done:* 250 cases × 2 models. ctxblame scores 95% / 85% F1 on the cases `v0.2`'s oracle kept and 71% / 44% on the ones it dropped (Qwen3-14B / Llama-3.1-8B).
 - **Phase 7, steelmanned baselines and theory:** contrastive ContextCite, black-box group testing over keep-probabilities, full-context self-explanation; a group-testing formulation with the precondition gate as the separating structure.
 - **Phase 8, external validity:** `ctxblame wrap`, wire-captured steps from real harnesses on SWE-bench, `ctxblame verify` fix study, one approved closed-API run. `ctxblame import` (best effort, marked reconstructed) follows in `v0.3`.
 
