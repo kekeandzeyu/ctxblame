@@ -59,6 +59,15 @@ def oracle_valid(t: dict) -> bool:
     return True
 
 
+def relabel_forced(t: dict, f: dict) -> dict:
+    """The truth of a case from its unforced table ``t`` and forced table ``f``, with the
+    current ``truth.label`` (the cells are the measurement; labels are derived)."""
+    from truth import Cell, label
+    cell = lambda c: (frozenset(c["removed"]), Cell(frozenset(c["removed"]), c["n"], c["k_given"], c["k"]))  # noqa: E731
+    return label(list(t["elements"]), t["kinds"], dict(map(cell, t["cells"])),
+                 forced=dict(map(cell, f["forced_cells"]))).to_json()
+
+
 def element_of(mid: str, chunks: dict[str, list[str]]) -> str | None:
     for e, ids in chunks.items():
         if any(mid == i or mid.startswith(i + ".") or i.startswith(mid + ".") for i in ids):
@@ -146,13 +155,18 @@ def main(argv=None) -> int:
     ap.add_argument("--forced", type=Path, default=None,
                     help="6.4: a forced/ dir from tables.py --forced; its cases are scored on the truth "
                          "recomputed with E forced")
+    ap.add_argument("--stored-truth", action="store_true",
+                    help="--forced: use the truth stored in each forced file (as run) instead of relabelling "
+                         "its cells with the current truth.py")
     a = ap.parse_args(argv)
     tables = {json.loads(p.read_text())["case"]: json.loads(p.read_text()) for p in a.tables.glob("*.json")}
     if a.forced:
         for p in a.forced.glob("*.json"):
             f = json.loads(p.read_text())
             if f["case"] in tables:
-                tables[f["case"]] = {**tables[f["case"]], "truth": f["truth"], "forced_truth": True}
+                t = tables[f["case"]]
+                truth = f["truth"] if a.stored_truth else relabel_forced(t, f)
+                tables[f["case"]] = {**t, "truth": truth, "forced_truth": True}
     if not a.bench:
         if not tables:
             print(f"no tables in {a.tables}")

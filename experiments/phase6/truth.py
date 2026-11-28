@@ -30,11 +30,13 @@ Forced cells (6.4, optional): the same removals replayed with E forced by
 ``tool_choice``, recording A among the replies in E. Where removing S collapses E,
 the unforced cell cannot say whether S also steers the choice (positivity); the
 forced cell compares P(A | do(E), do(-S)) with half the equally forced baseline
-P(A | do(E)), never with the unforced P(A | E). A precondition element is then
-``triggers_and_steers`` if it is in a minimal *steer set* (minimal S whose forced
-cell flips). Forcing only decides that question: carriers outside every
-precondition set keep their unforced definition. If forcing E changes the choice
-even with the whole context (forced base below 0.5), the forced cells are not used.
+P(A | do(E)), never with the unforced P(A | E). *Steer sets* are the minimal S whose
+forced cell flips, and the carrier (choice) sets become the minimal sets among the
+unforced flips (E intact) and the forced flips together: a set that looks minimal
+unforced only because a smaller one collapses E is not minimal once that smaller
+one is read with E forced (6.4b). A precondition element in a choice set is
+``triggers_and_steers``. If forcing E changes the choice even with the whole
+context (forced base below 0.5), the forced cells are not used.
 """
 
 from __future__ import annotations
@@ -138,9 +140,7 @@ def label(elements: list[str], kinds: dict[str, str], cells: dict[frozenset, Cel
     collapses = [s for s in subsets if t.e_state[s] == "collapsed"]
     t.carrier_sets = _minimal(flips)
     t.precondition_sets = _minimal(collapses)
-    in_c = set().union(*t.carrier_sets) if t.carrier_sets else set()
     in_p = set().union(*t.precondition_sets) if t.precondition_sets else set()
-    in_s: set[str] = set()
     if forced is not None:
         missing = [s for s in subsets if s not in forced]
         if missing:
@@ -155,12 +155,16 @@ def label(elements: list[str], kinds: dict[str, str], cells: dict[frozenset, Cel
             t.f_state[s] = ("none" if c.k_given < min_given else
                             _side(c.k, c.k_given, f_rate / 2, "kept", "flipped"))
         if used:
-            t.steer_sets = _minimal([s for s in subsets if t.f_state[s] == "flipped"])
-            in_s = set().union(*t.steer_sets) if t.steer_sets else set()
+            f_flips = [s for s in subsets if t.f_state[s] == "flipped"]
+            t.steer_sets = _minimal(f_flips)
+            # a choice set is a minimal removal that flips A, read with E forced where the
+            # unforced cell cannot (E collapsed): {c1, p1} is not minimal when removing c1
+            # alone collapses E unforced but flips A with E forced
+            t.carrier_sets = _minimal(flips + f_flips)
+    in_c = set().union(*t.carrier_sets) if t.carrier_sets else set()
     for x in elements:
-        t.roles[x] = ("triggers_and_steers" if x in in_p and (x in in_c or x in in_s) else "carrier" if x in in_c
+        t.roles[x] = ("triggers_and_steers" if x in in_p and x in in_c else "carrier" if x in in_c
                       else "precondition" if x in in_p else "neutral")
-    in_c = in_c | (in_s & in_p)  # a steering precondition carries the choice too (regimes below)
 
     for s in subsets:
         for x in elements:

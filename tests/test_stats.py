@@ -197,6 +197,22 @@ def test_audit_drops_a_coupled_member_that_does_not_restore_with_E_forced():
     assert aud.calls[-1] == ("forced", frozenset("b"))  # stage 2: the forced claim, on new replays
 
 
+def test_audit_makes_a_forced_claim_when_several_members_are_dropped_by_the_forced_test():
+    import asyncio
+
+    from ctxblame.blame import Cause, audit_findings
+    # p6/0-1085: the ruff rule r plus the two lines a, b of one tool-call pair. Keeping a
+    # (or b) alone stops E; with E forced neither brings the choice back. Both are
+    # dropped, and the rule alone is certified as a forced claim on new replays.
+    t = {frozenset("rab"): (20, 0), frozenset("rb"): (0, 0), frozenset("ra"): (0, 0), frozenset("ab"): (20, 20),
+         frozenset("r"): (0, 0)}
+    f = Cause(["r", "a", "b"])
+    aud = _ForcedCondAuditor(t, {frozenset("rb"): 0, frozenset("ra"): 0, frozenset("r"): 0})
+    asyncio.run(audit_findings([f], aud, 20, 0.05))
+    assert f.members == ["r"] and f.forced is True and f.certified is True
+    assert {"stage1:forced:a", "stage1:forced:b"} <= set(f.audit) and aud.calls[-1] == ("forced", frozenset("r"))
+
+
 def test_null_simulation_steering_claims_under_forced_E():
     from null_sim import simulate
     assert simulate("tas_power", 30, 1, 20, 0.05)["power"] >= 0.9

@@ -172,6 +172,21 @@ def test_forced_cells_decide_whether_a_precondition_also_steers():
     assert t2.forced["used"] is False and t2.steer_sets == [] and t2.roles == t0.roles
 
 
+def test_a_set_minimal_only_because_a_smaller_one_collapses_E_is_not_a_choice_set():
+    # p6/0-1179 shape: removing c1 stops E unless p1 is removed too; with E intact,
+    # removing both flips. Unforced, {c1, p1} is the minimal flip, so p1 looks like a
+    # carrier. With E forced, removing c1 alone already flips: p1 modulates E, not A.
+    els = ["c1", "p1"]
+    k = {"c1": "carrier", "p1": "probe"}
+    unforced = table(els, lambda s: 0.05 if s == {"c1"} else 0.95, lambda s: 0.05 if "c1" in s else 0.9)
+    t0 = label(els, k, unforced)
+    assert t0.carrier_sets == [frozenset({"c1", "p1"})] and t0.roles["p1"] == "carrier"
+    forced = table(els, lambda s: 1.0, lambda s: 0.05 if "c1" in s else 0.9)
+    t = label(els, k, unforced, forced=forced)
+    assert t.carrier_sets == [frozenset({"c1"})] and t.steer_sets == [frozenset({"c1"})]
+    assert t.roles == {"c1": "triggers_and_steers", "p1": "neutral"}
+
+
 def test_forced_table_runner_replays_every_removal_with_tool_choice(tmp_path):
     import asyncio
     import json
@@ -262,3 +277,16 @@ def test_forced_alternatives_tell_another_step_from_a_competing_tool(tmp_path):
     rows = summarize(tmp_path)["rows"]
     assert rows == [{"kinds": "precondition", "instead": "same program", "steer_sets": 1,
                      "examples": [("run pnpm add", 45)]}]  # c1 is no precondition: not listed
+
+
+def test_paired_comparison_averages_seeds_inside_a_case_and_skips_negatives():
+    from compare6 import compare
+    row = lambda c, s, r, p, reg=("single",), ov=True: {"case": c, "seed": s, "recall": r, "precision": p,  # noqa: E731
+                                                        "regimes": list(reg), "oracle_valid": ov}
+    a = [row("x", "seed0", 0.0, 0.0), row("x", "seed1", 1.0, 1.0), row("y", "seed0", 1.0, 1.0),
+         row("n", "seed0", None, 0.0, ("negative",))]
+    b = [row("x", "seed0", 1.0, 1.0), row("y", "seed0", 1.0, 1.0), row("n", "seed0", None, None, ("negative",))]
+    res = compare(a, b, boot=200)
+    assert res["all"]["cases"] == 2 and abs(res["all"]["a"] - 0.75) < 1e-9 and res["all"]["b"] == 1.0
+    assert abs(res["all"]["diff"] - 0.25) < 1e-9 and res["all"]["better"] == 1 and res["all"]["worse"] == 0
+    assert "regime:negative" not in res and res["all"]["ci"][0] >= 0

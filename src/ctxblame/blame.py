@@ -1181,10 +1181,10 @@ async def audit_findings(findings: list[Cause], auditor, n: int, alpha: float) -
     restoration is testable after all: stage 1 replays its leave-one-in removal
     with E forced. If keeping it restores the choice under do(E), stage 2 tests
     that (``forced:<id>``); if the choice is clearly not restored, it is a
-    hitchhiker and dropped; otherwise the collapse test above is kept. If that one
-    dropped member was the only change, the rest of the bundle is removed by exactly
-    its leave-one-in test, which stopped E: the remainder triggers and steers, and
-    stage 2 audits it as a ``forced`` finding. A ``forced`` finding (a choice claim
+    hitchhiker and dropped; otherwise the collapse test above is kept. If every
+    dropped member was dropped this way (with one, the rest of the bundle is removed
+    by exactly its leave-one-in test, which stopped E), the remainder triggers and
+    steers, and stage 2 audits it as a ``forced`` finding. A ``forced`` finding (a choice claim
     under do(E)) is audited entirely with E forced, against the forced baseline."""
     forceable = getattr(auditor, "force_tool", None) is not None  # measured lazily: only a coupled member needs it
 
@@ -1239,10 +1239,11 @@ async def audit_findings(findings: list[Cause], auditor, n: int, alpha: float) -
             f.members = [m for m in f.members if m not in drop]
             f.removal = [m for m in (f.removal or []) if m not in drop]
             removal = removal - set(drop)
-            if len(drop) == 1 and drop[0] in forced_drop:
-                # what is left is removed by exactly the dropped member's leave-one-in test,
-                # which stopped E (unforced) and flipped A with E forced: the remainder
-                # triggers and steers, and its claim can only be tested with E forced
+            if drop and set(drop) <= forced_drop:
+                # every dropped member stopped E when kept alone (unforced) and did not
+                # restore A with E forced (with one, what is left is removed by exactly its
+                # leave-one-in test): the remainder triggers and steers, and its claim is
+                # tested with E forced (an E-intact remainder passes it as well)
                 f.forced, kinds, coupled, forced_restore = True, ("forced_flip", "forced_restore"), set(), set()
             audit, p_main, p_members = await run(f.members, removal, kinds, coupled - forced_restore,
                                                  forced_restore & set(f.members), f.forced)
