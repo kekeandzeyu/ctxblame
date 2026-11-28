@@ -1239,14 +1239,18 @@ async def audit_findings(findings: list[Cause], auditor, n: int, alpha: float) -
             f.members = [m for m in f.members if m not in drop]
             f.removal = [m for m in (f.removal or []) if m not in drop]
             removal = removal - set(drop)
+            became_forced = False
             if drop and set(drop) <= forced_drop:
                 # every dropped member stopped E when kept alone (unforced) and did not
                 # restore A with E forced (with one, what is left is removed by exactly its
                 # leave-one-in test): the remainder triggers and steers, and its claim is
                 # tested with E forced (an E-intact remainder passes it as well)
                 f.forced, kinds, coupled, forced_restore = True, ("forced_flip", "forced_restore"), set(), set()
+                became_forced = True
             audit, p_main, p_members = await run(f.members, removal, kinds, coupled - forced_restore,
                                                  forced_restore & set(f.members), f.forced)
+            if became_forced:  # the claim is now the forced removal: report that outcome, not the search's
+                f.together = audit["together"]
             audit = {**stage1, **audit}
             f.coupled = [m for m in f.members if m in coupled]
         f.audit = audit

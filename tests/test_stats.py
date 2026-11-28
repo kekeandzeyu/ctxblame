@@ -195,6 +195,7 @@ def test_audit_drops_a_coupled_member_that_does_not_restore_with_E_forced():
     assert f.members == ["b"] and f.coupled == [] and f.forced is True and f.certified is True
     assert "stage1:forced:a" in f.audit and f.audit["together"].k == 0 and not f.audit["together"].collapsed
     assert aud.calls[-1] == ("forced", frozenset("b"))  # stage 2: the forced claim, on new replays
+    assert f.together is f.audit["together"]  # reported as the forced outcome, not the search's unforced one
 
 
 def test_audit_makes_a_forced_claim_when_several_members_are_dropped_by_the_forced_test():

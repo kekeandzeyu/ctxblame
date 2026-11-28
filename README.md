@@ -141,9 +141,12 @@ How it works:
    is reported as *triggers and steers*: it makes the agent act and also picks
    what it does. It is then listed as a cause "with E forced" and audited like
    any finding. `coupled` bundle members get the same forced test of whether
-   they restore the choice. With an intent-level E, or Anthropic extended
-   thinking, E cannot be forced and the report says so. `--no-force` gives the
-   v0.2.1 behaviour.
+   they restore the choice. The report also says what the forced replies did
+   instead (`instead: run git status 12`), so a line that decides *what to do
+   next* can be told from one that decides *how* (`instead: run flake8`). With
+   an intent-level E, or Anthropic extended thinking, E cannot be forced and the
+   report says so. `--no-force` gives the v0.2.1 behaviour. On the Phase 6 suite
+   this raises F1 on such cases by 9–10 points (Qwen3-14B, Llama-3.1-8B).
 
 If whether the agent acts at all depends on context spread over many chunks
 (every precondition found reveals another), the search keeps a minimal set
@@ -222,7 +225,7 @@ Phase 3 attribution benchmark at **$0 API cost**.
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the audit, the theory plan and the exit gate of each phase:
 
 - **Phase 5, engine correctness:** split `<system-reminder>` blocks inside user turns into removable chunks, keep searching past diffuse preconditions, audit every reported cause on fresh replays (intersection-union + Holm), pin Anthropic `cache_control` breakpoints.
-- **Phase 6, ground truth independent of the method:** exhaustive $2^m$ removal tables per case (no oracle dropping), neutral probe lines, matched `tool_choice` interventions for rules that both trigger and steer the action. *Tables done:* 250 cases × 2 models. ctxblame scores 95% / 85% F1 on the cases `v0.2`'s oracle kept and 71% / 44% on the ones it dropped (Qwen3-14B / Llama-3.1-8B).
+- **Phase 6, ground truth independent of the method:** exhaustive $2^m$ removal tables per case (no oracle dropping), neutral probe lines, matched `tool_choice` interventions for rules that both trigger and steer the action. *Done:* 250 cases × 2 models. ctxblame scores 95% / 85% F1 on the cases `v0.2`'s oracle kept and 71% / 44% on the ones it dropped (Qwen3-14B / Llama-3.1-8B). With the action forced (6.4, unreleased), F1 on rules that trigger and steer rises from 53% to 62% (Qwen) and from 46% to 56% (Llama).
 - **Phase 7, steelmanned baselines and theory:** contrastive ContextCite, black-box group testing over keep-probabilities, full-context self-explanation; a group-testing formulation with the precondition gate as the separating structure.
 - **Phase 8, external validity:** `ctxblame wrap`, wire-captured steps from real harnesses on SWE-bench, `ctxblame verify` fix study, one approved closed-API run. `ctxblame import` (best effort, marked reconstructed) follows in `v0.3`.
 
