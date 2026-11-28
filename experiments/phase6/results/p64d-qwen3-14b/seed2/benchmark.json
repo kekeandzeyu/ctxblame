@@ -1,0 +1,3299 @@
+[
+ {
+  "case": "p6/0-1085/ruff/system/conflict",
+  "category": "single",
+  "method": "ctxblame",
+  "score": {
+   "result": "causes",
+   "carriers_found": 1,
+   "carriers": 1,
+   "recall": 1.0,
+   "precision": 1.0,
+   "f1": 1.0,
+   "precond_found": null,
+   "precond_fp": false,
+   "neg_correct": null,
+   "members": 1,
+   "replays": 1100,
+   "cost": 0.0,
+   "seconds": 92.45,
+   "cache_hit_rate": 0.9353362475260213,
+   "input_uncached": 45414
+  },
+  "report": {
+   "trace": "p6/0-1085/ruff/system/conflict.json",
+   "step": 1,
+   "match": "args",
+   "any_call": true,
+   "recorded": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+   "baseline": {
+    "baseline": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+    "match": "args (any call)",
+    "n_ok": 10,
+    "n_error": 0,
+    "same_decision": 10,
+    "same_rate": 1.0,
+    "same_rate_ci95": [
+     0.7224598312333834,
+     1.0
+    ],
+    "same_tool_name": null,
+    "modal": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+    "modal_rate": 1.0,
+    "verdict": "stable",
+    "verdict_text": "the recorded decision comes back in 10/10 replays",
+    "distribution": [
+     [
+      "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+      10
+     ]
+    ],
+    "cost": 0.0
+   },
+   "given": {
+    "mode": "name",
+    "target": "bash",
+    "baseline_given": 10,
+    "baseline_n": 10,
+    "baseline_cond": 10,
+    "baseline_cond_rate": 1.0
+   },
+   "everything_removed": {
+    "k": 0,
+    "n": 10,
+    "verdict": "flipped",
+    "cost": 0.0,
+    "dist": [
+     [
+      "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+      10
+     ]
+    ],
+    "note": "",
+    "k_given": 10,
+    "n_total": 10,
+    "given_verdict": "intact"
+   },
+   "result": "causes",
+   "causes": [
+    {
+     "relation": "and_cause",
+     "members": [
+      {
+       "id": "sys@msg0.p2.6",
+       "kind": "line",
+       "label": "system ¶2 line 6",
+       "text": "- Lint with `ruff check --fix src/`; flake8 and pylint are not used."
+      }
+     ],
+     "together": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     },
+     "specific": true,
+     "alone": {
+      "sys@msg0.p2.6": {
+       "k": 0,
+       "n": 0,
+       "verdict": "collapsed",
+       "cost": 0.0,
+       "dist": [
+        [
+         "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         10
+        ]
+       ],
+       "note": "",
+       "k_given": 0,
+       "n_total": 10,
+       "given_verdict": "collapsed"
+      },
+      "pair:call_1085_2.1": {
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      },
+      "pair:call_1085_2.2": {
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      }
+     },
+     "restored": {
+      "sys@msg0.p2.6": {
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      },
+      "pair:call_1085_2.1": {
+       "k": 0,
+       "n": 0,
+       "verdict": "collapsed",
+       "cost": 0.0,
+       "dist": [
+        [
+         "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         10
+        ]
+       ],
+       "note": "",
+       "k_given": 0,
+       "n_total": 10,
+       "given_verdict": "collapsed"
+      },
+      "pair:call_1085_2.2": {
+       "k": 0,
+       "n": 0,
+       "verdict": "collapsed",
+       "cost": 0.0,
+       "dist": [
+        [
+         "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         10
+        ]
+       ],
+       "note": "",
+       "k_given": 0,
+       "n_total": 10,
+       "given_verdict": "collapsed"
+      }
+     },
+     "controls": [
+      {
+       "removed": "- Ask before deleting files you did not… / - Prefer small, well-named functions.",
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      },
+      {
+       "removed": "## Repository Rules / - Ask before deleting files you did not…",
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      }
+     ],
+     "certified": true,
+     "p_value": 9.5367431640625e-07,
+     "p_adjusted": 1.9073486328125e-06,
+     "coupled": [],
+     "forced": true,
+     "steers": null,
+     "steer_test": null,
+     "audit": {
+      "stage1:together": {
+       "k": 0,
+       "n": 20,
+       "verdict": "flipped",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         20
+        ]
+       ],
+       "note": "",
+       "k_given": 20,
+       "n_total": 20,
+       "given_verdict": "intact"
+      },
+      "stage1:sys@msg0.p2.6": {
+       "k": 20,
+       "n": 20,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         20
+        ]
+       ],
+       "note": "",
+       "k_given": 20,
+       "n_total": 20,
+       "given_verdict": "intact"
+      },
+      "stage1:pair:call_1085_2.1": {
+       "k": 0,
+       "n": 0,
+       "verdict": "collapsed",
+       "cost": 0.0,
+       "dist": [
+        [
+         "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         20
+        ]
+       ],
+       "note": "",
+       "k_given": 0,
+       "n_total": 20,
+       "given_verdict": "collapsed"
+      },
+      "stage1:pair:call_1085_2.2": {
+       "k": 0,
+       "n": 0,
+       "verdict": "collapsed",
+       "cost": 0.0,
+       "dist": [
+        [
+         "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         20
+        ]
+       ],
+       "note": "",
+       "k_given": 0,
+       "n_total": 20,
+       "given_verdict": "collapsed"
+      },
+      "stage1:forced:pair:call_1085_2.1": {
+       "k": 0,
+       "n": 20,
+       "verdict": "flipped",
+       "cost": 0.0,
+       "dist": [
+        [
+         "run flake8",
+         20
+        ]
+       ],
+       "note": "",
+       "k_given": 20,
+       "n_total": 20,
+       "given_verdict": null
+      },
+      "stage1:forced:pair:call_1085_2.2": {
+       "k": 0,
+       "n": 20,
+       "verdict": "flipped",
+       "cost": 0.0,
+       "dist": [
+        [
+         "run flake8",
+         20
+        ]
+       ],
+       "note": "",
+       "k_given": 20,
+       "n_total": 20,
+       "given_verdict": null
+      },
+      "together": {
+       "k": 0,
+       "n": 20,
+       "verdict": "flipped",
+       "cost": 0.0,
+       "dist": [
+        [
+         "run flake8",
+         20
+        ]
+       ],
+       "note": "",
+       "k_given": 20,
+       "n_total": 20,
+       "given_verdict": null
+      }
+     }
+    }
+   ],
+   "preconditions": [],
+   "uncertified": [
+    {
+     "relation": "or_preconditions",
+     "members": [
+      {
+       "id": "tooldesc:bash.1",
+       "kind": "line",
+       "label": "tool bash description 1",
+       "text": "Run one shell command in the repository working directory."
+      },
+      {
+       "id": "tooldesc:bash.2",
+       "kind": "line",
+       "label": "tool bash description 2",
+       "text": "the command line, e.g. `git status`"
+      }
+     ],
+     "together": {
+      "k": 11,
+      "n": 11,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        29
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        11
+       ]
+      ],
+      "note": "",
+      "k_given": 11,
+      "n_total": 40,
+      "given_verdict": "collapsed"
+     },
+     "specific": true,
+     "alone": {
+      "tooldesc:bash.1": {
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      },
+      "tooldesc:bash.2": {
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      }
+     },
+     "restored": {
+      "tooldesc:bash.1": {
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      },
+      "tooldesc:bash.2": {
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      }
+     },
+     "controls": [
+      {
+       "removed": "Read a text file from the repository an…",
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      },
+      {
+       "removed": "Use the tools to inspect, change and ve… / Do one step at a time.",
+       "k": 5,
+       "n": 5,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 5,
+       "given_verdict": "intact"
+      }
+     ],
+     "certified": false,
+     "p_value": 0.057659149169921875,
+     "p_adjusted": 0.057659149169921875,
+     "coupled": [],
+     "forced": false,
+     "steers": false,
+     "steer_test": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": null
+     },
+     "audit": {
+      "stage1:together": {
+       "k": 5,
+       "n": 5,
+       "verdict": "collapsed",
+       "cost": 0.0,
+       "dist": [
+        [
+         "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         15
+        ],
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         5
+        ]
+       ],
+       "note": "",
+       "k_given": 5,
+       "n_total": 20,
+       "given_verdict": "collapsed"
+      },
+      "stage1:tooldesc:bash.1": {
+       "k": 20,
+       "n": 20,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         20
+        ]
+       ],
+       "note": "",
+       "k_given": 20,
+       "n_total": 20,
+       "given_verdict": "intact"
+      },
+      "stage1:tooldesc:bash.2": {
+       "k": 16,
+       "n": 16,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         16
+        ],
+        [
+         "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         4
+        ]
+       ],
+       "note": "",
+       "k_given": 16,
+       "n_total": 20,
+       "given_verdict": "intact"
+      },
+      "together": {
+       "k": 6,
+       "n": 6,
+       "verdict": "unclear",
+       "cost": 0.0,
+       "dist": [
+        [
+         "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         14
+        ],
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         6
+        ]
+       ],
+       "note": "",
+       "k_given": 6,
+       "n_total": 20,
+       "given_verdict": "unclear"
+      },
+      "tooldesc:bash.1": {
+       "k": 20,
+       "n": 20,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         20
+        ]
+       ],
+       "note": "",
+       "k_given": 20,
+       "n_total": 20,
+       "given_verdict": "intact"
+      },
+      "tooldesc:bash.2": {
+       "k": 14,
+       "n": 14,
+       "verdict": "kept",
+       "cost": 0.0,
+       "dist": [
+        [
+         "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+         14
+        ],
+        [
+         "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+         6
+        ]
+       ],
+       "note": "",
+       "k_given": 14,
+       "n_total": 20,
+       "given_verdict": "intact"
+      }
+     }
+    }
+   ],
+   "audit": {
+    "n": 20,
+    "alpha": 0.05
+   },
+   "diffuse_preconditions": [],
+   "triggers_and_steers_suspected": false,
+   "forcing": {
+    "tool": "bash",
+    "unavailable": null,
+    "note": null,
+    "baseline": {
+     "k": 15,
+     "n": 15,
+     "verdict": "kept",
+     "cost": 0.0,
+     "dist": [],
+     "note": "",
+     "k_given": 15,
+     "n_total": 15,
+     "given_verdict": null
+    },
+    "threshold": 0.5
+   },
+   "cache_stats": {
+    "input_uncached": 45414,
+    "input_cache_read": 656896,
+    "input_cache_write": 0,
+    "output": 33164,
+    "cache_hit_rate": 0.9353362475260213
+   },
+   "notes": [
+    "non-monotonic: removing all of the context keeps the decision, but removing 4 chunk(s) in one tier changes it",
+    "pruned non-essential hitchhiker(s): tooldesc:read_file.3",
+    "non-monotonic: removing all of the context keeps the decision, but removing 6 chunk(s) in one tier changes it",
+    "dropped an unconfirmed precondition (tooldesc:bash.3, tooldesc:read_file.1, tooldesc:list_dir.2, sys@msg0.p1.1, sys@msg0.p1.2, sys@msg0.p3): 10/10 (given 10/10) after more replays",
+    "audit dropped pair:call_1085_2.1, pair:call_1085_2.2, forced:pair:call_1085_2.1, forced:pair:call_1085_2.2 (did not restore it with the action family intact); cause re-audited on new fresh replays as sys@msg0.p2.6",
+    "not certified on 20 fresh replays per test (precondition: tooldesc:bash.1, tooldesc:bash.2; p = 0.0577, Holm-adjusted 0.0577 > 0.05)"
+   ],
+   "stopped": null,
+   "tests": [
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "pair:call_1085_2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "pair:call_1085_2",
+      "sys@msg0.p1",
+      "sys@msg0.p2",
+      "sys@msg0.p3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p2",
+      "sys@msg0.p3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "pair:call_1085_2",
+      "sys@msg0.p3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "pair:call_1085_2",
+      "sys@msg0.p1",
+      "sys@msg0.p2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "pair:call_1085_2",
+      "sys@msg0.p2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2",
+      "sys@msg0.p2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "sys@msg0.p1",
+      "sys@msg0.p3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:edit_file",
+      "tooldesc:list_dir"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 10,
+      "n": 10,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        10
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 15,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.3",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1",
+      "tooldesc:bash.2",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.2",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 9,
+      "n": 9,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        9
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        6
+       ]
+      ],
+      "note": "",
+      "k_given": 9,
+      "n_total": 15,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash",
+      "tooldesc:bash.1",
+      "tooldesc:bash.2",
+      "tooldesc:read_file.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 3,
+      "n": 3,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        12
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        3
+       ]
+      ],
+      "note": "",
+      "k_given": 3,
+      "n_total": 15,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.2",
+      "tooldesc:read_file.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1",
+      "tooldesc:read_file.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1",
+      "tooldesc:bash.2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 9,
+      "n": 9,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        21
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        9
+       ]
+      ],
+      "note": "",
+      "k_given": 9,
+      "n_total": 30,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.3",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        15
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 20,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:list_dir"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.3",
+      "tooldesc:edit_file",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 15,
+      "n": 15,
+      "verdict": "unclear",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        15
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        15
+       ]
+      ],
+      "note": "",
+      "k_given": 15,
+      "n_total": 30,
+      "given_verdict": "unclear"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:list_dir"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:edit_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 12,
+      "n": 12,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        12
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        3
+       ]
+      ],
+      "note": "",
+      "k_given": 12,
+      "n_total": 15,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 15,
+      "n": 15,
+      "verdict": "unclear",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        15
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        15
+       ]
+      ],
+      "note": "",
+      "k_given": 15,
+      "n_total": 30,
+      "given_verdict": "unclear"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 12,
+      "n": 12,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        12
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        3
+       ]
+      ],
+      "note": "",
+      "k_given": 12,
+      "n_total": 15,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 13,
+      "n": 13,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        13
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        2
+       ]
+      ],
+      "note": "",
+      "k_given": 13,
+      "n_total": 15,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:read_file"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:read_file.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:read_file.1",
+      "tooldesc:read_file.2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 3,
+      "n": 3,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        12
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        3
+       ]
+      ],
+      "note": "",
+      "k_given": 3,
+      "n_total": 15,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:read_file.2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 1,
+      "n": 1,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        9
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        1
+       ]
+      ],
+      "note": "",
+      "k_given": 1,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.3",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.1",
+      "sys@msg0.p1.2",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.2",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 13,
+      "n": 13,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        13
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        2
+       ]
+      ],
+      "note": "",
+      "k_given": 13,
+      "n_total": 15,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 15,
+      "n": 15,
+      "verdict": "unclear",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        15
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        15
+       ]
+      ],
+      "note": "",
+      "k_given": 15,
+      "n_total": 30,
+      "given_verdict": "unclear"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.1",
+      "sys@msg0.p1.2",
+      "sys@msg0.p3",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.1",
+      "sys@msg0.p1.2",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir.2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.1",
+      "sys@msg0.p1.2",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.2",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.1",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.1",
+      "sys@msg0.p1.2",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "sys@msg0.p1.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_1",
+      "sys@msg0.p1.3",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir.1",
+      "tooldesc:read_file.2",
+      "tooldesc:read_file.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:edit_file",
+      "tooldesc:list_dir.1",
+      "tooldesc:read_file.2",
+      "tooldesc:read_file.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.3",
+      "tooldesc:edit_file",
+      "tooldesc:list_dir.1",
+      "tooldesc:read_file.2",
+      "tooldesc:read_file.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1",
+      "tooldesc:bash.2"
+     ],
+     "fresh": true,
+     "outcome": {
+      "k": 11,
+      "n": 11,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        29
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        11
+       ]
+      ],
+      "note": "",
+      "k_given": 11,
+      "n_total": 40,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:read_file.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.2",
+      "sys@msg0.p1.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p1.1",
+      "sys@msg0.p1.2",
+      "sys@msg0.p3",
+      "tooldesc:bash.3",
+      "tooldesc:list_dir.2",
+      "tooldesc:read_file.1"
+     ],
+     "fresh": true,
+     "outcome": {
+      "k": 10,
+      "n": 10,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [],
+     "forced": true,
+     "baseline": true,
+     "outcome": {
+      "k": 15,
+      "n": 15,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [],
+      "note": "",
+      "k_given": 15,
+      "n_total": 15,
+      "given_verdict": null
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1",
+      "tooldesc:bash.2"
+     ],
+     "fresh": false,
+     "forced": true,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": null
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2",
+      "sys@msg0.p2.4",
+      "sys@msg0.p2.5",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "pair:call_1085_2.2",
+      "pair:call_1085_2.3",
+      "pair:call_1085_2.4",
+      "pair:call_1085_2.5",
+      "pair:call_1085_2.6",
+      "sys@msg0.p2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.4",
+      "pair:call_1085_2.5",
+      "pair:call_1085_2.6",
+      "sys@msg0.p2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "pair:call_1085_2.2",
+      "pair:call_1085_2.3",
+      "sys@msg0.p2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 11,
+      "verdict": "unclear",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        19
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        11
+       ]
+      ],
+      "note": "",
+      "k_given": 11,
+      "n_total": 30,
+      "given_verdict": "unclear"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.5",
+      "pair:call_1085_2.6",
+      "sys@msg0.p2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.3",
+      "pair:call_1085_2.4",
+      "sys@msg0.p2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "pair:call_1085_2.2",
+      "sys@msg0.p2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.2",
+      "sys@msg0.p2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "sys@msg0.p2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "pair:call_1085_2.2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "pair:call_1085_2.2",
+      "sys@msg0.p2.6"
+     ],
+     "fresh": true,
+     "outcome": {
+      "k": 0,
+      "n": 10,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 10,
+      "n_total": 10,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p2.6"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        10
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 10,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p2.2",
+      "sys@msg0.p2.3"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p2.1",
+      "sys@msg0.p2.2"
+     ],
+     "fresh": false,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 5,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "pair:call_1085_2.2",
+      "sys@msg0.p2.6"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 0,
+      "n": 20,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        20
+       ]
+      ],
+      "note": "",
+      "k_given": 20,
+      "n_total": 20,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "pair:call_1085_2.2"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 20,
+      "n": 20,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        20
+       ]
+      ],
+      "note": "",
+      "k_given": 20,
+      "n_total": 20,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.2",
+      "sys@msg0.p2.6"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        20
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 20,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "sys@msg0.p2.6"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 0,
+      "n": 0,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        20
+       ]
+      ],
+      "note": "",
+      "k_given": 0,
+      "n_total": 20,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.2",
+      "sys@msg0.p2.6"
+     ],
+     "audit": true,
+     "forced": true,
+     "outcome": {
+      "k": 0,
+      "n": 20,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "run flake8",
+        20
+       ]
+      ],
+      "note": "",
+      "k_given": 20,
+      "n_total": 20,
+      "given_verdict": null
+     }
+    },
+    {
+     "removed": [
+      "pair:call_1085_2.1",
+      "sys@msg0.p2.6"
+     ],
+     "audit": true,
+     "forced": true,
+     "outcome": {
+      "k": 0,
+      "n": 20,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "run flake8",
+        20
+       ]
+      ],
+      "note": "",
+      "k_given": 20,
+      "n_total": 20,
+      "given_verdict": null
+     }
+    },
+    {
+     "removed": [
+      "sys@msg0.p2.6"
+     ],
+     "audit": true,
+     "forced": true,
+     "outcome": {
+      "k": 0,
+      "n": 20,
+      "verdict": "flipped",
+      "cost": 0.0,
+      "dist": [
+       [
+        "run flake8",
+        20
+       ]
+      ],
+      "note": "",
+      "k_given": 20,
+      "n_total": 20,
+      "given_verdict": null
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1",
+      "tooldesc:bash.2"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 5,
+      "n": 5,
+      "verdict": "collapsed",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        15
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        5
+       ]
+      ],
+      "note": "",
+      "k_given": 5,
+      "n_total": 20,
+      "given_verdict": "collapsed"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.2"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 20,
+      "n": 20,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        20
+       ]
+      ],
+      "note": "",
+      "k_given": 20,
+      "n_total": 20,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 16,
+      "n": 16,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        16
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        4
+       ]
+      ],
+      "note": "",
+      "k_given": 16,
+      "n_total": 20,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1",
+      "tooldesc:bash.2"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 6,
+      "n": 6,
+      "verdict": "unclear",
+      "cost": 0.0,
+      "dist": [
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        14
+       ],
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        6
+       ]
+      ],
+      "note": "",
+      "k_given": 6,
+      "n_total": 20,
+      "given_verdict": "unclear"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.2"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 20,
+      "n": 20,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        20
+       ]
+      ],
+      "note": "",
+      "k_given": 20,
+      "n_total": 20,
+      "given_verdict": "intact"
+     }
+    },
+    {
+     "removed": [
+      "tooldesc:bash.1"
+     ],
+     "audit": true,
+     "outcome": {
+      "k": 14,
+      "n": 14,
+      "verdict": "kept",
+      "cost": 0.0,
+      "dist": [
+       [
+        "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+        14
+       ],
+       [
+        "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+        6
+       ]
+      ],
+      "note": "",
+      "k_given": 14,
+      "n_total": 20,
+      "given_verdict": "intact"
+     }
+    }
+   ],
+   "cost": 0.0,
+   "replays": 1100,
+   "seconds": 92.45
+  }
+ }
+]
