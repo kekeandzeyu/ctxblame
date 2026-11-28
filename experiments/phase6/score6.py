@@ -144,6 +144,60 @@ def print_tables_summary(s: dict) -> None:
         print(f"| {g} | {n} |")
 
 
+def load_tables(tables_dir: Path, forced: Path | None = None, stored_truth: bool = False) -> dict[str, dict]:
+    """case -> table; with ``forced``, the cases it covers get the truth with E forced
+    (recomputed from both tables, or as stored with ``stored_truth``)."""
+    tables = {}
+    for p in tables_dir.glob("*.json"):
+        t = json.loads(p.read_text())
+        tables[t["case"]] = t
+    if forced:
+        for p in forced.glob("*.json"):
+            f = json.loads(p.read_text())
+            if f["case"] in tables:
+                t = tables[f["case"]]
+                truth = f["truth"] if stored_truth else relabel_forced(t, f)
+                tables[f["case"]] = {**t, "truth": truth, "forced_truth": True}
+    return tables
+
+
+def score_rows(tables: dict[str, dict], bench: list[tuple[str, list[dict]]], method: str) -> list[dict]:
+    """One scored row per (case, seed) of ``method``; ``bench`` is [(seed name, benchmark rows)]."""
+    rows = []
+    for seed, rs in bench:
+        for r in rs:
+            if r["method"] != method or r["case"] not in tables:
+                continue
+            t = tables[r["case"]]
+            rows.append({"case": r["case"], "seed": seed, "design": t["design"], "regimes": t["truth"]["regimes"],
+                         "oracle_valid": oracle_valid(t), "replays": r["report"].get("replays"),
+                         **score_case(t, r["report"])})
+    return rows
+
+
+def group_rows(rows: list[dict]) -> dict[str, list[dict]]:
+    groups: dict[str, list] = defaultdict(list)
+    for r in rows:
+        groups["all"].append(r)
+        groups["oracle-valid" if r["oracle_valid"] else "oracle-dropped"].append(r)
+        for g in r["regimes"]:
+            groups[f"regime:{g}"].append(r)
+    return groups
+
+
+def summarize(rs: list[dict]) -> dict:
+    rec, prec = mean(r["recall"] for r in rs), mean(r["precision"] for r in rs)
+    return {"rows": len(rs), "recall": rec, "precision": prec,
+            "f1": mean(f1(r["recall"], r["precision"]) for r in rs),
+            "precond": mean(r["precond"] for r in rs), "precond_blamed": mean(r["precond_blamed"] for r in rs),
+            "probe_fp": mean(r["probe_fp"] for r in rs), "negative_ok": mean(r["negative_ok"] for r in rs),
+            "unplanted": mean(r["unplanted"] for r in rs)}
+
+
+def group_order(g: str) -> tuple:
+    return (g != "all", not g.startswith("oracle"), g)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("tables", type=Path)
@@ -159,14 +213,7 @@ def main(argv=None) -> int:
                     help="--forced: use the truth stored in each forced file (as run) instead of relabelling "
                          "its cells with the current truth.py")
     a = ap.parse_args(argv)
-    tables = {json.loads(p.read_text())["case"]: json.loads(p.read_text()) for p in a.tables.glob("*.json")}
-    if a.forced:
-        for p in a.forced.glob("*.json"):
-            f = json.loads(p.read_text())
-            if f["case"] in tables:
-                t = tables[f["case"]]
-                truth = f["truth"] if a.stored_truth else relabel_forced(t, f)
-                tables[f["case"]] = {**t, "truth": truth, "forced_truth": True}
+    tables = load_tables(a.tables, a.forced, a.stored_truth)
     if not a.bench:
         if not tables:
             print(f"no tables in {a.tables}")
@@ -176,40 +223,21 @@ def main(argv=None) -> int:
         if a.out:
             a.out.write_text(json.dumps({"tables_summary": s}, indent=1))
         return 0
-    rows = []
-    for bp in a.bench:
-        for r in json.loads(bp.read_text()):
-            if r["method"] != a.method or r["case"] not in tables:
-                continue
-            t = tables[r["case"]]
-            s = score_case(t, r["report"])
-            rows.append({"case": r["case"], "seed": bp.parent.name, "design": t["design"],
-                         "regimes": t["truth"]["regimes"], "oracle_valid": oracle_valid(t), **s})
+    rows = score_rows(tables, [(bp.parent.name, json.loads(bp.read_text())) for bp in a.bench], a.method)
     if not rows:
         print("no scored rows (case names must match the tables)")
         return 1
-    groups: dict[str, list] = defaultdict(list)
-    for r in rows:
-        groups["all"].append(r)
-        groups["oracle-valid" if r["oracle_valid"] else "oracle-dropped"].append(r)
-        for g in r["regimes"]:
-            groups[f"regime:{g}"].append(r)
+    groups = group_rows(rows)
     print(f"{len(rows)} case x seed rows, {len({r['case'] for r in rows})} cases\n")
     print("| group | rows | recall | precision | F1 | precond. separated | precond. blamed | "
           "neutral probe blamed | negatives correct | unplanted members |")
     print("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
     pct = lambda x: "–" if x is None else f"{x:.0%}"  # noqa: E731
     summary = {}
-    for g in sorted(groups, key=lambda g: (g != "all", not g.startswith("oracle"), g)):
+    for g in sorted(groups, key=group_order):
         rs = groups[g]
-        rec, prec = mean(r["recall"] for r in rs), mean(r["precision"] for r in rs)
-        row = {"rows": len(rs), "recall": rec, "precision": prec, "f1": mean(f1(r["recall"], r["precision"])
-                                                                            for r in rs),
-               "precond": mean(r["precond"] for r in rs), "precond_blamed": mean(r["precond_blamed"] for r in rs),
-               "probe_fp": mean(r["probe_fp"] for r in rs), "negative_ok": mean(r["negative_ok"] for r in rs),
-               "unplanted": mean(r["unplanted"] for r in rs)}
-        summary[g] = row
-        print(f"| {g} | {len(rs)} | {pct(rec)} | {pct(prec)} | {pct(row['f1'])} | {pct(row['precond'])} | "
+        row = summary[g] = summarize(rs)
+        print(f"| {g} | {len(rs)} | {pct(row['recall'])} | {pct(row['precision'])} | {pct(row['f1'])} | {pct(row['precond'])} | "
               f"{pct(row['precond_blamed'])} | {pct(row['probe_fp'])} | {pct(row['negative_ok'])} | "
               f"{row['unplanted']:.2f} |")
     if a.out:

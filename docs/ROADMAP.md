@@ -240,6 +240,17 @@ with `v0.2`.
     decisive comparison: if a tuned non-adaptive design matches ctxblame on
     choice carriers, the contribution is the gate handling, not the search.
   - *Self-explain-full*: no 320-char truncation, $(A, E)$ stated in the prompt.
+  - *Code ready, offline-tested; GPU run pending*
+    ([experiments/phase7](../experiments/phase7/README.md)). As built:
+    - Budgets: $M = 512$ added, since ctxblame's median spend on the suite is about
+      295 replays.
+    - Keep-probabilities: $q \in \{1/4, 1/2, 3/4, 0.9\}$, which covers $1/k$ read
+      either as a keep or as a removal probability.
+    - A forced design (`fq0.5`, $E$ forced by `tool_choice`) as the strongest
+      non-adaptive opponent.
+    - Units: lines plus whole tool-call pairs, as ctxblame.
+    - Every estimator uses a max-statistic permutation null, so each can answer
+      "nothing".
 - [ ] **7.2 Theory section:**
   1. Noisy group-testing formulation and the $\Omega(k \log(d/k))$ lower bound;
      delta debugging / binary splitting meets it adaptively.
