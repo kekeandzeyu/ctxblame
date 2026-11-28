@@ -11,7 +11,9 @@ Per case and seed:
   precision   reported planted cause elements that are truth carriers
   precond     truth precondition elements reported as preconditions, not causes
   probe_fp    a probe the table calls neutral, reported as a cause
-  negative    truth "negative": correct when no cause is reported
+  negative    truth "negative": correct when no planted element is reported as a cause
+              (unplanted causes are not judged by the table; they are counted in
+              ``unplanted``, e.g. a role line the choice really depends on)
 
 Rows are grouped by truth regime; the subset the Phase 3 oracle would have kept
 (``oracle_valid``, computed from the table's own cells) is reported apart, so the
@@ -82,7 +84,7 @@ def score_case(t: dict, rep: dict) -> dict:
         "precond": len(found_pre & t_pre) / len(t_pre) if t_pre else None,
         "precond_blamed": bool((t_pre - t_car) & found),
         "probe_fp": bool(found & neutral_probes),
-        "negative_ok": (not cause_ids) if "negative" in truth["regimes"] else None,
+        "negative_ok": (not found) if "negative" in truth["regimes"] else None,
         "unplanted": unplanted,
         "coupled_reported": any(c.get("coupled") for c in rep.get("causes", [])),
         "triggers_and_steers_suspected": bool(rep.get("triggers_and_steers_suspected")),

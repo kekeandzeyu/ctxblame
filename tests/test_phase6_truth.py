@@ -140,3 +140,10 @@ def test_score_maps_refined_lines_to_elements_and_flags_neutral_probes():
     s = score_case(t, rep)
     assert s["recall"] == 1.0 and s["precision"] == 0.5 and s["probe_fp"] and s["unplanted"] == 1
     assert s["precond"] == 1.0 and not s["precond_blamed"] and s["negative_ok"] is None
+    # a negative case: only planted elements are judged; an unplanted cause is counted apart
+    neg = {**t, "truth": {**t["truth"], "roles": {"c1": "neutral", "pre": "neutral", "p1": "neutral"},
+                          "regimes": ["negative"]}}
+    s = score_case(neg, {"causes": [{"members": [{"id": "sys@msg0.p1.1"}]}]})
+    assert s["negative_ok"] is True and s["unplanted"] == 1
+    s = score_case(neg, {"causes": [{"members": [{"id": "sys@msg0.p2.4"}]}]})
+    assert s["negative_ok"] is False and s["unplanted"] == 0
