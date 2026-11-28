@@ -1,0 +1,787 @@
+{
+ "case": "p6/0-1039/script/tooldesc+doc+user",
+ "design": "or",
+ "category": "or_redundant",
+ "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "e.g. `./scripts/ci.sh --quick`",
+  "c2": "Our standard check is `./scripts/ci.sh --quick`, just so you know.",
+  "c3": "Validation: `./scripts/ci.sh --quick` runs the fast subset of CI locally.",
+  "p1": "- Documentation lives in docs/ and is written in Markdown.",
+  "p2": "- Write commit messages in the imperative mood."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "c3": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "tooldesc:bash.2"
+  ],
+  "c2": [
+   "msg[1].3"
+  ],
+  "c3": [
+   "pair:call_1039_1.7"
+  ],
+  "p1": [
+   "sys@msg0.p2.3"
+  ],
+  "p2": [
+   "sys@msg0.p2.5"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 16,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     34
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     16
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 44,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     44
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 32,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     32
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     18
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 7,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     43
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 47,
+   "k": 13,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     34
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     13
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 5,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     45
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 40,
+   "k": 40,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     40
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 44,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     44
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 47,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     47
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 41,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     41
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     9
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 24,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     26
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     24
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 21,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     29
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     21
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 13,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     37
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     13
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 7,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     43
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 45,
+   "k": 3,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     42
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     5
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 41,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     41
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     9
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 38,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     38
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     12
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 42,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     42
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 23,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     27
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     23
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 2,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     48
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 40,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     40
+    ],
+    [
+     "read_file({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     10
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "c3",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "c3": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "c3": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+c3": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+c3": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "c3+p1": "intact",
+   "c3+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+c3": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+c3+p1": "intact",
+   "c1+c3+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+c3+p1": "intact",
+   "c2+c3+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c3+p1+p2": "intact",
+   "c1+c2+c3+p1": "intact",
+   "c1+c2+c3+p2": "intact",
+   "c1+c2+p1+p2": "intact",
+   "c1+c3+p1+p2": "intact",
+   "c2+c3+p1+p2": "intact",
+   "c1+c2+c3+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "c2": "kept",
+   "c3": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+c3": "kept",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "c2+c3": "flipped",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "c3+p1": "kept",
+   "c3+p2": "kept",
+   "p1+p2": "kept",
+   "c1+c2+c3": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+c3+p1": "ambiguous",
+   "c1+c3+p2": "ambiguous",
+   "c1+p1+p2": "flipped",
+   "c2+c3+p1": "flipped",
+   "c2+c3+p2": "flipped",
+   "c2+p1+p2": "kept",
+   "c3+p1+p2": "kept",
+   "c1+c2+c3+p1": "flipped",
+   "c1+c2+c3+p2": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+c3+p1+p2": "ambiguous",
+   "c2+c3+p1+p2": "flipped",
+   "c1+c2+c3+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ],
+   [
+    "c2",
+    "c3"
+   ]
+  ],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "c3": "carrier",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "mixed",
+   "non_monotone"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1"
+    ],
+    [
+     "c1",
+     "c3"
+    ],
+    "flip undone"
+   ]
+  ],
+  "ambiguous": 3,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.5
+  }
+ },
+ "seconds": 34.2,
+ "replays": 1600
+}

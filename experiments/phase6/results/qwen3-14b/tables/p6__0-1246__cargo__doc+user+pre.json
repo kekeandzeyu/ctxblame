@@ -1,0 +1,689 @@
+{
+ "case": "p6/0-1246/cargo/doc+user+pre",
+ "design": "precondition_gated",
+ "category": "precondition_or",
+ "target": "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "Remember that tests here run via `cargo nextest run`.",
+  "c2": "We use nextest: `cargo nextest run` (plain `cargo test` misses our config).",
+  "pre": "pair:call_1246_4",
+  "p1": "Branch names: feature/<topic> or fix/<topic>.",
+  "p2": "Every public function needs a docstring."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "pre": "precondition",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "msg[1].3"
+  ],
+  "c2": [
+   "pair:call_1246_2.6"
+  ],
+  "pre": [
+   "pair:call_1246_4"
+  ],
+  "p1": [
+   "pair:call_1246_2.4"
+  ],
+  "p2": [
+   "pair:call_1246_2.7"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 34,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     34
+    ],
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     16
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~cargo\\\\s+nextest\\\\s+run\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "collapsed",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "none",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "none",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "none",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "or",
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 0,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.5
+  }
+ },
+ "seconds": 68.6,
+ "replays": 1600
+}

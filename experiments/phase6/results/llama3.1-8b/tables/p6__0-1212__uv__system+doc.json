@@ -1,0 +1,388 @@
+{
+ "case": "p6/0-1212/uv/system+doc",
+ "design": "or",
+ "category": "or_redundant",
+ "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Set up the environment with `uv sync --frozen`; never use pip install.",
+  "c2": "Environment setup: `uv sync --frozen` installs exactly what uv.lock pins.",
+  "p1": "- Do not modify generated files under build/ or dist/.",
+  "p2": "Open an issue before large changes."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.3"
+  ],
+  "c2": [
+   "pair:call_1212_2.5"
+  ],
+  "p1": [
+   "sys@msg0.p2.4"
+  ],
+  "p2": [
+   "pair:call_1212_2.3"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 28,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     28
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     22
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 15,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     35
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     15
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 31,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     31
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     19
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 18,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     32
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     18
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c1+c2+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "c2": "ambiguous",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "c2+p1": "flipped",
+   "c2+p2": "ambiguous",
+   "p1+p2": "kept",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+p2": "flipped",
+   "c2+p1+p2": "flipped",
+   "c1+c2+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ],
+   [
+    "c2",
+    "p1"
+   ]
+  ],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "carrier",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "mixed",
+   "probe_interaction"
+  ],
+  "non_monotone": [],
+  "ambiguous": 2,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.5
+  }
+ },
+ "seconds": 56.5,
+ "replays": 800
+}

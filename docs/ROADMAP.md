@@ -154,7 +154,7 @@ reports `diffuse_precondition` with the search continuing.
 
 ### Phase 6 — Ground truth independent of the method (Tier 1, $0)
 
-- [ ] **6.1 Exhaustive coalition tables.** For each case, enumerate all $2^m$
+- [x] **6.1 Exhaustive coalition tables.** For each case, enumerate all $2^m$
   removals of its planted elements ($m \le 5$: carriers, precondition, plus 1–2
   *neutral probe lines*), fixed $N = 50$ replays each. Truth = the estimated
   Boolean function of $(P(E), P(A \mid E))$; nothing is dropped, cases are
@@ -165,7 +165,7 @@ reports `diffuse_precondition` with the search continuing.
   *Done (Qwen3-14B and Llama-3.1-8B):* 1,080 replays/case, 76–94 replays/s on one
   RTX 5090, so the tables for 250 cases take about 1 h per model. The suite stays at 250.
   [experiments/phase6/README.md](../experiments/phase6/README.md#62-pilot-2026-11-28).
-- [ ] **6.3 Settle the Llama question.** The neutral probes say directly whether
+- [x] **6.3 Settle the Llama question.** The neutral probes say directly whether
   Llama's neutral lines are real interactions (they appear in the table) or
   ctxblame false positives (they do not).
 - [ ] **6.4 E-coupled cases** (audit #4). Estimate the coupled effect with a
@@ -182,6 +182,14 @@ reports `diffuse_precondition` with the search continuing.
 **Gate:** ≥ 200 labelled cases on ≥ 2 models; ctxblame scored on all of them
 (per regime), with the oracle-dropped subset reported separately for comparison
 with `v0.2`.
+
+*Gate met (2026-11-28).* 250 cases each on Qwen3-14B and Llama-3.1-8B
+([experiments/phase6/README.md](../experiments/phase6/README.md#61--63-the-full-suite-2026-11-28)):
+- Oracle-valid F1 is 95% / 85%, as in `v0.2`.
+- Oracle-dropped F1 is 71% / 44%.
+- 6.3: Llama's neutral lines are real interactions. A probe is a carrier in 14%
+  of cases, and ctxblame blames table-neutral probes in 1% of rows.
+- 6.4's engine side stays open. Qwen has 50 `e_coupled` cases, and F1 there is 46%.
 
 ### Phase 7 — Steelmanned baselines and theory ($0)
 

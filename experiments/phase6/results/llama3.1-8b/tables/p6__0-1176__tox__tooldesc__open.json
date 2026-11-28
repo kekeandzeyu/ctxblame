@@ -1,0 +1,239 @@
+{
+ "case": "p6/0-1176/tox/tooldesc/open",
+ "design": "e_coupled",
+ "category": "single",
+ "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "e.g. `tox -e py312`",
+  "p1": "- Documentation lives in docs/ and is written in Markdown.",
+  "p2": "- Prefer small, well-named functions."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "tooldesc:bash.2"
+  ],
+  "p1": [
+   "sys@msg0.p2.3"
+  ],
+  "p2": [
+   "sys@msg0.p2.2"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 46,
+   "k": 19,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     27
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     19
+    ],
+    [
+     "<no tool call>",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 13,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     37
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     13
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 48,
+   "k": 18,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     30
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     18
+    ],
+    [
+     "<no tool call>",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 48,
+   "k": 13,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     35
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     13
+    ],
+    [
+     "<no tool call>",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "p1+p2": "intact",
+   "c1+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "p1": "ambiguous",
+   "p2": "kept",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "p1+p2": "ambiguous",
+   "c1+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ]
+  ],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "carrier",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "single"
+  ],
+  "non_monotone": [],
+  "ambiguous": 2,
+  "base": {
+   "p_given": 0.92,
+   "p_cond": 0.41304347826086957,
+   "n": 50,
+   "tau_e": 0.46,
+   "tau_a": 0.20652173913043478
+  }
+ },
+ "seconds": 107.1,
+ "replays": 400
+}

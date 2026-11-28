@@ -1,0 +1,729 @@
+{
+ "case": "p6/0-1234/make/system+doc+user",
+ "design": "or",
+ "category": "or_redundant",
+ "target": "bash({\"command~make\\\\s+check\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Verify every change with `make check` (lint + type check + tests).",
+  "c2": "Also, the way we verify things here is `make check`.",
+  "c3": "Before sending a change, run `make check`; CI runs exactly the same target.",
+  "p1": "pair:call_1234_2",
+  "p2": "Every public function needs a docstring."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "c3": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.3"
+  ],
+  "c2": [
+   "msg[1].3"
+  ],
+  "c3": [
+   "pair:call_1234_1.5"
+  ],
+  "p1": [
+   "pair:call_1234_2"
+  ],
+  "p2": [
+   "pair:call_1234_1.7"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 42,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     42
+    ],
+    [
+     "read_file({\"command~make\\\\s+check\": false})",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 8,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "read_file({\"command~make\\\\s+check\": false})",
+     42
+    ],
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 49,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     49
+    ],
+    [
+     "read_file({\"command~make\\\\s+check\": false})",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "c3",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "c3": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "c3": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+c3": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+c3": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "c3+p1": "intact",
+   "c3+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+c3": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+c3+p1": "intact",
+   "c1+c3+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+c3+p1": "intact",
+   "c2+c3+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c3+p1+p2": "intact",
+   "c1+c2+c3+p1": "intact",
+   "c1+c2+c3+p2": "intact",
+   "c1+c2+p1+p2": "intact",
+   "c1+c3+p1+p2": "intact",
+   "c2+c3+p1+p2": "intact",
+   "c1+c2+c3+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "c3": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+c3": "kept",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+c3": "kept",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "c3+p1": "kept",
+   "c3+p2": "kept",
+   "p1+p2": "kept",
+   "c1+c2+c3": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+c3+p1": "kept",
+   "c1+c3+p2": "kept",
+   "c1+p1+p2": "kept",
+   "c2+c3+p1": "kept",
+   "c2+c3+p2": "kept",
+   "c2+p1+p2": "kept",
+   "c3+p1+p2": "kept",
+   "c1+c2+c3+p1": "flipped",
+   "c1+c2+c3+p2": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+c3+p1+p2": "kept",
+   "c2+c3+p1+p2": "kept",
+   "c1+c2+c3+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "c1",
+    "c2",
+    "c3"
+   ]
+  ],
+  "roles": {
+   "c1": "triggers_and_steers",
+   "c2": "triggers_and_steers",
+   "c3": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "or",
+   "e_coupled",
+   "non_monotone"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1",
+     "c2",
+     "c3"
+    ],
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p1"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2",
+     "c3"
+    ],
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 0,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.5
+  }
+ },
+ "seconds": 68.0,
+ "replays": 1600
+}

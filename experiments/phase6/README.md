@@ -4,10 +4,10 @@ Plan and exit gate: [docs/ROADMAP.md](../../docs/ROADMAP.md#phase-6--ground-trut
 
 | Item | Status | Where |
 |---|---|---|
-| 6.1 exhaustive coalition tables | code done, tested offline with a simulated model | `cases6.py`, `tables.py`, `truth.py` |
+| 6.1 exhaustive coalition tables | **done**: 250 cases × 2 models, scored per regime | [results/qwen3-14b](results/qwen3-14b/summary.md), [results/llama3.1-8b](results/llama3.1-8b/summary.md) |
 | 6.2 pilot (10 cases, Qwen3-14B and Llama-3.1-8B) | **done**: about 1 h of tables per model for 250 cases | [results/pilot-qwen3-14b](results/pilot-qwen3-14b/summary.md), [results/pilot-llama3.1-8b](results/pilot-llama3.1-8b/summary.md) |
-| 6.3 Llama's neutral lines | probes in every case; needs the Llama run | `score6.py` (`neutral probe blamed`, regime `probe_interaction`) |
-| 6.4 E-coupled cases | `e_coupled` design cases and `triggers_and_steers` roles in the truth | `truth.py` |
+| 6.3 Llama's neutral lines | **answered**: real interactions (a probe is a carrier in 14% of cases), ctxblame blames table-neutral probes in 1% of rows | `score6.py` (`neutral probe blamed`, regime `probe_interaction`) |
+| 6.4 E-coupled cases | truth side done (`triggers_and_steers` roles in the tables); engine side open: ctxblame F1 46% (Qwen) / 14% (Llama) on `e_coupled` | `truth.py` |
 
 ## Method
 
@@ -34,6 +34,81 @@ separately.
 The case designs, which are only used to stratify the suite (`cases6.py`, 250
 cases): single/or 40%, precondition-gated 20%, and 12%, e_coupled ("open" style)
 10%, conflict (a stale doc line names another command) 10%, habit-negative 8%.
+
+## 6.1 / 6.3: the full suite (2026-11-28)
+
+Setup:
+- 250 cases, all 2^m removals, N = 50 replays per cell: 234,000 replays per model, nothing dropped.
+- Then ctxblame (defaults, the 5.6 engine) with 3 seeds on the same cases, no oracle filter.
+- One RTX 5090 per model, vLLM 0.34.0, sampling as in `v0.2`.
+
+| | Qwen3-14B-FP8 | Llama-3.1-8B |
+|---|---:|---:|
+| tables (wall, replays/s) | 53 min, 74/s | 42 min, 93/s |
+| ctxblame, per seed | 23 min | 22 min |
+| ambiguous cells per case (of 18.7) | 1.2 | 2.0 |
+| cases the Phase 3 oracle would keep | 146 / 250 | 114 / 250 |
+
+**ctxblame against the tables** (case × seed rows; F1 over planted elements):
+
+| group | Qwen3-14B F1 | Llama-3.1-8B F1 | `v0.2` (oracle-filtered) |
+|---|---:|---:|---:|
+| oracle-valid | **95%** (146 cases) | **85%** (114) | 95% / 85% |
+| oracle-dropped | 71% (104) | 44% (136) | not measured |
+| all 250 | 87% | 66% | – |
+
+Other columns, Qwen / Llama:
+- Preconditions separated: 54% / 67% overall, 95% / 79% on oracle-valid cases.
+- Preconditions blamed as causes: 5% / 1%.
+- Table-neutral probes blamed: 3% / 1%.
+- Negatives correct: 80% / 94%.
+
+| regime (cases, Qwen / Llama) | Qwen3-14B F1 | Llama-3.1-8B F1 |
+|---|---:|---:|
+| single (85 / 87) | 97% | 80% |
+| precondition_gated (49 / 52) | 94% | 74% |
+| or (100 / 75) | 81% | 65% |
+| and (4 / 19) | 83% | 55% |
+| e_coupled (50 / 9) | 46% | 14% |
+| non_monotone (30 / 25) | 45% | 34% |
+| probe_interaction (34 / 35) | 46% | 31% |
+| mixed (4 / 28) | 45% | 34% |
+
+A case can be in several regimes. Full tables:
+[qwen3-14b/summary.md](results/qwen3-14b/summary.md) and
+[llama3.1-8b/summary.md](results/llama3.1-8b/summary.md).
+
+What this shows:
+- **On the cases `v0.2` could validate, the numbers hold under independent truth:**
+  95% and 85%, the same as `v0.2`. The oracle's selection did not inflate them.
+- **The oracle dropped the hard part of the problem.** 42% (Qwen) and 54% (Llama)
+  of cases fail its validity rule. On them, F1 falls to 71% and 44%. The failures
+  concentrate where monotone search assumptions break: `e_coupled`,
+  `non_monotone`, `probe_interaction`, `mixed`.
+- **6.3, Llama's neutral lines are real.** A planted probe is in a minimal carrier
+  set in 35 of 250 Llama cases (14%; Qwen 34). Probes the table calls neutral are
+  blamed in 1% of Llama rows. So `v0.2`'s Llama gap was not ctxblame blaming
+  neutral lines. Llama's choices really do depend on them, and ctxblame mostly
+  *misses* those interactions (recall 24% on `probe_interaction`).
+- **6.4 is the main open problem on Qwen.** 50 of 250 Qwen cases (20%, against
+  10% by design) have a `triggers_and_steers` element. There ctxblame separates
+  preconditions in only 10% of rows and blames a pure precondition as a cause in
+  23%, and F1 is 46%. The matched
+  `tool_choice` intervention is next.
+
+**Scoring correction before commit.** The as-run `summary.md` reported
+negatives correct 26% (Qwen) and 90% (Llama). The scorer counted any reported
+cause as a failure on a truth-negative case. But the tables judge only the
+planted elements, as the scorer's own docstring says for precision.
+- On Qwen, 45 of 48 `habit_negative` rows blamed one unplanted line, "You are a
+  careful coding agent working in a Python repository."
+- Direct replays (`p6/0-092`, N = 40, diagnostic) show it is a real cause: 40×
+  `pytest` with the line, 40× `npm test` without it.
+
+`negative_ok` now counts planted elements only (test added). The unplanted
+members stay in their own column, and every other column is unchanged. So the
+`habit_negative` design is not a habit for Qwen: the role line carries the
+choice, and Phase 7 cases should plant it as an element.
 
 ## 6.2 pilot (2026-11-28)
 

@@ -1,0 +1,416 @@
+{
+ "case": "p6/0-1056/tox/system+pre",
+ "design": "precondition_gated",
+ "category": "precondition_or",
+ "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Run the test suite with `tox -e py312`; never call pytest directly.",
+  "pre": "pair:call_1056_4",
+  "p1": "pair:call_1056_2",
+  "p2": "- Prefer small, well-named functions."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "pre": "precondition",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.3"
+  ],
+  "pre": [
+   "pair:call_1056_4"
+  ],
+  "p1": [
+   "pair:call_1056_2"
+  ],
+  "p2": [
+   "sys@msg0.p2.4"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 48,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     48
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 48,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     48
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 47,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     47
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     48
+    ],
+    [
+     "<no tool call>",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     47
+    ],
+    [
+     "<no tool call>",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     49
+    ],
+    [
+     "<no tool call>",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 47,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     47
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     46
+    ],
+    [
+     "<no tool call>",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     45
+    ],
+    [
+     "<no tool call>",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     48
+    ],
+    [
+     "<no tool call>",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     48
+    ],
+    [
+     "<no tool call>",
+     2
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+pre": "none",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "flipped",
+   "p1+p2+pre": "none",
+   "c1+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "single",
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 0,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.96,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.48
+  }
+ },
+ "seconds": 52.4,
+ "replays": 800
+}

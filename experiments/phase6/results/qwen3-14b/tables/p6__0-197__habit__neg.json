@@ -1,0 +1,207 @@
+{
+ "case": "p6/0-197/habit/neg",
+ "design": "habit_negative",
+ "category": "negative",
+ "target": "bash({\"command~\\\\bpytest\\\\b\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "p1": "- Documentation lives in docs/ and is written in Markdown.",
+  "p2": "- Use type annotations for all new public functions.",
+  "p3": "- Keep diffs minimal and focused on the task."
+ },
+ "kinds": {
+  "p1": "probe",
+  "p2": "probe",
+  "p3": "probe"
+ },
+ "chunks": {
+  "p1": [
+   "sys@msg0.p2.4"
+  ],
+  "p2": [
+   "sys@msg0.p2.3"
+  ],
+  "p3": [
+   "sys@msg0.p2.2"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "list_dir({\"command~\\\\bpytest\\\\b\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "list_dir({\"command~\\\\bpytest\\\\b\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "list_dir({\"command~\\\\bpytest\\\\b\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p3"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "list_dir({\"command~\\\\bpytest\\\\b\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "list_dir({\"command~\\\\bpytest\\\\b\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p3"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "list_dir({\"command~\\\\bpytest\\\\b\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "p3"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "list_dir({\"command~\\\\bpytest\\\\b\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "p3"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "list_dir({\"command~\\\\bpytest\\\\b\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "p1",
+   "p2",
+   "p3"
+  ],
+  "kinds": {
+   "p1": "probe",
+   "p2": "probe",
+   "p3": "probe"
+  },
+  "e_state": {
+   "-": "ambiguous",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "p3": "ambiguous",
+   "p1+p2": "ambiguous",
+   "p1+p3": "ambiguous",
+   "p2+p3": "ambiguous",
+   "p1+p2+p3": "ambiguous"
+  },
+  "a_state": {
+   "-": "none",
+   "p1": "none",
+   "p2": "none",
+   "p3": "none",
+   "p1+p2": "none",
+   "p1+p3": "none",
+   "p2+p3": "none",
+   "p1+p2+p3": "none"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [],
+  "roles": {
+   "p1": "neutral",
+   "p2": "neutral",
+   "p3": "neutral"
+  },
+  "regimes": [
+   "negative"
+  ],
+  "non_monotone": [],
+  "ambiguous": 8,
+  "base": {
+   "p_given": 0.0,
+   "p_cond": null,
+   "n": 50,
+   "tau_e": 0.0,
+   "tau_a": 0.0
+  }
+ },
+ "seconds": 14.4,
+ "replays": 400
+}

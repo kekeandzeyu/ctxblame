@@ -1,0 +1,424 @@
+{
+ "case": "p6/0-1184/tox/system/conflict",
+ "design": "conflict",
+ "category": "single",
+ "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Run the test suite with `tox -e py312`; never call pytest directly.",
+  "x1": "Legacy note (2019): tests used to run with `python setup.py test`.",
+  "p1": "- Keep diffs minimal and focused on the task.",
+  "p2": "pair:call_1184_1"
+ },
+ "kinds": {
+  "c1": "carrier",
+  "x1": "conflict",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.2"
+  ],
+  "x1": [
+   "sys@msg0.p3"
+  ],
+  "p1": [
+   "sys@msg0.p2.3"
+  ],
+  "p2": [
+   "pair:call_1184_1"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "read_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "read_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "read_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 0,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "read_file({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "x1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "x1",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "x1": "conflict",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "collapsed",
+   "x1": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+x1": "collapsed",
+   "c1+p1": "collapsed",
+   "c1+p2": "intact",
+   "p1+x1": "intact",
+   "p2+x1": "intact",
+   "p1+p2": "intact",
+   "c1+p1+x1": "collapsed",
+   "c1+p2+x1": "intact",
+   "c1+p1+p2": "intact",
+   "p1+p2+x1": "intact",
+   "c1+p1+p2+x1": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "none",
+   "x1": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+x1": "none",
+   "c1+p1": "none",
+   "c1+p2": "flipped",
+   "p1+x1": "kept",
+   "p2+x1": "kept",
+   "p1+p2": "kept",
+   "c1+p1+x1": "none",
+   "c1+p2+x1": "flipped",
+   "c1+p1+p2": "flipped",
+   "p1+p2+x1": "kept",
+   "c1+p1+p2+x1": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "p2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "c1"
+   ]
+  ],
+  "roles": {
+   "c1": "triggers_and_steers",
+   "x1": "neutral",
+   "p1": "neutral",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "or",
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1"
+    ],
+    [
+     "c1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "x1"
+    ],
+    [
+     "c1",
+     "p2",
+     "x1"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "p1"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "p1",
+     "x1"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2",
+     "x1"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 0,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.5
+  }
+ },
+ "seconds": 51.2,
+ "replays": 800
+}

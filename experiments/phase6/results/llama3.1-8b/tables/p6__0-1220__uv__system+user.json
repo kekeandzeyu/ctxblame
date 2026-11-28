@@ -1,0 +1,449 @@
+{
+ "case": "p6/0-1220/uv/system+user",
+ "design": "or",
+ "category": "or_redundant",
+ "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "- Set up the environment with `uv sync --frozen`; never use pip install.",
+  "c2": "FYI our environments are always created with `uv sync --frozen`.",
+  "p1": "- Keep diffs minimal and focused on the task.",
+  "p2": "pair:call_1220_1"
+ },
+ "kinds": {
+  "c1": "carrier",
+  "c2": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "sys@msg0.p2.2"
+  ],
+  "c2": [
+   "msg[1].3"
+  ],
+  "p1": [
+   "sys@msg0.p2.4"
+  ],
+  "p2": [
+   "pair:call_1220_1"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 30,
+   "k": 12,
+   "errors": 0,
+   "dist": [
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     20
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     18
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     12
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 46,
+   "k": 4,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     42
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     4
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 48,
+   "k": 24,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     24
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     24
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 37,
+   "k": 14,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     23
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     14
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     13
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 30,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     30
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     20
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 38,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     38
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     12
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 42,
+   "k": 9,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     33
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     9
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 31,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     31
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     19
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 2,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     48
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 26,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     26
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     24
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 32,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     32
+    ],
+    [
+     "edit_file({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     18
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 4,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     46
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 6,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     44
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c1+c2+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "ambiguous",
+   "c2": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+p1": "ambiguous",
+   "c1+p2": "flipped",
+   "c2+p1": "kept",
+   "c2+p2": "flipped",
+   "p1+p2": "kept",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+p2": "flipped",
+   "c2+p1+p2": "ambiguous",
+   "c1+c2+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c2"
+   ],
+   [
+    "c1",
+    "p2"
+   ],
+   [
+    "c2",
+    "p2"
+   ]
+  ],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "neutral",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "mixed",
+   "probe_interaction"
+  ],
+  "non_monotone": [],
+  "ambiguous": 3,
+  "base": {
+   "p_given": 0.6,
+   "p_cond": 0.4,
+   "n": 50,
+   "tau_e": 0.3,
+   "tau_a": 0.2
+  }
+ },
+ "seconds": 33.6,
+ "replays": 800
+}

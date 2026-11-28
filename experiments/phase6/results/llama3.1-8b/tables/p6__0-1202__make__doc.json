@@ -1,0 +1,231 @@
+{
+ "case": "p6/0-1202/make/doc",
+ "design": "single",
+ "category": "single",
+ "target": "bash({\"command~make\\\\s+check\": true})",
+ "given": "bash",
+ "n": 50,
+ "elements": {
+  "c1": "Before sending a change, run `make check`; CI runs exactly the same target.",
+  "p1": "Every public function needs a docstring.",
+  "p2": "Branch names: feature/<topic> or fix/<topic>."
+ },
+ "kinds": {
+  "c1": "carrier",
+  "p1": "probe",
+  "p2": "probe"
+ },
+ "chunks": {
+  "c1": [
+   "pair:call_1202_2.3"
+  ],
+  "p1": [
+   "pair:call_1202_2.7"
+  ],
+  "p2": [
+   "pair:call_1202_2.5"
+  ]
+ },
+ "cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 43,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     43
+    ],
+    [
+     "edit_file({\"command~make\\\\s+check\": false})",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 40,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     40
+    ],
+    [
+     "edit_file({\"command~make\\\\s+check\": false})",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 43,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     43
+    ],
+    [
+     "edit_file({\"command~make\\\\s+check\": false})",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 42,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     42
+    ],
+    [
+     "edit_file({\"command~make\\\\s+check\": false})",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 49,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     49
+    ],
+    [
+     "edit_file({\"command~make\\\\s+check\": false})",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 42,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~make\\\\s+check\": false})",
+     42
+    ],
+    [
+     "edit_file({\"command~make\\\\s+check\": false})",
+     8
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "p1+p2": "intact",
+   "c1+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "p1+p2": "ambiguous",
+   "c1+p1+p2": "ambiguous"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [],
+  "roles": {
+   "c1": "neutral",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "negative"
+  ],
+  "non_monotone": [],
+  "ambiguous": 8,
+  "base": {
+   "p_given": 0.86,
+   "p_cond": 0.0,
+   "n": 50,
+   "tau_e": 0.43,
+   "tau_a": 0.0
+  }
+ },
+ "seconds": 32.9,
+ "replays": 400
+}
