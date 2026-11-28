@@ -258,8 +258,11 @@ NeurIPS Datasets & Benchmarks with `AgentBlame-Bench` as the contribution.
 
 ### Phase 8 — External validity: wild traces and one closed API
 
-- [ ] **8.1 `ctxblame wrap -- <cmd>`** (prerequisite): ephemeral proxy port and
-  `ANTHROPIC_BASE_URL` / `OPENAI_BASE_URL` injection.
+- [x] **8.1 `ctxblame wrap -- <cmd>`** (prerequisite): ephemeral proxy port and
+  `ANTHROPIC_BASE_URL` / `OPENAI_BASE_URL` injection. *Done:* one proxy per
+  format on a free port, one shared trace; base URLs already set become the
+  upstreams; the command's exit code is passed through (`src/ctxblame/wrap.py`,
+  `tests/test_wrap.py`).
 - [ ] **8.2 Tier 2 wild steps.** 50–100 wire-captured steps from 2 harnesses
   (start with one open-model harness, e.g. OpenHands, then Claude Code) on a
   SWE-bench Verified subset, with **decision types beyond the test command**:
