@@ -12,6 +12,10 @@ error ≤ α).
 uvx ctxblame --help        # or: pip install ctxblame
 ```
 
+![ctxblame demo: separating a precondition and isolating a 3-way redundant OR cause on a real coding-agent step](assets/demo.gif)
+
+*Real v0.2.1 trace (`real/run1/step21`, Qwen3-14B on local vLLM): `ctxblame` separates the `edit_file` precondition, catches all 3 redundant `--tb=line` carriers that leave-one-out misses (`5/5 kept` alone), and certifies the bundle on 20 fresh replays (`p = 1.9e-6`, 91% KV-cache hit).*
+
 The examples below use `uv run ctxblame` from a checkout; `uvx ctxblame` works the same.
 
 Two wire formats are supported, which covers most models: Anthropic Messages
