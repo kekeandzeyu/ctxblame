@@ -240,3 +240,25 @@ def test_forced_table_runner_replays_every_removal_with_tool_choice(tmp_path):
                            "--out", str(out), *forced_arg]) == 0
         row = json.loads(out.read_text())["rows"][0]
         assert row["precond_blamed"] is blamed and row["precond"] == 1.0
+
+
+def test_forced_alternatives_tell_another_step_from_a_competing_tool(tmp_path):
+    import json
+
+    from forced_alts import kind_of, summarize
+    a = {"pnpm"}
+    assert kind_of("run git status", a) == "step: inspect" and kind_of("read src/a.py", a) == "step: inspect"
+    assert kind_of("edit package.json", a) == "step: edit" and kind_of("run git add", a) == "step: edit"
+    assert kind_of("run pnpm add", a) == "same program" and kind_of("run npm install", a) == "competing tool"
+    # one case: removing the edit (pre) flips A under do(E) to `pnpm add`; c1's flip is npm
+    truth = {"forced": {"used": True}, "precondition_sets": [["pre"]], "steer_sets": [["c1"], ["pre"]],
+             "kinds": {"c1": "carrier", "pre": "precondition"}}
+    cells = [{"removed": [], "replies": [[True, "run pnpm install", 50]]},
+             {"removed": ["c1"], "replies": [[False, "run npm install", 50]]},
+             {"removed": ["pre"], "replies": [[False, "run pnpm add", 45], [True, "run pnpm install", 5]]},
+             {"removed": ["c1", "pre"], "replies": [[False, "run npm install", 50]]}]
+    (tmp_path / "forced").mkdir()
+    (tmp_path / "forced" / "x.json").write_text(json.dumps({"truth": truth, "forced_cells": cells}))
+    rows = summarize(tmp_path)["rows"]
+    assert rows == [{"kinds": "precondition", "instead": "same program", "steer_sets": 1,
+                     "examples": [("run pnpm add", 45)]}]  # c1 is no precondition: not listed

@@ -185,13 +185,16 @@ def test_audit_drops_a_coupled_member_that_does_not_restore_with_E_forced():
     from ctxblame.blame import Cause, audit_findings
     # same, but with E forced keeping a does not bring the choice back: a only looked
     # coupled (like the 9 table-neutral "coupled" members of Phase 6) and is dropped.
-    # What is left, {b}, is re-audited on new replays: removing b alone stops E, so
-    # "removing b flips the choice" cannot be certified either.
+    # What is left, {b}, is removed by exactly a's leave-one-in test: unforced it stops
+    # E, forced it flips A. So b triggers and steers (p6/0-1187: the pnpm rule), and
+    # stage 2 certifies "with E forced, removing b flips the choice" on new replays.
     t = {frozenset("ab"): (20, 0), frozenset("b"): (0, 0), frozenset("a"): (20, 20)}
     f = Cause(["a", "b"])
-    asyncio.run(audit_findings([f], _ForcedCondAuditor(t, {frozenset("b"): 0}), 20, 0.05))
-    assert f.members == ["b"] and f.coupled == [] and f.certified is False
-    assert "stage1:forced:a" in f.audit and f.audit["together"].collapsed
+    aud = _ForcedCondAuditor(t, {frozenset("b"): 0})
+    asyncio.run(audit_findings([f], aud, 20, 0.05))
+    assert f.members == ["b"] and f.coupled == [] and f.forced is True and f.certified is True
+    assert "stage1:forced:a" in f.audit and f.audit["together"].k == 0 and not f.audit["together"].collapsed
+    assert aud.calls[-1] == ("forced", frozenset("b"))  # stage 2: the forced claim, on new replays
 
 
 def test_null_simulation_steering_claims_under_forced_E():
