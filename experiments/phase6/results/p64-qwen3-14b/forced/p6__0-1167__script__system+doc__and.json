@@ -1,0 +1,590 @@
+{
+ "case": "p6/0-1167/script/system+doc/and",
+ "design": "and",
+ "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "collapsed",
+   "c2": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "collapsed",
+   "c1+p1": "collapsed",
+   "c1+p2": "intact",
+   "c2+p1": "collapsed",
+   "c2+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+p1": "collapsed",
+   "c1+c2+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c1+c2+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "none",
+   "c2": "none",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+c2": "none",
+   "c1+p1": "none",
+   "c1+p2": "ambiguous",
+   "c2+p1": "none",
+   "c2+p2": "ambiguous",
+   "p1+p2": "ambiguous",
+   "c1+c2+p1": "none",
+   "c1+c2+p2": "ambiguous",
+   "c1+p1+p2": "ambiguous",
+   "c2+p1+p2": "ambiguous",
+   "c1+c2+p1+p2": "ambiguous"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [
+   [
+    "c1"
+   ],
+   [
+    "c2"
+   ]
+  ],
+  "roles": {
+   "c1": "precondition",
+   "c2": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "e_coupled",
+   "non_monotone"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1"
+    ],
+    [
+     "c1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2"
+    ],
+    [
+     "c2",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2"
+    ],
+    [
+     "c1",
+     "c2",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "p1"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2",
+     "p1"
+    ],
+    [
+     "c2",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2",
+     "p1"
+    ],
+    [
+     "c1",
+     "c2",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 10,
+  "base": {
+   "p_given": 0.98,
+   "p_cond": 0.0,
+   "n": 50,
+   "tau_e": 0.49,
+   "tau_a": 0.0
+  },
+  "f_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "c2": "ambiguous",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+c2": "ambiguous",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "c2+p1": "ambiguous",
+   "c2+p2": "ambiguous",
+   "p1+p2": "ambiguous",
+   "c1+c2+p1": "ambiguous",
+   "c1+c2+p2": "ambiguous",
+   "c1+p1+p2": "ambiguous",
+   "c2+p1+p2": "ambiguous",
+   "c1+c2+p1+p2": "ambiguous"
+  },
+  "steer_sets": [],
+  "forced": {
+   "p_cond": 0.0,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.0,
+   "used": false
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "collapsed",
+   "c2": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "collapsed",
+   "c1+p1": "collapsed",
+   "c1+p2": "intact",
+   "c2+p1": "collapsed",
+   "c2+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+p1": "collapsed",
+   "c1+c2+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c1+c2+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "none",
+   "c2": "none",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+c2": "none",
+   "c1+p1": "none",
+   "c1+p2": "ambiguous",
+   "c2+p1": "none",
+   "c2+p2": "ambiguous",
+   "p1+p2": "ambiguous",
+   "c1+c2+p1": "none",
+   "c1+c2+p2": "ambiguous",
+   "c1+p1+p2": "ambiguous",
+   "c2+p1+p2": "ambiguous",
+   "c1+c2+p1+p2": "ambiguous"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [
+   [
+    "c1"
+   ],
+   [
+    "c2"
+   ]
+  ],
+  "roles": {
+   "c1": "precondition",
+   "c2": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "e_coupled",
+   "non_monotone"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1"
+    ],
+    [
+     "c1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2"
+    ],
+    [
+     "c2",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2"
+    ],
+    [
+     "c1",
+     "c2",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "p1"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2",
+     "p1"
+    ],
+    [
+     "c2",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2",
+     "p1"
+    ],
+    [
+     "c1",
+     "c2",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 10,
+  "base": {
+   "p_given": 0.98,
+   "p_cond": 0.0,
+   "n": 50,
+   "tau_e": 0.49,
+   "tau_a": 0.0
+  }
+ },
+ "seconds": 68.3,
+ "replays": 800
+}

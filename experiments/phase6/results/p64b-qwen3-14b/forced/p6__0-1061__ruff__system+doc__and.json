@@ -1,0 +1,705 @@
+{
+ "case": "p6/0-1061/ruff/system+doc/and",
+ "design": "and",
+ "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm run",
+     43
+    ],
+    [
+     false,
+     "run eslint",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 8,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     42
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     8
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run ruff",
+     42
+    ],
+    [
+     true,
+     "run ruff",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm run",
+     46
+    ],
+    [
+     false,
+     "run eslint",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run eslint",
+     25
+    ],
+    [
+     false,
+     "run npm run",
+     22
+    ],
+    [
+     false,
+     "run lint",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm run",
+     41
+    ],
+    [
+     false,
+     "run eslint",
+     9
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 31,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     31
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     19
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     31
+    ],
+    [
+     false,
+     "run ruff",
+     19
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 15,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     35
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     15
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run ruff",
+     35
+    ],
+    [
+     true,
+     "run ruff",
+     15
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm run",
+     25
+    ],
+    [
+     false,
+     "run eslint",
+     18
+    ],
+    [
+     false,
+     "run flake8",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm run",
+     49
+    ],
+    [
+     false,
+     "run eslint",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run eslint",
+     21
+    ],
+    [
+     false,
+     "run npm run",
+     17
+    ],
+    [
+     false,
+     "run lint",
+     12
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 42,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     42
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     8
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     42
+    ],
+    [
+     false,
+     "run ruff",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm run",
+     35
+    ],
+    [
+     false,
+     "run eslint",
+     8
+    ],
+    [
+     false,
+     "run flake8",
+     7
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "ambiguous",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "collapsed",
+   "c2+p1": "ambiguous",
+   "c2+p2": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "collapsed",
+   "c1+c2+p1+p2": "ambiguous"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "c2": "ambiguous",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+p1": "flipped",
+   "c1+p2": "none",
+   "c2+p1": "none",
+   "c2+p2": "none",
+   "p1+p2": "kept",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "none",
+   "c1+p1+p2": "flipped",
+   "c2+p1+p2": "none",
+   "c1+c2+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "c1",
+    "p2"
+   ],
+   [
+    "c2",
+    "p2"
+   ]
+  ],
+  "roles": {
+   "c1": "triggers_and_steers",
+   "c2": "triggers_and_steers",
+   "p1": "neutral",
+   "p2": "precondition"
+  },
+  "regimes": [
+   "single",
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1",
+     "p2"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 3,
+  "base": {
+   "p_given": 0.46,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.23,
+   "tau_a": 0.5
+  },
+  "f_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "c2": "flipped",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "c2+p1": "ambiguous",
+   "c2+p2": "flipped",
+   "p1+p2": "kept",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+p2": "flipped",
+   "c2+p1+p2": "kept",
+   "c1+c2+p1+p2": "flipped"
+  },
+  "steer_sets": [
+   [
+    "c1"
+   ],
+   [
+    "c2"
+   ]
+  ],
+  "forced": {
+   "p_cond": 1.0,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.5,
+   "used": true
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "ambiguous",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "collapsed",
+   "c2+p1": "ambiguous",
+   "c2+p2": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+p2": "collapsed",
+   "c1+c2+p1+p2": "ambiguous"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "c2": "ambiguous",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+p1": "flipped",
+   "c1+p2": "none",
+   "c2+p1": "none",
+   "c2+p2": "none",
+   "p1+p2": "kept",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "none",
+   "c1+p1+p2": "flipped",
+   "c2+p1+p2": "none",
+   "c1+c2+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "c1",
+    "p2"
+   ],
+   [
+    "c2",
+    "p2"
+   ]
+  ],
+  "roles": {
+   "c1": "triggers_and_steers",
+   "c2": "precondition",
+   "p1": "neutral",
+   "p2": "precondition"
+  },
+  "regimes": [
+   "single",
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1",
+     "p2"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 3,
+  "base": {
+   "p_given": 0.46,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.23,
+   "tau_a": 0.5
+  }
+ },
+ "seconds": 64.7,
+ "replays": 800
+}

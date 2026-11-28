@@ -1,0 +1,615 @@
+{
+ "case": "p6/0-1043/pnpm/history+pre",
+ "design": "precondition_gated",
+ "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 43,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     43
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     7
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     43
+    ],
+    [
+     false,
+     "run pnpm install",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pnpm add",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 20,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     30
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     20
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pnpm install",
+     30
+    ],
+    [
+     true,
+     "run pnpm install",
+     20
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 44,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     44
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     6
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     44
+    ],
+    [
+     false,
+     "run pnpm install",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pnpm add",
+     47
+    ],
+    [
+     false,
+     "run npm install",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pnpm add",
+     49
+    ],
+    [
+     false,
+     "run npm install",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 33,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     33
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     17
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     33
+    ],
+    [
+     false,
+     "run pnpm install",
+     17
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pnpm add",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "pre": "none",
+   "p1": "ambiguous",
+   "p2": "kept",
+   "c1+pre": "none",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "flipped",
+   "p1+p2+pre": "none",
+   "c1+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "pre": "triggers_and_steers",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "single",
+   "e_coupled"
+  ],
+  "non_monotone": [],
+  "ambiguous": 1,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.84,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.42
+  },
+  "f_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "pre": "flipped",
+   "p1": "ambiguous",
+   "p2": "kept",
+   "c1+pre": "flipped",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "p1+pre": "flipped",
+   "p2+pre": "flipped",
+   "p1+p2": "kept",
+   "c1+p1+pre": "flipped",
+   "c1+p2+pre": "flipped",
+   "c1+p1+p2": "flipped",
+   "p1+p2+pre": "flipped",
+   "c1+p1+p2+pre": "flipped"
+  },
+  "steer_sets": [
+   [
+    "c1"
+   ],
+   [
+    "pre"
+   ]
+  ],
+  "forced": {
+   "p_cond": 0.86,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.43,
+   "used": true
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "pre": "none",
+   "p1": "ambiguous",
+   "p2": "kept",
+   "c1+pre": "none",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "flipped",
+   "p1+p2+pre": "none",
+   "c1+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "single",
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 1,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.84,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.42
+  }
+ },
+ "seconds": 58.2,
+ "replays": 800
+}

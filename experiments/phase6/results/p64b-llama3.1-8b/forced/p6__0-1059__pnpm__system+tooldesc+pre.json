@@ -1,0 +1,1172 @@
+{
+ "case": "p6/0-1059/pnpm/system+tooldesc+pre",
+ "design": "precondition_gated",
+ "target": "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 27,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     27
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     23
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     27
+    ],
+    [
+     false,
+     "run pnpm add",
+     23
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 19,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     31
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     19
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pnpm add",
+     31
+    ],
+    [
+     true,
+     "run pnpm install",
+     19
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 46,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     46
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     4
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     46
+    ],
+    [
+     false,
+     "run pnpm add",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 38,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     38
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     12
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     38
+    ],
+    [
+     false,
+     "run pnpm add",
+     12
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 26,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     26
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     24
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     26
+    ],
+    [
+     false,
+     "run pnpm add",
+     24
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 17,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     33
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     17
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pnpm add",
+     33
+    ],
+    [
+     true,
+     "run pnpm install",
+     17
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 10,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     40
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     10
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pnpm add",
+     40
+    ],
+    [
+     true,
+     "run pnpm install",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 42,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     42
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     8
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     41
+    ],
+    [
+     false,
+     "run pnpm add",
+     8
+    ],
+    [
+     true,
+     "run pnpm add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 39,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     39
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     11
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     36
+    ],
+    [
+     false,
+     "run pnpm add",
+     11
+    ],
+    [
+     true,
+     "run pnpm add",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 34,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     34
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     16
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     34
+    ],
+    [
+     false,
+     "run pnpm add",
+     16
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 9,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     41
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     9
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pnpm add",
+     41
+    ],
+    [
+     true,
+     "run pnpm install",
+     9
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 42,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": true})",
+     42
+    ],
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     8
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run pnpm install",
+     35
+    ],
+    [
+     false,
+     "run pnpm add",
+     8
+    ],
+    [
+     true,
+     "run pnpm add",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~pnpm\\\\s+(i|install)\\\\b.*--frozen-lockfile\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run npm install",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "ambiguous",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "none",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "none",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "kept",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "triggers_and_steers",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "or",
+   "e_coupled"
+  ],
+  "non_monotone": [],
+  "ambiguous": 1,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.5
+  },
+  "f_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "ambiguous",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "ambiguous",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "kept",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "kept",
+   "p2+pre": "ambiguous",
+   "p1+p2": "kept",
+   "c1+c2+pre": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "flipped",
+   "c1+p2+pre": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "kept",
+   "c2+p2+pre": "kept",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "kept",
+   "c1+c2+p1+pre": "flipped",
+   "c1+c2+p2+pre": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "flipped",
+   "c2+p1+p2+pre": "kept",
+   "c1+c2+p1+p2+pre": "flipped"
+  },
+  "steer_sets": [
+   [
+    "c1",
+    "c2"
+   ],
+   [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   [
+    "c1",
+    "p2",
+    "pre"
+   ]
+  ],
+  "forced": {
+   "p_cond": 1.0,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.5,
+   "used": true
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "ambiguous",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "none",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "none",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "kept",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "or",
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 1,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.5
+  }
+ },
+ "seconds": 39.6,
+ "replays": 1600
+}

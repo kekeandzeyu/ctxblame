@@ -1,0 +1,1336 @@
+{
+ "case": "p6/0-1204/uv/system+tooldesc+doc",
+ "design": "or",
+ "target": "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 39,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     39
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     11
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     39
+    ],
+    [
+     false,
+     "run venv",
+     11
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 3,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     47
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     3
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     30
+    ],
+    [
+     false,
+     "run pip install",
+     17
+    ],
+    [
+     true,
+     "run uv sync",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     39
+    ],
+    [
+     false,
+     "run pip install",
+     11
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 44,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     44
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     6
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     44
+    ],
+    [
+     false,
+     "run venv",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 41,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     41
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     9
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     41
+    ],
+    [
+     false,
+     "run venv",
+     9
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 10,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     40
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     10
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     36
+    ],
+    [
+     true,
+     "run uv sync",
+     10
+    ],
+    [
+     false,
+     "run pip install",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     36
+    ],
+    [
+     false,
+     "run pip install",
+     14
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 6,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     44
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     6
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     28
+    ],
+    [
+     false,
+     "run pip install",
+     16
+    ],
+    [
+     true,
+     "run uv sync",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 8,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     42
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     8
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     25
+    ],
+    [
+     false,
+     "run pip install",
+     17
+    ],
+    [
+     true,
+     "run uv sync",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     41
+    ],
+    [
+     false,
+     "run pip install",
+     9
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     40
+    ],
+    [
+     false,
+     "run pip install",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 45,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     45
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     5
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     45
+    ],
+    [
+     false,
+     "run venv",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 17,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     33
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     17
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     33
+    ],
+    [
+     true,
+     "run uv sync",
+     17
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 7,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     43
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     7
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     35
+    ],
+    [
+     false,
+     "run pip install",
+     8
+    ],
+    [
+     true,
+     "run uv sync",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run uv sync",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     39
+    ],
+    [
+     false,
+     "run pip install",
+     11
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     41
+    ],
+    [
+     false,
+     "run pip install",
+     9
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 5,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     45
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     5
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     30
+    ],
+    [
+     false,
+     "run pip install",
+     15
+    ],
+    [
+     true,
+     "run uv sync",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     39
+    ],
+    [
+     false,
+     "run pip install",
+     11
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 7,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     43
+    ],
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": true})",
+     7
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     37
+    ],
+    [
+     true,
+     "run uv sync",
+     7
+    ],
+    [
+     false,
+     "run pip install",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~uv\\\\s+sync\\\\b.*--frozen\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run venv",
+     37
+    ],
+    [
+     false,
+     "run pip install",
+     13
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "c3",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "c3": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "ambiguous",
+   "c2": "ambiguous",
+   "c3": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "ambiguous",
+   "c1+c3": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "ambiguous",
+   "c2+c3": "intact",
+   "c2+p1": "collapsed",
+   "c2+p2": "ambiguous",
+   "c3+p1": "intact",
+   "c3+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+c3": "intact",
+   "c1+c2+p1": "ambiguous",
+   "c1+c2+p2": "ambiguous",
+   "c1+c3+p1": "collapsed",
+   "c1+c3+p2": "ambiguous",
+   "c1+p1+p2": "ambiguous",
+   "c2+c3+p1": "intact",
+   "c2+c3+p2": "intact",
+   "c2+p1+p2": "collapsed",
+   "c3+p1+p2": "intact",
+   "c1+c2+c3+p1": "intact",
+   "c1+c2+c3+p2": "intact",
+   "c1+c2+p1+p2": "ambiguous",
+   "c1+c3+p1+p2": "ambiguous",
+   "c2+c3+p1+p2": "intact",
+   "c1+c2+c3+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "c3": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+c3": "flipped",
+   "c1+p1": "kept",
+   "c1+p2": "ambiguous",
+   "c2+c3": "flipped",
+   "c2+p1": "none",
+   "c2+p2": "kept",
+   "c3+p1": "kept",
+   "c3+p2": "kept",
+   "p1+p2": "kept",
+   "c1+c2+c3": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+c3+p1": "none",
+   "c1+c3+p2": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+c3+p1": "flipped",
+   "c2+c3+p2": "flipped",
+   "c2+p1+p2": "none",
+   "c3+p1+p2": "kept",
+   "c1+c2+c3+p1": "flipped",
+   "c1+c2+c3+p2": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+c3+p1+p2": "flipped",
+   "c2+c3+p1+p2": "flipped",
+   "c1+c2+c3+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c3"
+   ],
+   [
+    "c2",
+    "c3"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "c2",
+    "p1"
+   ],
+   [
+    "c1",
+    "c3",
+    "p1"
+   ]
+  ],
+  "roles": {
+   "c1": "triggers_and_steers",
+   "c2": "triggers_and_steers",
+   "c3": "triggers_and_steers",
+   "p1": "precondition",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "mixed",
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c2",
+     "p1"
+    ],
+    [
+     "c2",
+     "c3",
+     "p1"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c3",
+     "p1"
+    ],
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p1"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2",
+     "p1",
+     "p2"
+    ],
+    [
+     "c2",
+     "c3",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 11,
+  "base": {
+   "p_given": 0.92,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.46,
+   "tau_a": 0.5
+  },
+  "f_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "c3": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+c3": "flipped",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+c3": "flipped",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "c3+p1": "kept",
+   "c3+p2": "kept",
+   "p1+p2": "kept",
+   "c1+c2+c3": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+c3+p1": "flipped",
+   "c1+c3+p2": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+c3+p1": "flipped",
+   "c2+c3+p2": "flipped",
+   "c2+p1+p2": "kept",
+   "c3+p1+p2": "kept",
+   "c1+c2+c3+p1": "flipped",
+   "c1+c2+c3+p2": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+c3+p1+p2": "flipped",
+   "c2+c3+p1+p2": "flipped",
+   "c1+c2+c3+p1+p2": "flipped"
+  },
+  "steer_sets": [
+   [
+    "c1",
+    "c2"
+   ],
+   [
+    "c1",
+    "c3"
+   ],
+   [
+    "c2",
+    "c3"
+   ]
+  ],
+  "forced": {
+   "p_cond": 1.0,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.5,
+   "used": true
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "c3",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "c3": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "ambiguous",
+   "c2": "ambiguous",
+   "c3": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "ambiguous",
+   "c1+c3": "intact",
+   "c1+p1": "intact",
+   "c1+p2": "ambiguous",
+   "c2+c3": "intact",
+   "c2+p1": "collapsed",
+   "c2+p2": "ambiguous",
+   "c3+p1": "intact",
+   "c3+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+c3": "intact",
+   "c1+c2+p1": "ambiguous",
+   "c1+c2+p2": "ambiguous",
+   "c1+c3+p1": "collapsed",
+   "c1+c3+p2": "ambiguous",
+   "c1+p1+p2": "ambiguous",
+   "c2+c3+p1": "intact",
+   "c2+c3+p2": "intact",
+   "c2+p1+p2": "collapsed",
+   "c3+p1+p2": "intact",
+   "c1+c2+c3+p1": "intact",
+   "c1+c2+c3+p2": "intact",
+   "c1+c2+p1+p2": "ambiguous",
+   "c1+c3+p1+p2": "ambiguous",
+   "c2+c3+p1+p2": "intact",
+   "c1+c2+c3+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "c3": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+c3": "flipped",
+   "c1+p1": "kept",
+   "c1+p2": "ambiguous",
+   "c2+c3": "flipped",
+   "c2+p1": "none",
+   "c2+p2": "kept",
+   "c3+p1": "kept",
+   "c3+p2": "kept",
+   "p1+p2": "kept",
+   "c1+c2+c3": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+c3+p1": "none",
+   "c1+c3+p2": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+c3+p1": "flipped",
+   "c2+c3+p2": "flipped",
+   "c2+p1+p2": "none",
+   "c3+p1+p2": "kept",
+   "c1+c2+c3+p1": "flipped",
+   "c1+c2+c3+p2": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+c3+p1+p2": "flipped",
+   "c2+c3+p1+p2": "flipped",
+   "c1+c2+c3+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c3"
+   ],
+   [
+    "c2",
+    "c3"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "c2",
+    "p1"
+   ],
+   [
+    "c1",
+    "c3",
+    "p1"
+   ]
+  ],
+  "roles": {
+   "c1": "triggers_and_steers",
+   "c2": "triggers_and_steers",
+   "c3": "triggers_and_steers",
+   "p1": "precondition",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "mixed",
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c2",
+     "p1"
+    ],
+    [
+     "c2",
+     "c3",
+     "p1"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c3",
+     "p1"
+    ],
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p1"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2",
+     "p1",
+     "p2"
+    ],
+    [
+     "c2",
+     "c3",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 11,
+  "base": {
+   "p_given": 0.92,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.46,
+   "tau_a": 0.5
+  }
+ },
+ "seconds": 36.0,
+ "replays": 1600
+}
