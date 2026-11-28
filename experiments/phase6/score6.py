@@ -98,14 +98,59 @@ def f1(r, p):
     return None if r is None or p is None else (0.0 if r + p == 0 else 2 * r * p / (r + p))
 
 
+def tables_summary(tables: dict[str, dict], wall: float | None = None, suite: int = 250) -> dict:
+    """The tables alone (no ctxblame run, e.g. the 6.2 pilot): regimes, ambiguity and
+    throughput, with the wall time of a ``suite``-case run at the same rate."""
+    ts = list(tables.values())
+    replays = sum(t["replays"] for t in ts)
+    regimes: dict[str, int] = defaultdict(int)
+    for t in ts:
+        for g in t["truth"]["regimes"]:
+            regimes[g] += 1
+    rate = replays / wall if wall else None
+    per_case = replays / len(ts) if ts else 0
+    return {"cases": len(ts), "replays": replays, "replays_per_case": per_case,
+            "cells_per_case": mean(len(t["cells"]) for t in ts),
+            "ambiguous_cells_per_case": mean(t["truth"]["ambiguous"] for t in ts),
+            "oracle_valid": sum(oracle_valid(t) for t in ts), "regimes": dict(sorted(regimes.items())),
+            "wall_seconds": wall, "replays_per_second": rate,
+            "suite": suite, "suite_hours": per_case * suite / rate / 3600 if rate else None}
+
+
+def print_tables_summary(s: dict) -> None:
+    print(f"{s['cases']} tables, no ctxblame run (tables only)\n")
+    print("| cases | replays | replays/case | cells/case | ambiguous cells/case | oracle-valid | "
+          "wall | replays/s | est. hours for suite |")
+    print("|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
+    fmt = lambda x, f: "–" if x is None else format(x, f)  # noqa: E731
+    print(f"| {s['cases']} | {s['replays']} | {s['replays_per_case']:.0f} | {fmt(s['cells_per_case'], '.1f')} | "
+          f"{fmt(s['ambiguous_cells_per_case'], '.1f')} | {s['oracle_valid']}/{s['cases']} | "
+          f"{fmt(s['wall_seconds'], '.0f')}s | {fmt(s['replays_per_second'], '.1f')} | "
+          f"{fmt(s['suite_hours'], '.1f')} ({s['suite']} cases) |")
+    print("\n| regime | cases |\n|---|---:|")
+    for g, n in s["regimes"].items():
+        print(f"| {g} | {n} |")
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("tables", type=Path)
-    ap.add_argument("bench", type=Path, nargs="+")
+    ap.add_argument("bench", type=Path, nargs="*", help="none: summarize the tables only")
     ap.add_argument("--method", default="ctxblame")
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--wall-seconds", type=float, default=None, help="tables-only: wall time of tables.py")
+    ap.add_argument("--suite", type=int, default=250, help="tables-only: suite size to estimate the run time for")
     a = ap.parse_args(argv)
     tables = {json.loads(p.read_text())["case"]: json.loads(p.read_text()) for p in a.tables.glob("*.json")}
+    if not a.bench:
+        if not tables:
+            print(f"no tables in {a.tables}")
+            return 1
+        s = tables_summary(tables, a.wall_seconds, a.suite)
+        print_tables_summary(s)
+        if a.out:
+            a.out.write_text(json.dumps({"tables_summary": s}, indent=1))
+        return 0
     rows = []
     for bp in a.bench:
         for r in json.loads(bp.read_text()):

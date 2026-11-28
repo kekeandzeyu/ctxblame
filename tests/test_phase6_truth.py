@@ -68,7 +68,7 @@ def test_incomplete_table_is_refused():
         raise AssertionError("expected ValueError")
 
 
-def test_table_runner_enumerates_every_removal_with_a_simulated_model():
+def test_table_runner_enumerates_every_removal_with_a_simulated_model(tmp_path, capsys):
     """tables.table() on a real Phase 6 case: the simulated model uses the convention
     while any carrier is in the request and stops acting without the precondition."""
     import asyncio
@@ -117,6 +117,16 @@ def test_table_runner_enumerates_every_removal_with_a_simulated_model():
     c_names = sorted(k for k in tc.elements if tc.kinds[k] == "carrier")
     assert t["carrier_sets"] == [c_names] and t["precondition_sets"] == [["pre"]]
     assert all(t["roles"][p] == "neutral" for p in tc.elements if tc.kinds[p] == "probe")
+
+    # tables only (the 6.2 pilot): score6 summarizes the tables and sizes the suite
+    from score6 import main as score_main
+    (tmp_path / "t.json").write_text(__import__("json").dumps(r, default=str))
+    out = tmp_path / "score.json"
+    assert score_main([str(tmp_path), "--wall-seconds", "8", "--suite", "100", "--out", str(out)]) == 0
+    s = __import__("json").loads(out.read_text())["tables_summary"]
+    assert s["cases"] == 1 and s["replays"] == r["replays"] == 20 * 2 ** m and s["cells_per_case"] == 2 ** m
+    assert s["replays_per_second"] == r["replays"] / 8 and abs(s["suite_hours"] - 100 * 8 / 3600) < 1e-9
+    assert s["regimes"] == {g: 1 for g in t["regimes"]} and "tables only" in capsys.readouterr().out
 
 
 def test_score_maps_refined_lines_to_elements_and_flags_neutral_probes():

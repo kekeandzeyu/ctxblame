@@ -9,9 +9,10 @@
 # Optional: PY (python with ctxblame + vllm), VLLM, TOOL_PARSER (default hermes),
 # SERVE_ARGS (extra vllm serve flags, e.g. "--reasoning-parser qwen3"),
 # MAX_TOKENS (default 1024), METHODS, PARALLEL (default 8), CONC (default 16),
-# ORACLE_N (default 20), SKIP_SERVE=1 to reuse a running server on :8000,
+# ORACLE_N (default 20), SKIP_SERVE=1 to reuse a running server on :$PORT,
 # SUITE (default all; e.g. real, gen-long), BLAME_ARGS (extra ctxblame flags,
-# e.g. "--strict-restore --member-controls 2").
+# e.g. "--strict-restore --member-controls 2"), PORT (default 8000) and
+# CUDA_VISIBLE_DEVICES to run one server per GPU side by side.
 set -euo pipefail
 : "${TAG:?}" "${MODEL:?}" "${NAME:?}" "${EXTRA_BODY:?}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -23,27 +24,31 @@ METHODS=${METHODS:-"ctxblame ctxblame_uncond loo self_explain contextcite"}
 SUITE=${SUITE:-all}
 OUT=$REPO/experiments/phase3/results/$TAG
 LOGS=${LOGS:-$REPO/../logs}
+PORT=${PORT:-8000}
+GPU_IDX=${CUDA_VISIBLE_DEVICES:-0}; GPU_IDX=${GPU_IDX%%,*}
+SERVER="[v]llm serve .* --port $PORT( |$)"
 mkdir -p "$OUT" "$LOGS"
 cd "$REPO"
+echo $$ > "$LOGS/driver_$TAG.pid"  # vm_status.sh: is this tag's driver alive
 
 if [ -z "${SKIP_SERVE:-}" ]; then
-  pkill -f "[v]llm serve" || true
+  pkill -f "$SERVER" || true  # only the server on our port
   # wait for the old server's memory to come back (containers may not list GPU processes)
   for _ in $(seq 120); do
-    free=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits | head -1 | tr -d ' ')
+    free=$(nvidia-smi -i "$GPU_IDX" --query-gpu=memory.free --format=csv,noheader,nounits | tr -d ' ')
     [ "$free" -ge "${MIN_FREE_MB:-30000}" ] && break
     sleep 5
   done
-  EXTRA_ARGS="${SERVE_ARGS:-}" nohup "$HERE/serve_vllm.sh" "$MODEL" 8000 "$NAME" > "$LOGS/vllm_$TAG.log" 2>&1 &
+  EXTRA_ARGS="${SERVE_ARGS:-}" nohup "$HERE/serve_vllm.sh" "$MODEL" "$PORT" "$NAME" > "$LOGS/vllm_$TAG.log" 2>&1 &
   sleep 20  # let serve_vllm.sh exec into vllm before checking it is alive
-  until curl -sf http://127.0.0.1:8000/v1/models > /dev/null; do
-    if ! pgrep -f "[v]llm serve" > /dev/null; then echo "vllm died; see $LOGS/vllm_$TAG.log"; exit 1; fi
+  until curl -sf "http://127.0.0.1:$PORT/v1/models" > /dev/null; do
+    if ! pgrep -f "$SERVER" > /dev/null; then echo "vllm died; see $LOGS/vllm_$TAG.log"; exit 1; fi
     sleep 5
   done
 fi
 echo "[$TAG] server ready"
 
-COMMON=(--model "$NAME" --free --no-thinking-param --extra-body "$EXTRA_BODY")
+COMMON=(--base-url "http://127.0.0.1:$PORT/v1" --model "$NAME" --free --no-thinking-param --extra-body "$EXTRA_BODY")
 if [ ! -f "$OUT/oracle_all.json" ]; then
   "$PY" experiments/phase3/oracle.py --suite "$SUITE" "${COMMON[@]}" -n "${ORACLE_N:-20}" --max-tokens "$MAX_TOKENS" \
     --parallel-cases 8 --out "$OUT/oracle_all.json" > "$LOGS/oracle_$TAG.log" 2>&1
