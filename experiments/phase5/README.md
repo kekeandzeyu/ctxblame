@@ -9,7 +9,7 @@ Plan and exit gate: [docs/ROADMAP.md](../../docs/ROADMAP.md#phase-5--engine-corr
 | 5.3 search/audit split with FWER control | done, null simulation below | `blame.py:Tester.audit`, `audit_findings`, `stats.py`, `null_sim.py` |
 | 5.4 Anthropic `cache_control` pinning | done, offline | `ablate.py:pin_cache_breakpoints` |
 | 5.5 GPU re-run of Qwen3-14B | done: gate met (final table below) | `run_p5.sh`, `p5c-*` results |
-| 5.6 audit: coupled members kept, every bundle re-audited | done offline (null-sim-v3); GPU run `p5d-*` queued | `blame.py:audit_findings`, `null_sim.py` |
+| 5.6 audit: coupled members kept, every bundle re-audited | done: null-sim-v3, and `p5d-*` on the GPU (gen 97% F1) | `blame.py:audit_findings`, `null_sim.py`, `p5d-*` results |
 
 ## 5.1: chunking is unchanged on every existing case
 
@@ -258,7 +258,7 @@ or silently dropped. 5.6 below does this. It sets no threshold, only the rule
 that a test which cannot see the choice is not evidence against a member. The
 coalition tables in Phase 6 check it against independent ground truth.
 
-### 5.6: coupled members and a strict sample split (offline; GPU run queued)
+### 5.6: coupled members and a strict sample split (offline; GPU results below)
 
 Two changes to `audit_findings`, both from the `p5c-gen` diagnosis above:
 
@@ -310,8 +310,55 @@ Without any audit, the same null gives a false cause in 98.2% of runs.
 - `real`: no bundle reached stage 1 with a failing member, so nothing changes.
 
 Whether the stage-2 replays then certify these bundles is what `p5d-gen` and
-`p5d-real` measure (`RUNS="real5d gen5d" run_p5.sh`). They need a GPU box; the
-Phase 5 VM has been released.
+`p5d-real` measure (`RUNS="real5d gen5d" run_p5.sh`).
+
+### 5.6 on the GPU (`p5d-*`, 2026-11-28)
+
+Setup:
+- The same oracle-valid cases as `v0.2`: the oracle files are byte-identical copies.
+- Qwen3-14B-FP8 on vLLM 0.34.0 and one RTX 5090. FlashInfer kernels were off on this box, so `Secs/case` is not comparable with `p5c`.
+- Defaults, 3 seeds. Results: [p5d-real](../phase3/results/p5d-real-qwen3-14b/summary.md) and [p5d-gen](../phase3/results/p5d-gen-qwen3-14b/summary.md).
+
+| run | F1 [95% CI] | precond. separated / blamed | negatives | replays/case | `p5c` | `v0.2` |
+|---|---:|---:|---:|---:|---:|---:|
+| `p5d-real` (13) | 92% [77, 100] | 100% / 0% | – | 837 (`p5c` 762) | 92% [77, 100] | 92% [77, 100] |
+| `p5d-gen` (48) | **97% [92, 100]** | 93% / 7% | 100% | 252 (`p5c` 237) | 93% [84, 100] | 95% [87, 99] |
+
+The predictions above against the outcome (F1 per seed, `p5c` → `p5d`):
+
+| case | prediction | outcome |
+|---|---|---|
+| `p0/tool_result_sentence_config` | coupled member kept | **0/0/0 → 1/1/1**, reported `coupled` in every seed |
+| `gen/0-013/ruff/doc+user` | coupled kept (F1 .8) | **0/1/0 → 1/1/1** |
+| `gen/0-037/ruff/tooldesc+doc` | may lose a hit | 1/1/1 → 1/1/1 |
+| `p3/precond_2or_pnpm` | bundle uncertified, precondition no longer blamed | **wrong**: still blamed in 3 of 3 seeds (see below) |
+| `gen/0-052/uv/neg` | – | negative correct 2/3 → 3/3 (threshold noise) |
+| `real/run4/step21` | – | still unsolved; `diffuse_preconditions` and the search continues in 3 of 3 seeds; `triggers_and_steers suspected` in 2 of 3 (`p5c`: 1) |
+
+**`p3/precond_2or_pnpm` is a label error, not an audit error.** In `p5d` the
+search finds `edit_pkg` alone. A one-member finding has no stage 1, and stage 2
+certifies it on fresh replays, so the prediction made from `p5c`'s two-member
+bundle did not apply. Direct replays on the same server (N = 40 each,
+diagnostic only, not committed) show why:
+
+| removed | replies |
+|---|---|
+| nothing | 40× `pnpm install --frozen-lockfile` |
+| rule + example (the planted carriers) | 40× `npm install` |
+| `edit_pkg` | 30× `edit_file` (redo the edit), 10× `pnpm add zod@3.23.0` |
+| `read_pkg` | 40× `pnpm install --frozen-lockfile` |
+| `read_pkg` + `edit_pkg` | 40× `pnpm add zod@3.23.0` |
+
+`edit_pkg` is `triggers_and_steers`, not a pure precondition:
+- It triggers E: without it, P(bash) falls to 25%.
+- It steers the choice given E: `pnpm add` instead of `pnpm install`, 10 of 10.
+
+The truth is (rule OR example) AND `edit_pkg`. ctxblame certifies the
+`edit_pkg` half. It misses the OR pair, because the 2-chunk rest "flips only in
+bulk" with no same-size control possible (the conservative control rule). The
+case's design label counts that half as a blamed precondition, so this is the
+whole 7%. The Phase 6 tables assign such roles from the data (6.4) instead of
+from the design.
 
 ### Phase 5.5 summary
 
@@ -322,6 +369,8 @@ Phase 5 VM has been released.
 | `p5c-real` | final | real (13) | 92% [77, 100] | 92% |
 | `p5-gen` | Phase 5, one-stage audit | core + gen (48) | 90% [80, 98] | 95% [87, 99] |
 | `p5c-gen` | final | core + gen (48) | 93% [84, 100] | 95% [87, 99] |
+| `p5d-real` | final + 5.6 audit | real (13) | 92% [77, 100] | 92% |
+| `p5d-gen` | final + 5.6 audit | core + gen (48) | 97% [92, 100] | 95% [87, 99] |
 
 **Gate:** offline suite green; type-I error 3.0% [1.8, 4.9] ≤ α under the
 least-favourable null; final-engine F1 inside the `v0.2` CI on both suites, now
