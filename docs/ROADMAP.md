@@ -9,6 +9,9 @@ directories.
 
 ## 1. Where `v0.2.0` stands
 
+*`v0.2.2` (2026-11-28) adds the 6.4 forced-action step (Phase 6 below), GPU-checked on
+250 cases × 2 models and the `v0.2` cases.*
+
 *`v0.2.1` (2026-11-28) ships the Phase 5 engine below, after checks on the GPU:*
 - *chunking of injected user-turn blocks;*
 - *the stabilizer;*

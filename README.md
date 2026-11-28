@@ -3,10 +3,11 @@
 "git blame" for LLM agent decisions: replay one recorded LLM request with
 pieces of context removed and report which chunk caused the decision.
 Works with any model: the evidence comes from replays, not from the model's
-own explanation. Status: v0.2.1, validated on open models (see
-[docs/WRITEUP.md](docs/WRITEUP.md)). v0.2.1 adds correct chunking of Claude
-Code–style traces, and it audits reported causes on fresh replays (family-wise
-error ≤ α).
+own explanation. Status: v0.2.2, validated on open models (see
+[docs/WRITEUP.md](docs/WRITEUP.md)). v0.2.1 added correct chunking of Claude
+Code–style traces and audits reported causes on fresh replays (family-wise
+error ≤ α). v0.2.2 tells a rule that makes the agent act *and* picks what it
+does from one that only makes it act, by replaying with the tool forced.
 
 ```sh
 uvx ctxblame --help        # or: pip install ctxblame
@@ -138,7 +139,7 @@ How it works:
    correction across findings then holds the family-wise error at `--alpha`
    (default 0.05). Findings that fail are listed as `uncertified`.
    `--audit-n 0` turns the audit off (the v0.2 behaviour).
-7. **Forced action (unreleased).** When E is a tool (`--given bash`), a
+7. **Forced action (v0.2.2).** When E is a tool (`--given bash`), a
    precondition is also replayed with that tool forced by `tool_choice`. The
    choice rate there is compared with the equally forced baseline, never with
    the unforced one. If removing the precondition still changes the choice, it
@@ -229,7 +230,7 @@ Phase 3 attribution benchmark at **$0 API cost**.
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the audit, the theory plan and the exit gate of each phase:
 
 - **Phase 5, engine correctness:** split `<system-reminder>` blocks inside user turns into removable chunks, keep searching past diffuse preconditions, audit every reported cause on fresh replays (intersection-union + Holm), pin Anthropic `cache_control` breakpoints.
-- **Phase 6, ground truth independent of the method:** exhaustive $2^m$ removal tables per case (no oracle dropping), neutral probe lines, matched `tool_choice` interventions for rules that both trigger and steer the action. *Done:* 250 cases × 2 models. ctxblame scores 95% / 85% F1 on the cases `v0.2`'s oracle kept and 71% / 44% on the ones it dropped (Qwen3-14B / Llama-3.1-8B). With the action forced (6.4, unreleased), F1 on rules that trigger and steer rises from 53% to 62% (Qwen) and from 46% to 56% (Llama).
+- **Phase 6, ground truth independent of the method:** exhaustive $2^m$ removal tables per case (no oracle dropping), neutral probe lines, matched `tool_choice` interventions for rules that both trigger and steer the action. *Done:* 250 cases × 2 models. ctxblame scores 95% / 85% F1 on the cases `v0.2`'s oracle kept and 71% / 44% on the ones it dropped (Qwen3-14B / Llama-3.1-8B). With the action forced (6.4, v0.2.2), F1 on rules that trigger and steer rises from 53% to 62% (Qwen) and from 46% to 56% (Llama).
 - **Phase 7, steelmanned baselines and theory:** contrastive ContextCite, black-box group testing over keep-probabilities, full-context self-explanation; a group-testing formulation with the precondition gate as the separating structure.
 - **Phase 8, external validity:** `ctxblame wrap`, wire-captured steps from real harnesses on SWE-bench, `ctxblame verify` fix study, one approved closed-API run. `ctxblame import` (best effort, marked reconstructed) follows in `v0.3`.
 
