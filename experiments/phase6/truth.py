@@ -25,6 +25,18 @@ From the cells:
 collapse at S that disappears at some T > S, both cells decided). These are the
 cases a search that assumes monotonicity can get wrong, and they are labelled,
 not dropped.
+
+Forced cells (6.4, optional): the same removals replayed with E forced by
+``tool_choice``, recording A among the replies in E. Where removing S collapses E,
+the unforced cell cannot say whether S also steers the choice (positivity); the
+forced cell compares P(A | do(E), do(-S)) with half the equally forced baseline
+P(A | do(E)), never with the unforced P(A | E). *Steer sets* are the minimal S whose
+forced cell flips, and the carrier (choice) sets become the minimal sets among the
+unforced flips (E intact) and the forced flips together: a set that looks minimal
+unforced only because a smaller one collapses E is not minimal once that smaller
+one is read with E forced (6.4b). A precondition element in a choice set is
+``triggers_and_steers``. If forcing E changes the choice even with the whole
+context (forced base below 0.5), the forced cells are not used.
 """
 
 from __future__ import annotations
@@ -79,6 +91,9 @@ class Truth:
     non_monotone: list[tuple[list[str], list[str], str]] = field(default_factory=list)
     ambiguous: int = 0  # cells with an undecided E or (E intact) A
     base: dict = field(default_factory=dict)
+    f_state: dict[frozenset, str] = field(default_factory=dict)  # E forced: kept | flipped | ambiguous | none
+    steer_sets: list[frozenset] = field(default_factory=list)
+    forced: dict | None = None  # forced base and whether the forced cells were used
 
     def to_json(self) -> dict:
         key = lambda s: "+".join(sorted(s)) or "-"  # noqa: E731
@@ -88,7 +103,10 @@ class Truth:
                 "carrier_sets": [sorted(s) for s in self.carrier_sets],
                 "precondition_sets": [sorted(s) for s in self.precondition_sets],
                 "roles": self.roles, "regimes": self.regimes, "non_monotone": self.non_monotone,
-                "ambiguous": self.ambiguous, "base": self.base}
+                "ambiguous": self.ambiguous, "base": self.base,
+                **({"f_state": {key(s): v for s, v in self.f_state.items()},
+                    "steer_sets": [sorted(s) for s in self.steer_sets], "forced": self.forced}
+                   if self.forced is not None else {})}
 
 
 def _minimal(sets: list[frozenset]) -> list[frozenset]:
@@ -96,8 +114,9 @@ def _minimal(sets: list[frozenset]) -> list[frozenset]:
 
 
 def label(elements: list[str], kinds: dict[str, str], cells: dict[frozenset, Cell],
-          min_given: int = 10) -> Truth:
-    """Label one case from its full table (every subset of ``elements`` must be present)."""
+          min_given: int = 10, forced: dict[frozenset, Cell] | None = None) -> Truth:
+    """Label one case from its full table (every subset of ``elements`` must be present).
+    ``forced``: the forced cells (``k_given`` = replies in E, ``k`` = A among them)."""
     subsets = [frozenset(c) for r in range(len(elements) + 1) for c in combinations(elements, r)]
     missing = [s for s in subsets if s not in cells]
     if missing:
@@ -121,10 +140,30 @@ def label(elements: list[str], kinds: dict[str, str], cells: dict[frozenset, Cel
     collapses = [s for s in subsets if t.e_state[s] == "collapsed"]
     t.carrier_sets = _minimal(flips)
     t.precondition_sets = _minimal(collapses)
-    in_c = set().union(*t.carrier_sets) if t.carrier_sets else set()
     in_p = set().union(*t.precondition_sets) if t.precondition_sets else set()
+    if forced is not None:
+        missing = [s for s in subsets if s not in forced]
+        if missing:
+            raise ValueError(f"forced table incomplete: {len(missing)} of {len(subsets)} removals missing")
+        fb = forced[frozenset()]
+        f_rate = fb.k / fb.k_given if fb.k_given else 0.0
+        used = fb.k_given >= min_given and f_rate >= 0.5
+        t.forced = {"p_cond": f_rate if fb.k_given else None, "n_given": fb.k_given, "n": fb.n,
+                    "tau": f_rate / 2, "used": used}
+        for s in subsets:
+            c = forced[s]
+            t.f_state[s] = ("none" if c.k_given < min_given else
+                            _side(c.k, c.k_given, f_rate / 2, "kept", "flipped"))
+        if used:
+            f_flips = [s for s in subsets if t.f_state[s] == "flipped"]
+            t.steer_sets = _minimal(f_flips)
+            # a choice set is a minimal removal that flips A, read with E forced where the
+            # unforced cell cannot (E collapsed): {c1, p1} is not minimal when removing c1
+            # alone collapses E unforced but flips A with E forced
+            t.carrier_sets = _minimal(flips + f_flips)
+    in_c = set().union(*t.carrier_sets) if t.carrier_sets else set()
     for x in elements:
-        t.roles[x] = ("triggers_and_steers" if x in in_c and x in in_p else "carrier" if x in in_c
+        t.roles[x] = ("triggers_and_steers" if x in in_p and x in in_c else "carrier" if x in in_c
                       else "precondition" if x in in_p else "neutral")
 
     for s in subsets:

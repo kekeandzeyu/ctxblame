@@ -33,6 +33,21 @@ threshold 0.475; E = calling bash, the choice = its flag):
                    restores" and "Z is coupled" are both true nulls on the boundary,
                    and so is "removing X, Y flips". Every reported cause is false.
 
+Scenarios with E forced by tool_choice (6.4; the simulated model honours it, and
+P(A | do(E)) = b with the whole context, so the forced threshold is tau):
+
+  tas_power        X triggers and steers: removing X stops E (0.05), and with E
+                   forced the choice goes (0.05). Power = the forced cause {X}.
+  pure_precondition removing X stops E, but with E forced the choice stays (b).
+                   Every reported cause is false (X is only a precondition).
+  boundary_tas     removing X stops E, and with E forced the choice sits exactly on
+                   the forced threshold: "X steers" is a true null on the boundary.
+                   Every reported cause is false.
+  coupled_forced / boundary_coupled_forced
+                   coupled_power / boundary_coupled with E forceable, so the coupled
+                   member's restoration is tested with E forced (P(A | do(E)) = the
+                   unforced P(A | E) of the same removal).
+
 Usage:
   uv run python experiments/phase5/null_sim.py --runs 500 --out experiments/phase5/results/<tag>/null_sim.json
 """
@@ -62,10 +77,14 @@ TAU = B / 2
 BE = 0.95  # P(E) at baseline in the conditional scenarios
 TAU_E = BE / 2
 GIVEN = ("coupled_power", "boundary_coupled")
+FORCED = ("tas_power", "pure_precondition", "boundary_tas", "coupled_forced", "boundary_coupled_forced")
+BASE_OF = {"coupled_forced": "coupled_power", "boundary_coupled_forced": "boundary_coupled"}
 LINES = [f"Rule {c}: follow convention {c}." for c in "ABCDEFGH"]  # X = A, Y = B, Z = C
 
 
 def _rate_fn(scenario: str):
+    scenario = BASE_OF.get(scenario, scenario)
+
     def rate(present: set[str]) -> float:
         gone = {c for c in "ABCDEFGH" if c not in present}
         if scenario == "boundary_single":
@@ -87,6 +106,11 @@ def _rate_fn(scenario: str):
             if {"A", "B", "C"} <= gone:
                 return BE, 0.05
             return (TAU_E, TAU) if {"A", "B"} <= gone else (BE, B)
+        # forced scenarios: (P(E), P(A | E), P(A | do(E)))
+        if scenario in ("tas_power", "pure_precondition", "boundary_tas"):
+            if "A" not in gone:
+                return BE, B, B
+            return 0.05, B, {"tas_power": 0.05, "pure_precondition": B, "boundary_tas": TAU}[scenario]
         raise ValueError(scenario)
     return rate
 
@@ -116,10 +140,14 @@ class _SimReplayer:
         text = body["messages"][0]["content"] if body["messages"][0]["role"] == "system" else ""
         present = {line.split()[1][0] for line in LINES if line in text}
         p = self.rate(present)
+        forced = bool(body.get("tool_choice"))  # do(E): the model must call bash
         out = []
         for _ in range(n):
             if isinstance(p, tuple):  # E = calls bash; the choice = its flag
-                if self.rng.random() < p[0]:
+                if forced:
+                    pa = p[2] if len(p) > 2 else p[1]
+                    call = {"name": "bash", "args": {"flag": "x" if self.rng.random() < pa else "y"}}
+                elif self.rng.random() < p[0]:
                     call = {"name": "bash", "args": {"flag": "x" if self.rng.random() < p[1] else "y"}}
                 else:
                     call = {"name": "read", "args": {}}
@@ -142,6 +170,7 @@ class SimTester(Tester):
 
 def _is_false(scenario: str, c: Cause) -> bool:
     """Is this reported cause a false discovery (some component null true)?"""
+    scenario = BASE_OF.get(scenario, scenario)
     m = {x.split(".")[1][1] if x.startswith("sys") else x for x in c.members}
     letters = {"ABCDEFGH"[int(x) - 1] if x.isdigit() else x for x in m}
     if scenario == "power_bundle":
@@ -150,6 +179,8 @@ def _is_false(scenario: str, c: Cause) -> bool:
         return letters != {"A"}
     if scenario == "coupled_power":
         return letters != {"A", "B"}
+    if scenario == "tas_power":
+        return not (c.forced and letters == {"A"})
     return True
 
 
@@ -162,17 +193,20 @@ async def one(scenario: str, seed: int, audit_n: int, alpha: float, ledger_path:
         for k in c.children:
             by_id[k.id] = k
     sim = _SimReplayer(_rate_fn(scenario), rng)
-    if scenario in GIVEN:
+    if scenario in GIVEN or scenario in FORCED:
         test = SimTester(step, "http://127.0.0.1:1/v1", "", EXACT, TARGET, by_id, Ledger(ledger_path, 1.0), B,
                          given_matcher=Matcher("name"), given_target="bash", baseline_given_rate=BE,
-                         free=True, sim=sim)
+                         free=True, sim=sim, force_tool="bash" if scenario in FORCED else None)
     else:
         test = SimTester(step, "http://127.0.0.1:1/v1", "", Matcher("name"), "bash", by_id,
                          Ledger(ledger_path, 1.0), B, free=True, sim=sim)
     notes: list[str] = []
+    preconds: list[Cause] = []
     _, causes = await search(coarse, test, n_controls=0, rng=random.Random(seed), notes=notes,
-                             audit_n=audit_n, alpha=alpha, uncertified=[])
+                             audit_n=audit_n, alpha=alpha, uncertified=[], preconditions=preconds,
+                             force=scenario in FORCED)
     return {"reported": [sorted(c.members) for c in causes], "coupled": [c.coupled for c in causes],
+            "forced": [c.forced for c in causes], "steers": [p.steers for p in preconds],
             "false": sum(_is_false(scenario, c) for c in causes), "replays": test.replays}
 
 
@@ -181,8 +215,9 @@ def simulate(scenario: str, runs: int, seed: int, audit_n: int, alpha: float) ->
         rows = [asyncio.run(one(scenario, seed * 100_003 + r, audit_n, alpha, Path(d) / f"l{r}.jsonl"))
                 for r in range(runs)]
     any_false = sum(1 for r in rows if r["false"])
-    true_found = sum(1 for r in rows if any(not _is_false(scenario, Cause(m)) for m in r["reported"])) \
-        if scenario in ("power_bundle", "hitchhiker", "coupled_power") else None
+    true_found = sum(1 for r in rows if any(not _is_false(scenario, Cause(m, forced=f))
+                                            for m, f in zip(r["reported"], r["forced"]))) \
+        if scenario in ("power_bundle", "hitchhiker", "coupled_power", "tas_power", "coupled_forced") else None
     lo, hi = wilson(any_false, runs)
     return {"scenario": scenario, "audit_n": audit_n, "alpha": alpha, "runs": runs,
             "fwer": any_false / runs, "fwer_ci": [lo, hi],
@@ -198,7 +233,7 @@ def main(argv=None) -> int:
     ap.add_argument("--alpha", type=float, default=0.05)
     ap.add_argument("--out", type=Path, default=None)
     ap.add_argument("--scenarios", nargs="+", default=["boundary_single", "boundary_bundle", "power_bundle",
-                                                       "hitchhiker", *GIVEN])
+                                                       "hitchhiker", *GIVEN, *FORCED])
     a = ap.parse_args(argv)
     res = []
     print("| scenario | audit | runs | P(any false cause) [95% CI] | power | replays/run |")

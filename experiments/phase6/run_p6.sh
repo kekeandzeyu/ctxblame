@@ -10,6 +10,13 @@
 # LIMIT (first N cases only, the 6.2 pilot), SEEDS (ctxblame seeds, default "0 1 2";
 # empty = tables only), CONC (tables: requests in flight, default 128), SKIP_SERVE=1,
 # PORT (default 8000) and CUDA_VISIBLE_DEVICES to run one server per GPU side by side.
+#
+# 6.4: FORCED_FROM=<tag of finished tables> replays those tables' gated cases with E forced
+# by tool_choice (<tag>/forced/), runs ctxblame (forcing on by default) on all of FORCED_FROM's
+# cases, and scores it on the truth recomputed with E forced. Two comparison summaries are
+# written next to summary.md: the FORCED_FROM engine on the forced truth, and this engine on
+# the unforced truth, so engine and truth changes can be told apart.
+#   FORCED_FROM=qwen3-14b MODEL=... NAME=Qwen3-14B TAG=p64-qwen3-14b experiments/phase6/run_p6.sh
 set -euo pipefail
 : "${TAG:?}" "${MODEL:?}" "${NAME:?}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -48,16 +55,27 @@ fi
 echo "[$TAG] server ready"
 
 COMMON=(--base-url "http://127.0.0.1:$PORT/v1" --model "$NAME" --free --no-thinking-param --extra-body "$EXTRA_BODY")
+FORCED_FROM=${FORCED_FROM:-}
+if [ -n "$FORCED_FROM" ]; then
+  TABLES=$REPO/experiments/phase6/results/$FORCED_FROM/tables
+  [ -d "$TABLES" ] || { echo "no tables at $TABLES"; exit 1; }
+  TARGS=(--forced --base-tables "$TABLES")
+  FORCED_DIR=$OUT/forced
+else
+  TABLES=$OUT/tables
+  TARGS=()
+  FORCED_DIR=
+fi
 t0=$(date +%s)
 "$PY" experiments/phase6/tables.py "${COMMON[@]}" -n "$N" --cases "$CASES" --limit "$LIMIT" \
-  --concurrency "${CONC:-128}" --budget 1 --ledger "$LOGS/ledger_${TAG}_tables.jsonl" --out "$OUT" \
+  --concurrency "${CONC:-128}" --budget 1 --ledger "$LOGS/ledger_${TAG}_tables.jsonl" --out "$OUT" "${TARGS[@]}" \
   > "$LOGS/tables_$TAG.log" 2>&1
 wall=$(( $(date +%s) - t0 ))
 tail -n 1 "$LOGS/tables_$TAG.log"
 echo "[$TAG] tables done (${wall}s)"
 
 # ctxblame (defaults) on exactly the tabled cases, no oracle filter
-mapfile -t names < <(ls "$OUT/tables" | sed 's/\.json$//; s#__#/#g')
+mapfile -t names < <(ls "$TABLES" | sed 's/\.json$//; s#__#/#g')
 for s in $SEEDS; do
   [ -f "$OUT/seed$s/benchmark.json" ] && continue
   "$PY" experiments/phase3/benchmark.py --suite phase6 --gen-n "$CASES" --only "${names[@]}" "${COMMON[@]}" \
@@ -65,11 +83,18 @@ for s in $SEEDS; do
     --budget 1 --ledger "$LOGS/ledger_${TAG}_$s.jsonl" --out-dir "$OUT/seed$s" > "$LOGS/bench_${TAG}_$s.log" 2>&1
   echo "[$TAG] seed $s done"
 done
+FARGS=(${FORCED_DIR:+--forced "$FORCED_DIR"})
 if [ -n "$SEEDS" ]; then
-  "$PY" experiments/phase6/score6.py "$OUT/tables" "$OUT"/seed*/benchmark.json --out "$OUT/score.json" \
+  if [ -n "$FORCED_FROM" ]; then  # comparisons first: summary.md is the run's milestone
+    "$PY" experiments/phase6/score6.py "$TABLES" "$REPO/experiments/phase6/results/$FORCED_FROM"/seed*/benchmark.json \
+      "${FARGS[@]}" --out "$OUT/score_${FORCED_FROM}_engine.json" > "$OUT/summary_${FORCED_FROM}_engine.md"
+    "$PY" experiments/phase6/score6.py "$TABLES" "$OUT"/seed*/benchmark.json \
+      --out "$OUT/score_unforced_truth.json" > "$OUT/summary_unforced_truth.md"
+  fi
+  "$PY" experiments/phase6/score6.py "$TABLES" "$OUT"/seed*/benchmark.json "${FARGS[@]}" --out "$OUT/score.json" \
     > "$OUT/summary.md"
 else  # tables only (the 6.2 pilot): regimes, throughput and the full suite's estimated time
-  "$PY" experiments/phase6/score6.py "$OUT/tables" --wall-seconds "$wall" --suite "$CASES" \
+  "$PY" experiments/phase6/score6.py "${FORCED_DIR:-$OUT/tables}" --wall-seconds "$wall" --suite "$CASES" \
     --out "$OUT/tables_summary.json" > "$OUT/summary.md"
 fi
 echo "[$TAG] summary: $OUT/summary.md"

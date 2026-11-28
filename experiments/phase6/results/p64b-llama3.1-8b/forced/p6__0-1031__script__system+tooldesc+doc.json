@@ -1,0 +1,1671 @@
+{
+ "case": "p6/0-1031/script/system+tooldesc+doc",
+ "design": "or",
+ "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 46,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     46
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     4
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     46
+    ],
+    [
+     false,
+     "run git status",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 22,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     28
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     22
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     12
+    ],
+    [
+     true,
+     "run bash",
+     8
+    ],
+    [
+     false,
+     "run git status",
+     8
+    ],
+    [
+     false,
+     "run make clean",
+     6
+    ],
+    [
+     false,
+     "run echo",
+     5
+    ],
+    [
+     false,
+     "run make validate",
+     3
+    ],
+    [
+     false,
+     "run ci.sh",
+     3
+    ],
+    [
+     false,
+     "run make check",
+     2
+    ],
+    [
+     true,
+     "run make clean",
+     2
+    ],
+    [
+     false,
+     "run git diff",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 6,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     44
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     6
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     40
+    ],
+    [
+     true,
+     "run ci.sh",
+     6
+    ],
+    [
+     false,
+     "run validate.sh",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 43,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     43
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     7
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     43
+    ],
+    [
+     false,
+     "run git status",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 32,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     32
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     18
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     26
+    ],
+    [
+     false,
+     "run ci.sh",
+     8
+    ],
+    [
+     true,
+     "run bash",
+     6
+    ],
+    [
+     false,
+     "run git status",
+     3
+    ],
+    [
+     false,
+     "run make ci",
+     3
+    ],
+    [
+     false,
+     "run make check",
+     2
+    ],
+    [
+     false,
+     "run make test",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 16,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     34
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     16
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     13
+    ],
+    [
+     true,
+     "run ci.sh",
+     10
+    ],
+    [
+     false,
+     "run make test",
+     6
+    ],
+    [
+     false,
+     "run ci.sh",
+     5
+    ],
+    [
+     true,
+     "run bash",
+     4
+    ],
+    [
+     false,
+     "run echo",
+     3
+    ],
+    [
+     false,
+     "run make clean",
+     2
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ],
+    [
+     false,
+     "run make validate",
+     1
+    ],
+    [
+     true,
+     "run make clean",
+     1
+    ],
+    [
+     true,
+     "run echo",
+     1
+    ],
+    [
+     false,
+     "run make check",
+     1
+    ],
+    [
+     false,
+     "run grep",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 21,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     29
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     21
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     14
+    ],
+    [
+     false,
+     "run git status",
+     10
+    ],
+    [
+     true,
+     "run bash",
+     7
+    ],
+    [
+     false,
+     "run make validate",
+     5
+    ],
+    [
+     false,
+     "run git diff",
+     4
+    ],
+    [
+     false,
+     "run echo",
+     3
+    ],
+    [
+     false,
+     "run ci.sh",
+     2
+    ],
+    [
+     false,
+     "run make test",
+     2
+    ],
+    [
+     false,
+     "run make check",
+     1
+    ],
+    [
+     false,
+     "run pytest",
+     1
+    ],
+    [
+     false,
+     "run unittest",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 2,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     48
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     2
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     46
+    ],
+    [
+     false,
+     "run validate.sh",
+     2
+    ],
+    [
+     true,
+     "run ci.sh",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 46,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     46
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     4
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     46
+    ],
+    [
+     false,
+     "run git status",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 32,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     32
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     18
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     27
+    ],
+    [
+     false,
+     "run git status",
+     8
+    ],
+    [
+     true,
+     "run bash",
+     5
+    ],
+    [
+     false,
+     "run make test",
+     3
+    ],
+    [
+     false,
+     "run ci.sh",
+     3
+    ],
+    [
+     false,
+     "run make check",
+     2
+    ],
+    [
+     false,
+     "run git diff",
+     1
+    ],
+    [
+     false,
+     "run make clean",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 43,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     43
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     7
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     40
+    ],
+    [
+     false,
+     "run ci.sh",
+     3
+    ],
+    [
+     true,
+     "run bash",
+     3
+    ],
+    [
+     false,
+     "run git status",
+     2
+    ],
+    [
+     false,
+     "run make check",
+     1
+    ],
+    [
+     false,
+     "run make ci",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 20,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     30
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     20
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     15
+    ],
+    [
+     true,
+     "run ci.sh",
+     14
+    ],
+    [
+     true,
+     "run bash",
+     6
+    ],
+    [
+     false,
+     "run git diff",
+     4
+    ],
+    [
+     false,
+     "run echo",
+     3
+    ],
+    [
+     false,
+     "run make validate",
+     3
+    ],
+    [
+     false,
+     "run make test",
+     2
+    ],
+    [
+     false,
+     "run make clean",
+     2
+    ],
+    [
+     false,
+     "run ci.sh",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 5,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     45
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     5
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     42
+    ],
+    [
+     true,
+     "run ci.sh",
+     5
+    ],
+    [
+     false,
+     "run validate.sh",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 43,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     43
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     7
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ci.sh",
+     38
+    ],
+    [
+     true,
+     "run bash",
+     5
+    ],
+    [
+     false,
+     "run ci.sh",
+     3
+    ],
+    [
+     false,
+     "run make ci",
+     2
+    ],
+    [
+     false,
+     "run git status",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "c3",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "c3",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "c3": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "collapsed",
+   "c2": "collapsed",
+   "c3": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "collapsed",
+   "c1+c3": "ambiguous",
+   "c1+p1": "collapsed",
+   "c1+p2": "intact",
+   "c2+c3": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "c3+p1": "intact",
+   "c3+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+c3": "collapsed",
+   "c1+c2+p1": "collapsed",
+   "c1+c2+p2": "ambiguous",
+   "c1+c3+p1": "ambiguous",
+   "c1+c3+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+c3+p1": "intact",
+   "c2+c3+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c3+p1+p2": "intact",
+   "c1+c2+c3+p1": "collapsed",
+   "c1+c2+c3+p2": "intact",
+   "c1+c2+p1+p2": "intact",
+   "c1+c3+p1+p2": "intact",
+   "c2+c3+p1+p2": "intact",
+   "c1+c2+c3+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "none",
+   "c2": "none",
+   "c3": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "none",
+   "c1+c3": "flipped",
+   "c1+p1": "none",
+   "c1+p2": "kept",
+   "c2+c3": "kept",
+   "c2+p1": "ambiguous",
+   "c2+p2": "kept",
+   "c3+p1": "kept",
+   "c3+p2": "kept",
+   "p1+p2": "kept",
+   "c1+c2+c3": "none",
+   "c1+c2+p1": "none",
+   "c1+c2+p2": "flipped",
+   "c1+c3+p1": "flipped",
+   "c1+c3+p2": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+c3+p1": "ambiguous",
+   "c2+c3+p2": "kept",
+   "c2+p1+p2": "ambiguous",
+   "c3+p1+p2": "kept",
+   "c1+c2+c3+p1": "none",
+   "c1+c2+c3+p2": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+c3+p1+p2": "flipped",
+   "c2+c3+p1+p2": "kept",
+   "c1+c2+c3+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c3",
+    "p2"
+   ],
+   [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "c1"
+   ],
+   [
+    "c2"
+   ]
+  ],
+  "roles": {
+   "c1": "triggers_and_steers",
+   "c2": "triggers_and_steers",
+   "c3": "carrier",
+   "p1": "carrier",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "mixed",
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1"
+    ],
+    [
+     "c1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2"
+    ],
+    [
+     "c2",
+     "c3"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2"
+    ],
+    [
+     "c2",
+     "p1"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2"
+    ],
+    [
+     "c2",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "p1"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2",
+     "c3"
+    ],
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2",
+     "p1"
+    ],
+    [
+     "c1",
+     "c2",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p1"
+    ],
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 6,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.5
+  },
+  "f_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "ambiguous",
+   "c3": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+c3": "flipped",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+c3": "kept",
+   "c2+p1": "flipped",
+   "c2+p2": "ambiguous",
+   "c3+p1": "kept",
+   "c3+p2": "kept",
+   "p1+p2": "kept",
+   "c1+c2+c3": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+c3+p1": "flipped",
+   "c1+c3+p2": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+c3+p1": "kept",
+   "c2+c3+p2": "kept",
+   "c2+p1+p2": "ambiguous",
+   "c3+p1+p2": "kept",
+   "c1+c2+c3+p1": "flipped",
+   "c1+c2+c3+p2": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+c3+p1+p2": "flipped",
+   "c2+c3+p1+p2": "kept",
+   "c1+c2+c3+p1+p2": "flipped"
+  },
+  "steer_sets": [
+   [
+    "c1",
+    "c2"
+   ],
+   [
+    "c1",
+    "c3"
+   ],
+   [
+    "c2",
+    "p1"
+   ]
+  ],
+  "forced": {
+   "p_cond": 1.0,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.5,
+   "used": true
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "c3",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "c3": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "collapsed",
+   "c2": "collapsed",
+   "c3": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "collapsed",
+   "c1+c3": "ambiguous",
+   "c1+p1": "collapsed",
+   "c1+p2": "intact",
+   "c2+c3": "intact",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "c3+p1": "intact",
+   "c3+p2": "intact",
+   "p1+p2": "intact",
+   "c1+c2+c3": "collapsed",
+   "c1+c2+p1": "collapsed",
+   "c1+c2+p2": "ambiguous",
+   "c1+c3+p1": "ambiguous",
+   "c1+c3+p2": "intact",
+   "c1+p1+p2": "intact",
+   "c2+c3+p1": "intact",
+   "c2+c3+p2": "intact",
+   "c2+p1+p2": "intact",
+   "c3+p1+p2": "intact",
+   "c1+c2+c3+p1": "collapsed",
+   "c1+c2+c3+p2": "intact",
+   "c1+c2+p1+p2": "intact",
+   "c1+c3+p1+p2": "intact",
+   "c2+c3+p1+p2": "intact",
+   "c1+c2+c3+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "none",
+   "c2": "none",
+   "c3": "kept",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "none",
+   "c1+c3": "flipped",
+   "c1+p1": "none",
+   "c1+p2": "kept",
+   "c2+c3": "kept",
+   "c2+p1": "ambiguous",
+   "c2+p2": "kept",
+   "c3+p1": "kept",
+   "c3+p2": "kept",
+   "p1+p2": "kept",
+   "c1+c2+c3": "none",
+   "c1+c2+p1": "none",
+   "c1+c2+p2": "flipped",
+   "c1+c3+p1": "flipped",
+   "c1+c3+p2": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+c3+p1": "ambiguous",
+   "c2+c3+p2": "kept",
+   "c2+p1+p2": "ambiguous",
+   "c3+p1+p2": "kept",
+   "c1+c2+c3+p1": "none",
+   "c1+c2+c3+p2": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+c3+p1+p2": "flipped",
+   "c2+c3+p1+p2": "kept",
+   "c1+c2+c3+p1+p2": "flipped"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c3",
+    "p2"
+   ],
+   [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "c1"
+   ],
+   [
+    "c2"
+   ]
+  ],
+  "roles": {
+   "c1": "triggers_and_steers",
+   "c2": "triggers_and_steers",
+   "c3": "carrier",
+   "p1": "carrier",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "mixed",
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1"
+    ],
+    [
+     "c1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2"
+    ],
+    [
+     "c2",
+     "c3"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2"
+    ],
+    [
+     "c2",
+     "p1"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c2"
+    ],
+    [
+     "c2",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "p1"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2",
+     "c3"
+    ],
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2",
+     "p1"
+    ],
+    [
+     "c1",
+     "c2",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ],
+   [
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p1"
+    ],
+    [
+     "c1",
+     "c2",
+     "c3",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 6,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 1.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.5
+  }
+ },
+ "seconds": 17.5,
+ "replays": 1600
+}

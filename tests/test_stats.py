@@ -140,3 +140,82 @@ def test_audit_reaudits_every_bundle_on_new_replays_even_when_nothing_is_dropped
     asyncio.run(audit_findings([f, single], aud, 20, 0.05))
     assert f.certified and single.certified and f.members == ["a", "b"]
     assert aud.calls == [frozenset("ab"), frozenset("b"), frozenset("a")] * 2 + [frozenset("c")]
+
+
+class _ForcedCondAuditor(_CondAuditor):
+    """_CondAuditor plus E forced: ``forced`` maps a removal to A-count of 20 under do(E)."""
+    force_tool = "bash"
+
+    def __init__(self, table, forced):
+        super().__init__(table)
+        self.forced = forced
+
+    async def can_force(self):
+        return True
+
+    async def audit(self, removed, n, forced=False):
+        if not forced:
+            return await super().audit(removed, n)
+        self.calls.append(("forced", frozenset(removed)))
+        a = self.forced[frozenset(removed)]
+        return Outcome(a, n, "flipped" if a < 5 else "kept" if a > 14 else "unclear", k_given=n, n_total=n)
+
+    def p_value(self, o, kind):
+        return audit_p(o, kind, 0.45, 0.475, 0.45)
+
+
+def test_audit_tests_a_coupled_member_with_E_forced():
+    import asyncio
+
+    from ctxblame.blame import Cause, audit_findings
+    # the p0 shape again: keeping a while removing b stops E, so unforced a's role is
+    # untestable; with E forced, keeping a restores the choice -> certified as restoring
+    t = {frozenset("ab"): (20, 0), frozenset("b"): (0, 0), frozenset("a"): (20, 20)}
+    f = Cause(["a", "b"])
+    aud = _ForcedCondAuditor(t, {frozenset("b"): 20})
+    asyncio.run(audit_findings([f], aud, 20, 0.05))
+    assert f.members == ["a", "b"] and f.coupled == ["a"] and f.certified is True
+    assert "forced:a" in f.audit and "a" not in f.audit  # stage 2 tested a's restoration under do(E)
+    assert aud.calls.count(("forced", frozenset("b"))) == 2  # stage 1 picks, stage 2 decides
+
+
+def test_audit_drops_a_coupled_member_that_does_not_restore_with_E_forced():
+    import asyncio
+
+    from ctxblame.blame import Cause, audit_findings
+    # same, but with E forced keeping a does not bring the choice back: a only looked
+    # coupled (like the 9 table-neutral "coupled" members of Phase 6) and is dropped.
+    # What is left, {b}, is removed by exactly a's leave-one-in test: unforced it stops
+    # E, forced it flips A. So b triggers and steers (p6/0-1187: the pnpm rule), and
+    # stage 2 certifies "with E forced, removing b flips the choice" on new replays.
+    t = {frozenset("ab"): (20, 0), frozenset("b"): (0, 0), frozenset("a"): (20, 20)}
+    f = Cause(["a", "b"])
+    aud = _ForcedCondAuditor(t, {frozenset("b"): 0})
+    asyncio.run(audit_findings([f], aud, 20, 0.05))
+    assert f.members == ["b"] and f.coupled == [] and f.forced is True and f.certified is True
+    assert "stage1:forced:a" in f.audit and f.audit["together"].k == 0 and not f.audit["together"].collapsed
+    assert aud.calls[-1] == ("forced", frozenset("b"))  # stage 2: the forced claim, on new replays
+    assert f.together is f.audit["together"]  # reported as the forced outcome, not the search's unforced one
+
+
+def test_audit_makes_a_forced_claim_when_several_members_are_dropped_by_the_forced_test():
+    import asyncio
+
+    from ctxblame.blame import Cause, audit_findings
+    # p6/0-1085: the ruff rule r plus the two lines a, b of one tool-call pair. Keeping a
+    # (or b) alone stops E; with E forced neither brings the choice back. Both are
+    # dropped, and the rule alone is certified as a forced claim on new replays.
+    t = {frozenset("rab"): (20, 0), frozenset("rb"): (0, 0), frozenset("ra"): (0, 0), frozenset("ab"): (20, 20),
+         frozenset("r"): (0, 0)}
+    f = Cause(["r", "a", "b"])
+    aud = _ForcedCondAuditor(t, {frozenset("rb"): 0, frozenset("ra"): 0, frozenset("r"): 0})
+    asyncio.run(audit_findings([f], aud, 20, 0.05))
+    assert f.members == ["r"] and f.forced is True and f.certified is True
+    assert {"stage1:forced:a", "stage1:forced:b"} <= set(f.audit) and aud.calls[-1] == ("forced", frozenset("r"))
+
+
+def test_null_simulation_steering_claims_under_forced_E():
+    from null_sim import simulate
+    assert simulate("tas_power", 30, 1, 20, 0.05)["power"] >= 0.9
+    assert simulate("pure_precondition", 30, 1, 20, 0.05)["fwer"] == 0
+    assert simulate("boundary_tas", 120, 1, 20, 0.05)["fwer"] <= 0.06

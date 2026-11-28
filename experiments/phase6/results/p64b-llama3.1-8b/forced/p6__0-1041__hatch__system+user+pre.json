@@ -1,0 +1,1477 @@
+{
+ "case": "p6/0-1041/hatch/system+user+pre",
+ "design": "precondition_gated",
+ "target": "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 44,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     44
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     6
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     44
+    ],
+    [
+     false,
+     "run git add",
+     2
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ],
+    [
+     false,
+     "run git status",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 49,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     49
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     1
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     49
+    ],
+    [
+     false,
+     "run python",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 2,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     48
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     2
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/text.py",
+     19
+    ],
+    [
+     false,
+     "run git add",
+     13
+    ],
+    [
+     false,
+     "run git status",
+     9
+    ],
+    [
+     false,
+     "run git diff",
+     7
+    ],
+    [
+     true,
+     "run git add",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 45,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     45
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     5
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     45
+    ],
+    [
+     false,
+     "run git status",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 21,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     29
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     21
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     21
+    ],
+    [
+     false,
+     "run git status",
+     19
+    ],
+    [
+     false,
+     "run git add",
+     6
+    ],
+    [
+     false,
+     "run git diff",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     29
+    ],
+    [
+     false,
+     "run pytest",
+     11
+    ],
+    [
+     false,
+     "run unittest",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 1,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     49
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     1
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/text.py",
+     29
+    ],
+    [
+     false,
+     "run git add",
+     11
+    ],
+    [
+     false,
+     "run git status",
+     7
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ],
+    [
+     true,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 46,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     46
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     4
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     46
+    ],
+    [
+     false,
+     "run python",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 30,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     30
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     20
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     30
+    ],
+    [
+     false,
+     "run git status",
+     12
+    ],
+    [
+     false,
+     "run python",
+     6
+    ],
+    [
+     false,
+     "run git diff",
+     1
+    ],
+    [
+     false,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 3,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     47
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     3
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git add",
+     20
+    ],
+    [
+     false,
+     "edit src/text.py",
+     20
+    ],
+    [
+     false,
+     "run git status",
+     4
+    ],
+    [
+     true,
+     "run git add",
+     3
+    ],
+    [
+     false,
+     "run git diff",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/text.py",
+     37
+    ],
+    [
+     false,
+     "run git add",
+     8
+    ],
+    [
+     false,
+     "run sed",
+     3
+    ],
+    [
+     false,
+     "run git status",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 24,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     26
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     24
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     23
+    ],
+    [
+     false,
+     "run git status",
+     19
+    ],
+    [
+     false,
+     "run git add",
+     7
+    ],
+    [
+     true,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     28
+    ],
+    [
+     false,
+     "run python",
+     19
+    ],
+    [
+     false,
+     "run pytest",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     36
+    ],
+    [
+     false,
+     "run unittest",
+     9
+    ],
+    [
+     false,
+     "run pytest",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     25
+    ],
+    [
+     false,
+     "run unittest",
+     18
+    ],
+    [
+     false,
+     "run pytest",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 4,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     46
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     4
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git add",
+     17
+    ],
+    [
+     false,
+     "edit src/text.py",
+     17
+    ],
+    [
+     false,
+     "run git status",
+     4
+    ],
+    [
+     true,
+     "run git add",
+     4
+    ],
+    [
+     false,
+     "run python",
+     2
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ],
+    [
+     false,
+     "run pytest",
+     2
+    ],
+    [
+     false,
+     "run text.py",
+     1
+    ],
+    [
+     false,
+     "run unittest",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/text.py",
+     47
+    ],
+    [
+     false,
+     "run sed",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 29,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     29
+    ],
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     21
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     29
+    ],
+    [
+     false,
+     "run python",
+     12
+    ],
+    [
+     false,
+     "run git status",
+     8
+    ],
+    [
+     false,
+     "run pytest",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/text.py",
+     38
+    ],
+    [
+     false,
+     "run git add",
+     6
+    ],
+    [
+     false,
+     "run sed",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     30
+    ],
+    [
+     false,
+     "run python",
+     18
+    ],
+    [
+     false,
+     "run pytest",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     18
+    ],
+    [
+     false,
+     "run git add",
+     17
+    ],
+    [
+     false,
+     "run python",
+     5
+    ],
+    [
+     false,
+     "run pytest",
+     4
+    ],
+    [
+     false,
+     "edit src/text.py",
+     3
+    ],
+    [
+     false,
+     "run git status",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     27
+    ],
+    [
+     false,
+     "run python",
+     18
+    ],
+    [
+     false,
+     "run pytest",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run test:all",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/text.py",
+     46
+    ],
+    [
+     false,
+     "run sed",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~hatch\\\\s+run\\\\s+test\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     21
+    ],
+    [
+     false,
+     "run git add",
+     14
+    ],
+    [
+     false,
+     "edit src/text.py",
+     11
+    ],
+    [
+     false,
+     "run git status",
+     3
+    ],
+    [
+     false,
+     "run python",
+     1
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "collapsed",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "flipped",
+   "c1+c2": "flipped",
+   "c1+pre": "none",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "none",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "ambiguous",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "none",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "p2"
+   ],
+   [
+    "c1",
+    "c2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "triggers_and_steers",
+   "p1": "neutral",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "mixed",
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "p2"
+    ],
+    [
+     "c1",
+     "p2"
+    ],
+    "flip undone"
+   ],
+   [
+    [
+     "p2"
+    ],
+    [
+     "c2",
+     "p2"
+    ],
+    "flip undone"
+   ]
+  ],
+  "ambiguous": 1,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.92,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.46
+  },
+  "f_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "flipped",
+   "p1": "kept",
+   "p2": "ambiguous",
+   "c1+c2": "flipped",
+   "c1+pre": "kept",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "flipped",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "flipped",
+   "p2+pre": "flipped",
+   "p1+p2": "ambiguous",
+   "c1+c2+pre": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "kept",
+   "c1+p2+pre": "kept",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "flipped",
+   "c2+p2+pre": "flipped",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "flipped",
+   "c1+c2+p1+pre": "flipped",
+   "c1+c2+p2+pre": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "kept",
+   "c2+p1+p2+pre": "flipped",
+   "c1+c2+p1+p2+pre": "flipped"
+  },
+  "steer_sets": [
+   [
+    "pre"
+   ],
+   [
+    "c1",
+    "c2"
+   ]
+  ],
+  "forced": {
+   "p_cond": 0.88,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.44,
+   "used": true
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "collapsed",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "flipped",
+   "c1+c2": "flipped",
+   "c1+pre": "none",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "none",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "ambiguous",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "none",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "p2"
+   ],
+   [
+    "c1",
+    "c2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "mixed",
+   "precondition_gated",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "p2"
+    ],
+    [
+     "c1",
+     "p2"
+    ],
+    "flip undone"
+   ],
+   [
+    [
+     "p2"
+    ],
+    [
+     "c2",
+     "p2"
+    ],
+    "flip undone"
+   ]
+  ],
+  "ambiguous": 1,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.92,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.46
+  }
+ },
+ "seconds": 43.4,
+ "replays": 1600
+}

@@ -1,0 +1,202 @@
+[
+ {
+  "seed": "seed0",
+  "case": "gen/0-009/hatch/doc+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run git status",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed0",
+  "case": "gen/0-027/pnpm/system+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run pnpm add",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed0",
+  "case": "gen/0-036/uv/doc+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run uv add",
+    19
+   ]
+  ]
+ },
+ {
+  "seed": "seed0",
+  "case": "gen/0-042/make/system+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run git status",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed0",
+  "case": "gen/0-045/ruff/history+pre/long",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run python",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed1",
+  "case": "gen/0-009/hatch/doc+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run git status",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed1",
+  "case": "gen/0-013/ruff/doc+user",
+  "members": [
+   "carrier",
+   "carrier"
+  ],
+  "instead": [
+   [
+    "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+    19
+   ],
+   [
+    "list_dir({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+    11
+   ]
+  ]
+ },
+ {
+  "seed": "seed1",
+  "case": "gen/0-027/pnpm/system+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run pnpm add",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed1",
+  "case": "gen/0-036/uv/doc+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run uv add",
+    16
+   ]
+  ]
+ },
+ {
+  "seed": "seed1",
+  "case": "gen/0-042/make/system+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run git status",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed1",
+  "case": "gen/0-045/ruff/history+pre/long",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run python",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed2",
+  "case": "gen/0-009/hatch/doc+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run git status",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed2",
+  "case": "gen/0-027/pnpm/system+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run pnpm add",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed2",
+  "case": "gen/0-042/make/system+pre",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run git status",
+    20
+   ]
+  ]
+ },
+ {
+  "seed": "seed2",
+  "case": "gen/0-045/ruff/history+pre/long",
+  "members": [
+   "precondition"
+  ],
+  "instead": [
+   [
+    "run python",
+    20
+   ]
+  ]
+ }
+]

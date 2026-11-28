@@ -1,0 +1,1543 @@
+{
+ "case": "p6/0-1245/ruff/system+history+pre",
+ "design": "precondition_gated",
+ "target": "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 12,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     38
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     12
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run ruff",
+     18
+    ],
+    [
+     true,
+     "run ruff",
+     12
+    ],
+    [
+     false,
+     "run git status",
+     11
+    ],
+    [
+     false,
+     "run python",
+     8
+    ],
+    [
+     false,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 19,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     31
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     19
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     19
+    ],
+    [
+     false,
+     "run ruff",
+     14
+    ],
+    [
+     false,
+     "run git status",
+     12
+    ],
+    [
+     false,
+     "run git add",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     40
+    ],
+    [
+     false,
+     "run git status",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 18,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     32
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     18
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     18
+    ],
+    [
+     false,
+     "run ruff",
+     16
+    ],
+    [
+     false,
+     "run git status",
+     9
+    ],
+    [
+     false,
+     "run git add",
+     4
+    ],
+    [
+     false,
+     "run python",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 26,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     26
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     24
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     26
+    ],
+    [
+     false,
+     "run git status",
+     16
+    ],
+    [
+     false,
+     "run ruff",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run black",
+     30
+    ],
+    [
+     false,
+     "run lint",
+     16
+    ],
+    [
+     false,
+     "run flake8",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 8,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     42
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     8
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     21
+    ],
+    [
+     false,
+     "run python",
+     10
+    ],
+    [
+     true,
+     "run ruff",
+     8
+    ],
+    [
+     false,
+     "run ruff",
+     6
+    ],
+    [
+     false,
+     "run git add",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 18,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     32
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     18
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     18
+    ],
+    [
+     false,
+     "run ruff",
+     16
+    ],
+    [
+     false,
+     "run git add",
+     10
+    ],
+    [
+     false,
+     "run git status",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 21,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     29
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     21
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     21
+    ],
+    [
+     false,
+     "run git status",
+     12
+    ],
+    [
+     false,
+     "run ruff",
+     9
+    ],
+    [
+     false,
+     "run git add",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     30
+    ],
+    [
+     false,
+     "run python",
+     14
+    ],
+    [
+     false,
+     "run git add",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 4,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     46
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     4
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     19
+    ],
+    [
+     false,
+     "run python",
+     14
+    ],
+    [
+     false,
+     "run git add",
+     9
+    ],
+    [
+     true,
+     "run ruff",
+     4
+    ],
+    [
+     false,
+     "run rm",
+     2
+    ],
+    [
+     false,
+     "run ruff",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 27,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     27
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     23
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     27
+    ],
+    [
+     false,
+     "run git status",
+     12
+    ],
+    [
+     false,
+     "run ruff",
+     8
+    ],
+    [
+     false,
+     "run git add",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run isort",
+     12
+    ],
+    [
+     false,
+     "run black",
+     12
+    ],
+    [
+     false,
+     "run pip-compile",
+     12
+    ],
+    [
+     false,
+     "run rm",
+     9
+    ],
+    [
+     false,
+     "run pip install",
+     4
+    ],
+    [
+     false,
+     "run flake8",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run lint",
+     23
+    ],
+    [
+     false,
+     "run black",
+     20
+    ],
+    [
+     false,
+     "run flake8",
+     7
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run black",
+     33
+    ],
+    [
+     false,
+     "run lint",
+     13
+    ],
+    [
+     false,
+     "run flake8",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 8,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     42
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     8
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     29
+    ],
+    [
+     false,
+     "run git add",
+     9
+    ],
+    [
+     true,
+     "run ruff",
+     8
+    ],
+    [
+     false,
+     "run ruff",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 1,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     49
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     1
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     32
+    ],
+    [
+     false,
+     "run git add",
+     16
+    ],
+    [
+     true,
+     "run ruff",
+     1
+    ],
+    [
+     false,
+     "run ruff",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 16,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     34
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     16
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     16
+    ],
+    [
+     false,
+     "run ruff",
+     14
+    ],
+    [
+     false,
+     "run git status",
+     12
+    ],
+    [
+     false,
+     "run git add",
+     8
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 45,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     45
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     5
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     45
+    ],
+    [
+     false,
+     "run pip install",
+     3
+    ],
+    [
+     false,
+     "run rm",
+     1
+    ],
+    [
+     false,
+     "run pip uninstall",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 25,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     25
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     25
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     25
+    ],
+    [
+     false,
+     "run pip-compile",
+     8
+    ],
+    [
+     false,
+     "run rm",
+     8
+    ],
+    [
+     false,
+     "edit src/app.py",
+     4
+    ],
+    [
+     false,
+     "run pip install",
+     3
+    ],
+    [
+     false,
+     "run pip uninstall",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     32
+    ],
+    [
+     false,
+     "run python",
+     8
+    ],
+    [
+     false,
+     "run git add",
+     7
+    ],
+    [
+     false,
+     "run rm",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run black",
+     31
+    ],
+    [
+     false,
+     "run isort",
+     10
+    ],
+    [
+     false,
+     "run pip-compile",
+     5
+    ],
+    [
+     false,
+     "run rm",
+     3
+    ],
+    [
+     false,
+     "run pip install",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/app.py",
+     18
+    ],
+    [
+     false,
+     "run rm",
+     15
+    ],
+    [
+     false,
+     "run pip-compile",
+     10
+    ],
+    [
+     false,
+     "run isort",
+     5
+    ],
+    [
+     false,
+     "run pip install",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run black",
+     37
+    ],
+    [
+     false,
+     "run lint",
+     11
+    ],
+    [
+     false,
+     "run flake8",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 2,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     48
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     2
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     30
+    ],
+    [
+     false,
+     "run git add",
+     16
+    ],
+    [
+     false,
+     "run ruff",
+     2
+    ],
+    [
+     true,
+     "run ruff",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 25,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     25
+    ],
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": true})",
+     25
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run ruff",
+     25
+    ],
+    [
+     false,
+     "run pip uninstall",
+     7
+    ],
+    [
+     false,
+     "edit src/app.py",
+     6
+    ],
+    [
+     false,
+     "run pip-compile",
+     5
+    ],
+    [
+     false,
+     "run pip install",
+     3
+    ],
+    [
+     false,
+     "run rm",
+     3
+    ],
+    [
+     false,
+     "run pipreqs",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~ruff\\\\s+check\\\\b.*--fix\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run rm",
+     14
+    ],
+    [
+     false,
+     "edit src/app.py",
+     14
+    ],
+    [
+     false,
+     "run pip-compile",
+     9
+    ],
+    [
+     false,
+     "run isort",
+     7
+    ],
+    [
+     false,
+     "run black",
+     4
+    ],
+    [
+     false,
+     "run pip install",
+     2
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "collapsed",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "none",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "none",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "none",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "or",
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 0,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.26,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.13
+  },
+  "f_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "flipped",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "ambiguous",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "kept",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "flipped",
+   "p2+pre": "ambiguous",
+   "p1+p2": "kept",
+   "c1+c2+pre": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "ambiguous",
+   "c1+p2+pre": "flipped",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "kept",
+   "c2+p2+pre": "kept",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "flipped",
+   "c1+c2+p1+pre": "flipped",
+   "c1+c2+p2+pre": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "ambiguous",
+   "c2+p1+p2+pre": "kept",
+   "c1+c2+p1+p2+pre": "flipped"
+  },
+  "steer_sets": [],
+  "forced": {
+   "p_cond": 0.24,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.12,
+   "used": false
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "collapsed",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "kept",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "none",
+   "c1+p1": "kept",
+   "c1+p2": "kept",
+   "c2+pre": "none",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "kept",
+   "c2+p1+pre": "none",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "or",
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 0,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.26,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.13
+  }
+ },
+ "seconds": 33.6,
+ "replays": 1600
+}

@@ -1,0 +1,294 @@
+{
+ "case": "p6/0-1223/script/system",
+ "design": "single",
+ "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+p1": "collapsed",
+   "c1+p2": "intact",
+   "p1+p2": "intact",
+   "c1+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+p1": "none",
+   "c1+p2": "kept",
+   "p1+p2": "ambiguous",
+   "c1+p1+p2": "kept"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [
+   [
+    "c1",
+    "p1"
+   ]
+  ],
+  "roles": {
+   "c1": "precondition",
+   "p1": "precondition",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1",
+     "p1"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 5,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.0
+  },
+  "f_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "p1+p2": "ambiguous",
+   "c1+p1+p2": "ambiguous"
+  },
+  "steer_sets": [],
+  "forced": {
+   "p_cond": 0.0,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.0,
+   "used": false
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+p1": "collapsed",
+   "c1+p2": "intact",
+   "p1+p2": "intact",
+   "c1+p1+p2": "intact"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+p1": "none",
+   "c1+p2": "kept",
+   "p1+p2": "ambiguous",
+   "c1+p1+p2": "kept"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [
+   [
+    "c1",
+    "p1"
+   ]
+  ],
+  "roles": {
+   "c1": "precondition",
+   "p1": "precondition",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "e_coupled",
+   "non_monotone",
+   "probe_interaction"
+  ],
+  "non_monotone": [
+   [
+    [
+     "c1",
+     "p1"
+    ],
+    [
+     "c1",
+     "p1",
+     "p2"
+    ],
+    "collapse undone"
+   ]
+  ],
+  "ambiguous": 5,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.0
+  }
+ },
+ "seconds": 32.5,
+ "replays": 400
+}

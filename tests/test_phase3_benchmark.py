@@ -102,3 +102,25 @@ def test_phase3_benchmark_end_to_end_all_four_methods(tmp_path, monkeypatch):
     assert by_key[("p3/negative_habit_only", "self_explain")]["neg_correct"] is False
     assert by_key[("p3/negative_habit_only", "ctxblame")]["neg_correct"] is True
     assert "## Summary by Method" in md and "| ctxblame |" in md
+
+
+def test_rescore_sets_forced_causes_aside_for_the_v02_labels(tmp_path):
+    sys.path.insert(0, str(REPO / "experiments" / "phase5"))
+    from rescore_forced import main as rescore
+    case = next(c for c in all_cases("all") if c.preconditions and c.carriers)
+    spec = lambda x: {"id": x, "text": ""} if x.startswith("pair:") else {"id": "c", "text": x}  # noqa: E731
+    carrier, pre = spec(case.carriers[0]), spec(case.preconditions[0])
+    rep = {"result": "causes", "preconditions": [{"members": [pre]}],
+           "causes": [{"members": [carrier]}, {"members": [pre], "forced": True,
+                                               "together": {"dist": [["run git status", 12]]}}]}
+    (tmp_path / "seed0").mkdir()
+    (tmp_path / "seed0" / "benchmark.json").write_text(json.dumps(
+        [{"case": case.name, "category": case.category, "method": "ctxblame",
+          "score": benchmark.score_report(case, rep), "report": rep}]))
+    assert benchmark.score_report(case, rep)["precond_fp"] is True  # as run: the forced claim counts
+    assert rescore([str(tmp_path)]) == 0
+    row = json.loads((tmp_path / "forced_set_aside" / "seed0" / "benchmark.json").read_text())[0]
+    assert row["score"]["precond_fp"] is False and len(row["report"]["causes"]) == 1
+    claims = json.loads((tmp_path / "forced_set_aside" / "forced_claims.json").read_text())
+    assert claims == [{"seed": "seed0", "case": case.name, "members": ["precondition"],
+                       "instead": [["run git status", 12]]}]

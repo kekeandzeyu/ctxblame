@@ -1,0 +1,1459 @@
+{
+ "case": "p6/0-1055/script/system+doc+pre",
+ "design": "precondition_gated",
+ "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 5,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     45
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     5
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     23
+    ],
+    [
+     false,
+     "run git add",
+     19
+    ],
+    [
+     true,
+     "run git add",
+     5
+    ],
+    [
+     false,
+     "run git diff",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     36
+    ],
+    [
+     false,
+     "run git add",
+     10
+    ],
+    [
+     false,
+     "run git diff",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 11,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     39
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     11
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     23
+    ],
+    [
+     false,
+     "run git add",
+     16
+    ],
+    [
+     true,
+     "run git add",
+     11
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 1,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     49
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     1
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     45
+    ],
+    [
+     false,
+     "run git add",
+     4
+    ],
+    [
+     true,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 6,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     44
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     6
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     31
+    ],
+    [
+     false,
+     "run git add",
+     8
+    ],
+    [
+     true,
+     "run git add",
+     6
+    ],
+    [
+     false,
+     "run git diff",
+     5
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     47
+    ],
+    [
+     false,
+     "run git add",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     30
+    ],
+    [
+     false,
+     "run git status",
+     10
+    ],
+    [
+     false,
+     "run git diff",
+     7
+    ],
+    [
+     false,
+     "run git add",
+     2
+    ],
+    [
+     false,
+     "run git commit",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     36
+    ],
+    [
+     false,
+     "run git diff",
+     10
+    ],
+    [
+     false,
+     "run git add",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     39
+    ],
+    [
+     false,
+     "run git add",
+     7
+    ],
+    [
+     false,
+     "run git diff",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     39
+    ],
+    [
+     false,
+     "run git status",
+     4
+    ],
+    [
+     false,
+     "run edit",
+     2
+    ],
+    [
+     false,
+     "run git add",
+     2
+    ],
+    [
+     false,
+     "run git commit",
+     2
+    ],
+    [
+     false,
+     "run edit_file",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 3,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     47
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     3
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     35
+    ],
+    [
+     false,
+     "run git add",
+     8
+    ],
+    [
+     false,
+     "run git diff",
+     4
+    ],
+    [
+     true,
+     "run git add",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 6,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     44
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     6
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     23
+    ],
+    [
+     false,
+     "run git add",
+     14
+    ],
+    [
+     false,
+     "run git diff",
+     7
+    ],
+    [
+     true,
+     "run git add",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     48
+    ],
+    [
+     false,
+     "run git add",
+     1
+    ],
+    [
+     false,
+     "run git status",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 2,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     48
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     2
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     40
+    ],
+    [
+     false,
+     "run git add",
+     8
+    ],
+    [
+     true,
+     "run git add",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     30
+    ],
+    [
+     false,
+     "run git diff",
+     8
+    ],
+    [
+     false,
+     "edit src/config.py",
+     6
+    ],
+    [
+     false,
+     "run git add",
+     3
+    ],
+    [
+     false,
+     "run git config",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     45
+    ],
+    [
+     false,
+     "run git add",
+     3
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     38
+    ],
+    [
+     false,
+     "run git status",
+     8
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ],
+    [
+     false,
+     "run git commit",
+     1
+    ],
+    [
+     false,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     40
+    ],
+    [
+     false,
+     "run git status",
+     6
+    ],
+    [
+     false,
+     "run git add",
+     2
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     41
+    ],
+    [
+     false,
+     "run git add",
+     9
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     44
+    ],
+    [
+     false,
+     "run git status",
+     3
+    ],
+    [
+     false,
+     "run edit",
+     1
+    ],
+    [
+     false,
+     "run git commit",
+     1
+    ],
+    [
+     false,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     45
+    ],
+    [
+     false,
+     "run git commit",
+     3
+    ],
+    [
+     false,
+     "run git status",
+     1
+    ],
+    [
+     false,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 3,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     47
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     3
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     34
+    ],
+    [
+     false,
+     "run git add",
+     12
+    ],
+    [
+     true,
+     "run git add",
+     3
+    ],
+    [
+     false,
+     "run git diff",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     47
+    ],
+    [
+     false,
+     "run git add",
+     1
+    ],
+    [
+     false,
+     "run git status",
+     1
+    ],
+    [
+     false,
+     "run git diff",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     23
+    ],
+    [
+     false,
+     "edit src/config.py",
+     16
+    ],
+    [
+     false,
+     "run git add",
+     8
+    ],
+    [
+     false,
+     "run git config",
+     2
+    ],
+    [
+     false,
+     "run git diff",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     26
+    ],
+    [
+     false,
+     "edit src/config.py",
+     14
+    ],
+    [
+     false,
+     "run git diff",
+     4
+    ],
+    [
+     false,
+     "run git config",
+     3
+    ],
+    [
+     false,
+     "run git add",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     44
+    ],
+    [
+     false,
+     "run git add",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     32
+    ],
+    [
+     false,
+     "run git status",
+     14
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ],
+    [
+     false,
+     "run git add",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "edit src/config.py",
+     42
+    ],
+    [
+     false,
+     "run git add",
+     4
+    ],
+    [
+     false,
+     "run git status",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     36
+    ],
+    [
+     false,
+     "edit src/config.py",
+     8
+    ],
+    [
+     false,
+     "run git add",
+     3
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ],
+    [
+     false,
+     "run git config",
+     1
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "collapsed",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+c2": "ambiguous",
+   "c1+pre": "none",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "c2+pre": "none",
+   "c2+p1": "ambiguous",
+   "c2+p2": "ambiguous",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "ambiguous",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "ambiguous",
+   "c1+c2+p2": "ambiguous",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "ambiguous",
+   "c2+p1+pre": "none",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "ambiguous",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "ambiguous",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "neutral",
+   "c2": "neutral",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 15,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.14,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.07
+  },
+  "f_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "c2": "kept",
+   "pre": "ambiguous",
+   "p1": "ambiguous",
+   "p2": "kept",
+   "c1+c2": "ambiguous",
+   "c1+pre": "ambiguous",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "c2+pre": "ambiguous",
+   "c2+p1": "ambiguous",
+   "c2+p2": "kept",
+   "p1+pre": "ambiguous",
+   "p2+pre": "ambiguous",
+   "p1+p2": "ambiguous",
+   "c1+c2+pre": "ambiguous",
+   "c1+c2+p1": "ambiguous",
+   "c1+c2+p2": "ambiguous",
+   "c1+p1+pre": "ambiguous",
+   "c1+p2+pre": "ambiguous",
+   "c1+p1+p2": "ambiguous",
+   "c2+p1+pre": "ambiguous",
+   "c2+p2+pre": "ambiguous",
+   "c2+p1+p2": "ambiguous",
+   "p1+p2+pre": "ambiguous",
+   "c1+c2+p1+pre": "ambiguous",
+   "c1+c2+p2+pre": "ambiguous",
+   "c1+c2+p1+p2": "ambiguous",
+   "c1+p1+p2+pre": "ambiguous",
+   "c2+p1+p2+pre": "ambiguous",
+   "c1+c2+p1+p2+pre": "ambiguous"
+  },
+  "steer_sets": [],
+  "forced": {
+   "p_cond": 0.1,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.05,
+   "used": false
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "collapsed",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+c2": "ambiguous",
+   "c1+pre": "none",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "c2+pre": "none",
+   "c2+p1": "ambiguous",
+   "c2+p2": "ambiguous",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "ambiguous",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "ambiguous",
+   "c1+c2+p2": "ambiguous",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "ambiguous",
+   "c2+p1+pre": "none",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "ambiguous",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "ambiguous",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "neutral",
+   "c2": "neutral",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 15,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.14,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.07
+  }
+ },
+ "seconds": 63.2,
+ "replays": 1600
+}

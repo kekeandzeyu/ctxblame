@@ -173,3 +173,70 @@ def test_why_given_none_preserves_unconditional_behavior(tmp_path, monkeypatch):
     assert rep["preconditions"] == []
     # Without conditioning, unconditional ddmin locks onto edit_file (pair:call_2)
     assert [m["id"] for m in rep["causes"][0]["members"]] == ["pair:call_2"]
+
+
+def _make_pnpm_model():
+    """p3/precond_2or_pnpm as measured on Qwen3-14B (Phase 5.6): without the package.json
+    edit the agent redoes the edit, and if it is made to run bash anyway (tool_choice) it
+    runs `pnpm add zod` instead of `pnpm install`; the pnpm rule picks pnpm over npm."""
+    async def handler(request):
+        body = await request.json()
+        raw = json.dumps(body)
+        forced = (body.get("tool_choice") or {}).get("function", {}).get("name") == "bash"
+        if "edited package.json" not in raw and not forced:
+            resp = openai_resp("edit_file", "")
+            resp["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"] = json.dumps(
+                {"path": "package.json"})
+        else:
+            pm = "pnpm" if "Always install dependencies with pnpm" in raw else "npm"
+            cmd = f"{pm} install --frozen-lockfile" if "edited package.json" in raw else f"{pm} add zod"
+            resp = openai_resp("bash", cmd)
+        resp["model"] = body["model"]
+        return web.json_response(resp)
+    app = web.Application()
+    app.router.add_post("/v1/chat/completions", handler)
+    return app
+
+
+def test_why_forces_E_and_reports_a_precondition_that_also_steers(tmp_path, monkeypatch, capsys):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    tools = [{"type": "function", "function": {"name": n, "description": d, "parameters": {"type": "object"}}}
+             for n, d in (("bash", "Run one shell command."), ("edit_file", "Edit a file."))]
+    body = {"model": "m", "tools": tools, "messages": [
+        {"role": "system", "content": "You are a coding agent.\n\n## Rules\n- Keep diffs small.\n"
+                                      "- Always install dependencies with pnpm; never npm.\n"},
+        {"role": "user", "content": "Add zod to package.json and install dependencies."},
+        {"role": "assistant", "content": None, "tool_calls": [
+            {"id": "call_edit", "type": "function",
+             "function": {"name": "edit_file", "arguments": json.dumps({"path": "package.json"})}}]},
+        {"role": "tool", "tool_call_id": "call_edit", "content": "edited package.json"}]}
+    with ServerThread(_make_pnpm_model()) as base:
+        rec = {"format": "openai", "upstream": base + "/v1",
+               "request": {"path": "/chat/completions", "headers": {}, "body": body},
+               "response": {"streamed": False, "body": openai_resp("bash", "pnpm install --frozen-lockfile")}}
+        p = tmp_path / "pnpm.json"
+        p.write_text(json.dumps(rec))
+        args = ["why", str(p), "--key-arg", r"command~^pnpm install", "--given", "bash", "--free",
+                "--controls", "0", "--ledger", str(tmp_path / "spend.jsonl"), "--out", str(tmp_path / "runs")]
+        rc = cli.main(args)
+        out = capsys.readouterr().out
+        assert rc == 0, out
+        rep = json.loads(next((tmp_path / "runs").glob("*.why.json")).read_text())
+        assert rep["forcing"]["tool"] == "bash" and rep["forcing"]["threshold"] == 0.5
+        pre = rep["preconditions"][0]
+        assert [m["id"] for m in pre["members"]] == ["pair:call_edit"] and pre["steers"] is True
+        forced = [c for c in rep["causes"] if c["forced"]]
+        assert [[m["id"] for m in c["members"]] for c in forced] == [["pair:call_edit"]]
+        assert forced[0]["certified"] is True and forced[0]["audit"]["together"]["k"] == 0
+        assert "triggers and steers" in out and "with bash forced" in out
+        # what the forced replies did instead: another step (pnpm add), not another package manager
+        assert "instead: run pnpm add" in out and pre["steer_test"]["dist"][0][0] == "run pnpm add"
+        # the rule is an ordinary choice carrier (pnpm vs npm), unforced
+        plain = [m["id"] for c in rep["causes"] if not c["forced"] for m in c["members"]]
+        assert any(i.startswith("sys@msg0.") for i in plain)
+        # --no-force: the v0.2.1 report, the edit only a precondition
+        rc = cli.main(args + ["--no-force", "--out", str(tmp_path / "runs2")])
+        capsys.readouterr()
+        rep2 = json.loads(next((tmp_path / "runs2").glob("*.why.json")).read_text())
+        assert rc == 0 and rep2["preconditions"][0]["steers"] is None
+        assert not any(c["forced"] for c in rep2["causes"]) and rep2["forcing"]["unavailable"] == "--no-force"

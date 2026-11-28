@@ -1,0 +1,684 @@
+{
+ "case": "p6/0-1151/script/tooldesc+pre",
+ "design": "precondition_gated",
+ "target": "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 2,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     48
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     2
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run echo",
+     37
+    ],
+    [
+     false,
+     "run venv",
+     4
+    ],
+    [
+     false,
+     "run python",
+     3
+    ],
+    [
+     true,
+     "run ci.sh",
+     2
+    ],
+    [
+     false,
+     "run doctest",
+     2
+    ],
+    [
+     false,
+     "run pydoc",
+     1
+    ],
+    [
+     false,
+     "run py_compile",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     34
+    ],
+    [
+     false,
+     "run echo",
+     10
+    ],
+    [
+     false,
+     "run venv",
+     6
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 2,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     48
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     2
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run echo",
+     46
+    ],
+    [
+     true,
+     "run ci.sh",
+     2
+    ],
+    [
+     false,
+     "run venv",
+     1
+    ],
+    [
+     false,
+     "run python",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 1,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     49
+    ],
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": true})",
+     1
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run echo",
+     47
+    ],
+    [
+     false,
+     "run python",
+     2
+    ],
+    [
+     true,
+     "run ci.sh",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run echo",
+     26
+    ],
+    [
+     false,
+     "run python",
+     14
+    ],
+    [
+     false,
+     "run venv",
+     10
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     18
+    ],
+    [
+     false,
+     "run echo",
+     17
+    ],
+    [
+     false,
+     "run venv",
+     12
+    ],
+    [
+     false,
+     "run doctest",
+     2
+    ],
+    [
+     false,
+     "run config",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run echo",
+     48
+    ],
+    [
+     false,
+     "run venv",
+     1
+    ],
+    [
+     false,
+     "run doctest",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~scripts/ci\\\\.sh\\\\b.*--quick\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     18
+    ],
+    [
+     false,
+     "run echo",
+     17
+    ],
+    [
+     false,
+     "run venv",
+     13
+    ],
+    [
+     false,
+     "run doctest",
+     2
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "pre": "none",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+pre": "none",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "ambiguous",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "ambiguous",
+   "p1+p2+pre": "none",
+   "c1+p1+p2+pre": "none"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "neutral",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 8,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.0
+  },
+  "f_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "pre": "kept",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+pre": "ambiguous",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "p1+pre": "kept",
+   "p2+pre": "kept",
+   "p1+p2": "ambiguous",
+   "c1+p1+pre": "ambiguous",
+   "c1+p2+pre": "ambiguous",
+   "c1+p1+p2": "ambiguous",
+   "p1+p2+pre": "ambiguous",
+   "c1+p1+p2+pre": "ambiguous"
+  },
+  "steer_sets": [],
+  "forced": {
+   "p_cond": 0.0,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.0,
+   "used": false
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "ambiguous",
+   "c1": "ambiguous",
+   "pre": "none",
+   "p1": "ambiguous",
+   "p2": "ambiguous",
+   "c1+pre": "none",
+   "c1+p1": "ambiguous",
+   "c1+p2": "ambiguous",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "ambiguous",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "ambiguous",
+   "p1+p2+pre": "none",
+   "c1+p1+p2+pre": "none"
+  },
+  "carrier_sets": [],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "neutral",
+   "pre": "precondition",
+   "p1": "neutral",
+   "p2": "neutral"
+  },
+  "regimes": [
+   "precondition_gated"
+  ],
+  "non_monotone": [],
+  "ambiguous": 8,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.0,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.0
+  }
+ },
+ "seconds": 67.9,
+ "replays": 800
+}

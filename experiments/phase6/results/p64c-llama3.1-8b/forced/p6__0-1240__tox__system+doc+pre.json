@@ -1,0 +1,1622 @@
+{
+ "case": "p6/0-1240/tox/system+doc+pre",
+ "design": "precondition_gated",
+ "target": "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+ "given": "bash",
+ "n": 50,
+ "forced_cells": [
+  {
+   "removed": [],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run tox",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 16,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     34
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     16
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run tox",
+     16
+    ],
+    [
+     false,
+     "run git status",
+     15
+    ],
+    [
+     false,
+     "run python",
+     8
+    ],
+    [
+     false,
+     "run unittest",
+     6
+    ],
+    [
+     false,
+     "run make test",
+     3
+    ],
+    [
+     false,
+     "run tox",
+     1
+    ],
+    [
+     false,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run tox",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 1,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     49
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     1
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     30
+    ],
+    [
+     false,
+     "run git add",
+     10
+    ],
+    [
+     false,
+     "run git diff",
+     6
+    ],
+    [
+     false,
+     "run python",
+     3
+    ],
+    [
+     true,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run tox",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run tox",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     25
+    ],
+    [
+     false,
+     "run git status",
+     14
+    ],
+    [
+     false,
+     "run make test",
+     7
+    ],
+    [
+     false,
+     "run python",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     25
+    ],
+    [
+     false,
+     "run git diff",
+     9
+    ],
+    [
+     false,
+     "run git add",
+     6
+    ],
+    [
+     false,
+     "run python",
+     6
+    ],
+    [
+     false,
+     "run unittest",
+     3
+    ],
+    [
+     false,
+     "run pytest",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 4,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     46
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     4
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     17
+    ],
+    [
+     false,
+     "run python",
+     10
+    ],
+    [
+     false,
+     "run git status",
+     7
+    ],
+    [
+     false,
+     "run pytest",
+     6
+    ],
+    [
+     true,
+     "run tox",
+     4
+    ],
+    [
+     false,
+     "run tox",
+     4
+    ],
+    [
+     false,
+     "run make test",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 11,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     39
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     11
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     14
+    ],
+    [
+     true,
+     "run tox",
+     11
+    ],
+    [
+     false,
+     "run unittest",
+     10
+    ],
+    [
+     false,
+     "run git status",
+     7
+    ],
+    [
+     false,
+     "run make test",
+     6
+    ],
+    [
+     false,
+     "run tox",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 1,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     49
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     1
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     30
+    ],
+    [
+     false,
+     "run python",
+     10
+    ],
+    [
+     false,
+     "run pytest",
+     5
+    ],
+    [
+     false,
+     "run git add",
+     3
+    ],
+    [
+     false,
+     "run git diff",
+     1
+    ],
+    [
+     true,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run tox",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run tox",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 4,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     46
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     4
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     32
+    ],
+    [
+     false,
+     "run git add",
+     10
+    ],
+    [
+     true,
+     "run tox",
+     4
+    ],
+    [
+     false,
+     "run pytest",
+     2
+    ],
+    [
+     false,
+     "run python",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 2,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     48
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     2
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     26
+    ],
+    [
+     false,
+     "run git add",
+     13
+    ],
+    [
+     false,
+     "run git diff",
+     4
+    ],
+    [
+     false,
+     "run pytest",
+     3
+    ],
+    [
+     true,
+     "run git add",
+     2
+    ],
+    [
+     false,
+     "run python",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run tox",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     21
+    ],
+    [
+     false,
+     "run unittest",
+     14
+    ],
+    [
+     false,
+     "run git diff",
+     8
+    ],
+    [
+     false,
+     "run git add",
+     4
+    ],
+    [
+     false,
+     "run python",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     35
+    ],
+    [
+     false,
+     "run pytest",
+     12
+    ],
+    [
+     false,
+     "run make test",
+     2
+    ],
+    [
+     false,
+     "run python",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     34
+    ],
+    [
+     false,
+     "run make test",
+     7
+    ],
+    [
+     false,
+     "run git status",
+     5
+    ],
+    [
+     false,
+     "run python",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run python",
+     23
+    ],
+    [
+     false,
+     "run git status",
+     13
+    ],
+    [
+     false,
+     "run git add",
+     8
+    ],
+    [
+     false,
+     "run git diff",
+     3
+    ],
+    [
+     false,
+     "run unittest",
+     3
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     19
+    ],
+    [
+     false,
+     "run python",
+     12
+    ],
+    [
+     false,
+     "run git diff",
+     7
+    ],
+    [
+     false,
+     "run git add",
+     6
+    ],
+    [
+     false,
+     "run unittest",
+     4
+    ],
+    [
+     false,
+     "run pytest",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 4,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     46
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     4
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     22
+    ],
+    [
+     false,
+     "run python",
+     9
+    ],
+    [
+     false,
+     "run make test",
+     5
+    ],
+    [
+     false,
+     "run tox",
+     5
+    ],
+    [
+     true,
+     "run tox",
+     4
+    ],
+    [
+     false,
+     "run pytest",
+     3
+    ],
+    [
+     false,
+     "run git status",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 10,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     40
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     10
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     22
+    ],
+    [
+     true,
+     "run tox",
+     10
+    ],
+    [
+     false,
+     "run python",
+     8
+    ],
+    [
+     false,
+     "run git add",
+     6
+    ],
+    [
+     false,
+     "run pytest",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 6,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     44
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     6
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     27
+    ],
+    [
+     false,
+     "run git add",
+     10
+    ],
+    [
+     true,
+     "run tox",
+     5
+    ],
+    [
+     false,
+     "run git diff",
+     4
+    ],
+    [
+     false,
+     "run pytest",
+     2
+    ],
+    [
+     true,
+     "run git add",
+     1
+    ],
+    [
+     false,
+     "run python",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 50,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     true,
+     "run tox",
+     50
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 12,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     38
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     12
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     23
+    ],
+    [
+     false,
+     "run git add",
+     9
+    ],
+    [
+     true,
+     "run tox",
+     8
+    ],
+    [
+     false,
+     "run git diff",
+     6
+    ],
+    [
+     true,
+     "run git add",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     22
+    ],
+    [
+     false,
+     "run python",
+     16
+    ],
+    [
+     false,
+     "run git status",
+     10
+    ],
+    [
+     false,
+     "run git add",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     21
+    ],
+    [
+     false,
+     "run unittest",
+     15
+    ],
+    [
+     false,
+     "run python",
+     10
+    ],
+    [
+     false,
+     "run git add",
+     3
+    ],
+    [
+     false,
+     "run git diff",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     40
+    ],
+    [
+     false,
+     "run pytest",
+     6
+    ],
+    [
+     false,
+     "run make test",
+     4
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run git status",
+     23
+    ],
+    [
+     false,
+     "run python",
+     12
+    ],
+    [
+     false,
+     "run git add",
+     10
+    ],
+    [
+     false,
+     "run unittest",
+     3
+    ],
+    [
+     false,
+     "run git diff",
+     2
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 9,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     41
+    ],
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": true})",
+     9
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run pytest",
+     17
+    ],
+    [
+     false,
+     "run git status",
+     16
+    ],
+    [
+     true,
+     "run tox",
+     9
+    ],
+    [
+     false,
+     "run python",
+     7
+    ],
+    [
+     false,
+     "run git add",
+     1
+    ]
+   ]
+  },
+  {
+   "removed": [
+    "c1",
+    "c2",
+    "p1",
+    "p2",
+    "pre"
+   ],
+   "n": 50,
+   "k_given": 50,
+   "k": 0,
+   "errors": 0,
+   "dist": [
+    [
+     "bash({\"command~tox\\\\s+-e\\\\s*py312\": false})",
+     50
+    ]
+   ],
+   "replies": [
+    [
+     false,
+     "run unittest",
+     27
+    ],
+    [
+     false,
+     "run python",
+     13
+    ],
+    [
+     false,
+     "run git status",
+     7
+    ],
+    [
+     false,
+     "run git add",
+     2
+    ],
+    [
+     false,
+     "run git diff",
+     1
+    ]
+   ]
+  }
+ ],
+ "truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "collapsed",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "ambiguous",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "none",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "c2+pre": "none",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "flipped",
+   "c2+p1+pre": "none",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c2"
+   ],
+   [
+    "c1",
+    "p1"
+   ],
+   [
+    "c1",
+    "p2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "triggers_and_steers",
+   "p1": "carrier",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "mixed",
+   "e_coupled",
+   "probe_interaction"
+  ],
+  "non_monotone": [],
+  "ambiguous": 1,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.96,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.48
+  },
+  "f_state": {
+   "-": "kept",
+   "c1": "flipped",
+   "c2": "kept",
+   "pre": "flipped",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "flipped",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "c2+pre": "flipped",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "flipped",
+   "p2+pre": "flipped",
+   "p1+p2": "kept",
+   "c1+c2+pre": "flipped",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "flipped",
+   "c1+p2+pre": "flipped",
+   "c1+p1+p2": "flipped",
+   "c2+p1+pre": "flipped",
+   "c2+p2+pre": "flipped",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "flipped",
+   "c1+c2+p1+pre": "flipped",
+   "c1+c2+p2+pre": "flipped",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "flipped",
+   "c2+p1+p2+pre": "flipped",
+   "c1+c2+p1+p2+pre": "flipped"
+  },
+  "steer_sets": [
+   [
+    "c1"
+   ],
+   [
+    "pre"
+   ]
+  ],
+  "forced": {
+   "p_cond": 1.0,
+   "n_given": 50,
+   "n": 50,
+   "tau": 0.5,
+   "used": true
+  }
+ },
+ "unforced_truth": {
+  "elements": [
+   "c1",
+   "c2",
+   "pre",
+   "p1",
+   "p2"
+  ],
+  "kinds": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "probe",
+   "p2": "probe"
+  },
+  "e_state": {
+   "-": "intact",
+   "c1": "intact",
+   "c2": "intact",
+   "pre": "collapsed",
+   "p1": "intact",
+   "p2": "intact",
+   "c1+c2": "intact",
+   "c1+pre": "collapsed",
+   "c1+p1": "intact",
+   "c1+p2": "intact",
+   "c2+pre": "collapsed",
+   "c2+p1": "intact",
+   "c2+p2": "intact",
+   "p1+pre": "collapsed",
+   "p2+pre": "collapsed",
+   "p1+p2": "intact",
+   "c1+c2+pre": "collapsed",
+   "c1+c2+p1": "intact",
+   "c1+c2+p2": "intact",
+   "c1+p1+pre": "collapsed",
+   "c1+p2+pre": "collapsed",
+   "c1+p1+p2": "intact",
+   "c2+p1+pre": "collapsed",
+   "c2+p2+pre": "collapsed",
+   "c2+p1+p2": "intact",
+   "p1+p2+pre": "collapsed",
+   "c1+c2+p1+pre": "collapsed",
+   "c1+c2+p2+pre": "collapsed",
+   "c1+c2+p1+p2": "intact",
+   "c1+p1+p2+pre": "collapsed",
+   "c2+p1+p2+pre": "collapsed",
+   "c1+c2+p1+p2+pre": "collapsed"
+  },
+  "a_state": {
+   "-": "kept",
+   "c1": "ambiguous",
+   "c2": "kept",
+   "pre": "none",
+   "p1": "kept",
+   "p2": "kept",
+   "c1+c2": "flipped",
+   "c1+pre": "none",
+   "c1+p1": "flipped",
+   "c1+p2": "flipped",
+   "c2+pre": "none",
+   "c2+p1": "kept",
+   "c2+p2": "kept",
+   "p1+pre": "none",
+   "p2+pre": "none",
+   "p1+p2": "kept",
+   "c1+c2+pre": "none",
+   "c1+c2+p1": "flipped",
+   "c1+c2+p2": "flipped",
+   "c1+p1+pre": "none",
+   "c1+p2+pre": "none",
+   "c1+p1+p2": "flipped",
+   "c2+p1+pre": "none",
+   "c2+p2+pre": "none",
+   "c2+p1+p2": "kept",
+   "p1+p2+pre": "none",
+   "c1+c2+p1+pre": "none",
+   "c1+c2+p2+pre": "none",
+   "c1+c2+p1+p2": "flipped",
+   "c1+p1+p2+pre": "none",
+   "c2+p1+p2+pre": "none",
+   "c1+c2+p1+p2+pre": "none"
+  },
+  "carrier_sets": [
+   [
+    "c1",
+    "c2"
+   ],
+   [
+    "c1",
+    "p1"
+   ],
+   [
+    "c1",
+    "p2"
+   ]
+  ],
+  "precondition_sets": [
+   [
+    "pre"
+   ]
+  ],
+  "roles": {
+   "c1": "carrier",
+   "c2": "carrier",
+   "pre": "precondition",
+   "p1": "carrier",
+   "p2": "carrier"
+  },
+  "regimes": [
+   "mixed",
+   "precondition_gated",
+   "probe_interaction"
+  ],
+  "non_monotone": [],
+  "ambiguous": 1,
+  "base": {
+   "p_given": 1.0,
+   "p_cond": 0.96,
+   "n": 50,
+   "tau_e": 0.5,
+   "tau_a": 0.48
+  }
+ },
+ "seconds": 43.0,
+ "replays": 1600
+}

@@ -174,7 +174,7 @@ reports `diffuse_precondition` with the search continuing.
 - [x] **6.3 Settle the Llama question.** The neutral probes say directly whether
   Llama's neutral lines are real interactions (they appear in the table) or
   ctxblame false positives (they do not).
-- [ ] **6.4 E-coupled cases** (audit #4). Estimate the coupled effect with a
+- [x] **6.4 E-coupled cases** (audit #4). Estimate the coupled effect with a
   matched intervention: compare $P(A \mid do(E), do(\neg S))$ against the
   equally forced baseline $P(A \mid do(E))$ — never against unforced
   $P(A \mid E)$. `tool_choice` forces a tool name only, so this applies where
@@ -184,6 +184,35 @@ reports `diffuse_precondition` with the search continuing.
   `triggers_and_steers suspected` notes are the engine's first, conservative
   version: check them against the 6.1 tables, and add line-level stabilizing for
   the `run4/step21` tool description.
+  *Done except `run4/step21` (2026-11-28,
+  [experiments/phase6/README.md](../experiments/phase6/README.md#64-e-forced-by-tool_choice-2026-11-28)):*
+  - The 5.6 flags, checked against the tables, are unreliable: 9 of 23 planted
+    `coupled` members are table-neutral, and `triggers_and_steers suspected` never fired.
+  - Engine: a tool-level E is forced. Each precondition is classified as `steers`
+    (a forced cause, audited) or a pure precondition. `coupled` members get a
+    forced restore test, and a bundle that loses them is audited as a forced
+    claim. Stabilizers get a forced line search. Reports say what replaces A.
+  - Truth: forced tables of the gated cases, run twice (roles agree in 99%), with
+    choice sets read with E forced.
+  - Planted edit preconditions often do steer A, mostly by moving the model to
+    another step (`git status` instead of `make check`). That is a flip of A among
+    `bash` calls, the same estimand as the carrier truth.
+  - ctxblame, 3 seeds × 250 cases, paired against the 5.6 engine on the same
+    truth: `e_coupled` F1 +8.7 pp [+2.6, +15.0] (Qwen, 53% → 62%) and
+    +10.2 pp [+5.0, +15.7] (Llama, 46% → 56%). Oracle-valid +2.2 / +3.2 pp
+    (both intervals above 0); negatives unchanged.
+  - The choice-set rule was found after the first scoring, so the as-run truth is
+    reported too. There, Qwen's `e_coupled` gain is +5.0 pp [−0.8, +10.4].
+  - Null simulation v4: the boundary steering null gives 0.2% false claims at
+    100% power, and the forced coupled boundary 3.8% (≤ α).
+  - `v0.2` cases with forcing on (Qwen, 3 seeds): real 92% [77, 100], as before (E is
+    intent-level there, so nothing is forced). Generated 92% [85, 97], within the
+    `v0.2` interval: 14 planted edits are now reported as forced causes, which the
+    v0.2 oracle counts as preconditions blamed. With forced causes set aside it is
+    95%, as `p5d`.
+  - Open: `run4/step21` still reports only preconditions. Its E is intent-level
+    (`run pytest`), so it cannot be forced: that needs an intent-level matched
+    intervention, which `tool_choice` cannot express.
 
 **Gate:** ≥ 200 labelled cases on ≥ 2 models; ctxblame scored on all of them
 (per regime), with the oracle-dropped subset reported separately for comparison
@@ -195,7 +224,7 @@ with `v0.2`.
 - Oracle-dropped F1 is 71% / 44%.
 - 6.3: Llama's neutral lines are real interactions. A probe is a carrier in 14%
   of cases, and ctxblame blames table-neutral probes in 1% of rows.
-- 6.4's engine side stays open. Qwen has 50 `e_coupled` cases, and F1 there is 46%.
+- 6.4 (done, above): `e_coupled` F1 rises to 62% (Qwen) and 56% (Llama).
 
 ### Phase 7 — Steelmanned baselines and theory ($0)
 

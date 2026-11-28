@@ -1,0 +1,189 @@
+{
+ "b": 0.9,
+ "tau": 0.45,
+ "seed": 0,
+ "results": [
+  {
+   "scenario": "tas_power",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": 1.0,
+   "replays_mean": 120.34
+  },
+  {
+   "scenario": "tas_power",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": 0.998,
+   "replays_mean": 160.34
+  },
+  {
+   "scenario": "pure_precondition",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": null,
+   "replays_mean": 107.07
+  },
+  {
+   "scenario": "pure_precondition",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": null,
+   "replays_mean": 127.07
+  },
+  {
+   "scenario": "boundary_tas",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.032,
+   "fwer_ci": [
+    0.01979134135128301,
+    0.05134530159364255
+   ],
+   "power": null,
+   "replays_mean": 122.24
+  },
+  {
+   "scenario": "boundary_tas",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.002,
+   "fwer_ci": [
+    0.000353127309584542,
+    0.011240992747195207
+   ],
+   "power": null,
+   "replays_mean": 142.88
+  },
+  {
+   "scenario": "coupled_power",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": 1.0,
+   "replays_mean": 90.37
+  },
+  {
+   "scenario": "coupled_power",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": 0.974,
+   "replays_mean": 209.85
+  },
+  {
+   "scenario": "coupled_forced",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": 1.0,
+   "replays_mean": 90.37
+  },
+  {
+   "scenario": "coupled_forced",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.0,
+   "fwer_ci": [
+    0.0,
+    0.007624618530903363
+   ],
+   "power": 0.97,
+   "replays_mean": 244.29
+  },
+  {
+   "scenario": "boundary_coupled",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.982,
+   "fwer_ci": [
+    0.9661479527879661,
+    0.9905019149482431
+   ],
+   "power": null,
+   "replays_mean": 186.79
+  },
+  {
+   "scenario": "boundary_coupled",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.038,
+   "fwer_ci": [
+    0.024459922123289107,
+    0.0585852253992656
+   ],
+   "power": null,
+   "replays_mean": 333.67
+  },
+  {
+   "scenario": "boundary_coupled_forced",
+   "audit_n": 0,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.982,
+   "fwer_ci": [
+    0.9661479527879661,
+    0.9905019149482431
+   ],
+   "power": null,
+   "replays_mean": 186.79
+  },
+  {
+   "scenario": "boundary_coupled_forced",
+   "audit_n": 20,
+   "alpha": 0.05,
+   "runs": 500,
+   "fwer": 0.038,
+   "fwer_ci": [
+    0.024459922123289107,
+    0.0585852253992656
+   ],
+   "power": null,
+   "replays_mean": 335.31
+  }
+ ]
+}
