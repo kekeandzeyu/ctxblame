@@ -21,6 +21,18 @@ Scenarios (baseline rate b, search threshold tau = b/2):
                    is false; power = reporting exactly {X}. Models the GPU-run
                    failure where a bundle {carrier, hitchhiker} was rejected whole.
 
+Scenarios with an action family E (conditional blame, P(E) at baseline 0.95, E
+threshold 0.475; E = calling bash, the choice = its flag):
+
+  coupled_power    p0/tool_result_sentence_config: X and Y are an OR bundle for the
+                   choice (removing both: 0.05 given E), but removing Y while X stays
+                   stops E (0.05). Keeping X alone stops E, so X's restoration is
+                   untestable. Power = reporting exactly {X, Y}.
+  boundary_coupled removing X, Y, Z flips (0.05 given E); removing X, Y with Z kept
+                   puts both P(E) and P(A | E) exactly on their thresholds, so "Z
+                   restores" and "Z is coupled" are both true nulls on the boundary,
+                   and so is "removing X, Y flips". Every reported cause is false.
+
 Usage:
   uv run python experiments/phase5/null_sim.py --runs 500 --out experiments/phase5/results/<tag>/null_sim.json
 """
@@ -39,6 +51,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
 from ctxblame.blame import Cause, Tester, chunk_request, search  # noqa: E402
+from ctxblame.formats import ToolCall  # noqa: E402
 from ctxblame.match import Matcher  # noqa: E402
 from ctxblame.pricing import Ledger  # noqa: E402
 from ctxblame.replay import Sample, wilson  # noqa: E402
@@ -46,6 +59,9 @@ from ctxblame.trace import Step  # noqa: E402
 
 B = 0.9
 TAU = B / 2
+BE = 0.95  # P(E) at baseline in the conditional scenarios
+TAU_E = BE / 2
+GIVEN = ("coupled_power", "boundary_coupled")
 LINES = [f"Rule {c}: follow convention {c}." for c in "ABCDEFGH"]  # X = A, Y = B, Z = C
 
 
@@ -62,6 +78,15 @@ def _rate_fn(scenario: str):
             return 0.05 if {"A", "B"} <= gone else B
         if scenario == "hitchhiker":
             return 0.05 if "A" in gone else 0.5 if "B" in gone else B
+        # conditional scenarios: (P(E), P(A | E))
+        if scenario == "coupled_power":
+            if {"A", "B"} <= gone:
+                return BE, 0.05
+            return (0.05, B) if "B" in gone else (BE, B)
+        if scenario == "boundary_coupled":
+            if {"A", "B", "C"} <= gone:
+                return BE, 0.05
+            return (TAU_E, TAU) if {"A", "B"} <= gone else (BE, B)
         raise ValueError(scenario)
     return rate
 
@@ -79,6 +104,10 @@ def _step() -> Step:
                         "usage": {"prompt_tokens": 100, "completion_tokens": 10}}}})
 
 
+EXACT = Matcher("exact")
+TARGET = EXACT._one(ToolCall("bash", {"flag": "x"}))
+
+
 class _SimReplayer:
     def __init__(self, rate, rng: random.Random) -> None:
         self.rate, self.rng = rate, rng
@@ -89,6 +118,14 @@ class _SimReplayer:
         p = self.rate(present)
         out = []
         for _ in range(n):
+            if isinstance(p, tuple):  # E = calls bash; the choice = its flag
+                if self.rng.random() < p[0]:
+                    call = {"name": "bash", "args": {"flag": "x" if self.rng.random() < p[1] else "y"}}
+                else:
+                    call = {"name": "read", "args": {}}
+                k = EXACT._one(ToolCall(call["name"], call["args"]))
+                out.append(Sample(ok=True, key=k, keys=[k], calls=[call]))
+                continue
             k = "bash" if self.rng.random() < p else "read"
             out.append(Sample(ok=True, key=k, keys=[k], calls=[{"name": k, "args": {}}]))
         return out
@@ -111,6 +148,8 @@ def _is_false(scenario: str, c: Cause) -> bool:
         return letters != {"A", "B"}
     if scenario == "hitchhiker":
         return letters != {"A"}
+    if scenario == "coupled_power":
+        return letters != {"A", "B"}
     return True
 
 
@@ -122,12 +161,18 @@ async def one(scenario: str, seed: int, audit_n: int, alpha: float, ledger_path:
     for c in coarse:
         for k in c.children:
             by_id[k.id] = k
-    test = SimTester(step, "http://127.0.0.1:1/v1", "", Matcher("name"), "bash", by_id,
-                     Ledger(ledger_path, 1.0), B, free=True, sim=_SimReplayer(_rate_fn(scenario), rng))
+    sim = _SimReplayer(_rate_fn(scenario), rng)
+    if scenario in GIVEN:
+        test = SimTester(step, "http://127.0.0.1:1/v1", "", EXACT, TARGET, by_id, Ledger(ledger_path, 1.0), B,
+                         given_matcher=Matcher("name"), given_target="bash", baseline_given_rate=BE,
+                         free=True, sim=sim)
+    else:
+        test = SimTester(step, "http://127.0.0.1:1/v1", "", Matcher("name"), "bash", by_id,
+                         Ledger(ledger_path, 1.0), B, free=True, sim=sim)
     notes: list[str] = []
     _, causes = await search(coarse, test, n_controls=0, rng=random.Random(seed), notes=notes,
                              audit_n=audit_n, alpha=alpha, uncertified=[])
-    return {"reported": [sorted(c.members) for c in causes],
+    return {"reported": [sorted(c.members) for c in causes], "coupled": [c.coupled for c in causes],
             "false": sum(_is_false(scenario, c) for c in causes), "replays": test.replays}
 
 
@@ -137,7 +182,7 @@ def simulate(scenario: str, runs: int, seed: int, audit_n: int, alpha: float) ->
                 for r in range(runs)]
     any_false = sum(1 for r in rows if r["false"])
     true_found = sum(1 for r in rows if any(not _is_false(scenario, Cause(m)) for m in r["reported"])) \
-        if scenario in ("power_bundle", "hitchhiker") else None
+        if scenario in ("power_bundle", "hitchhiker", "coupled_power") else None
     lo, hi = wilson(any_false, runs)
     return {"scenario": scenario, "audit_n": audit_n, "alpha": alpha, "runs": runs,
             "fwer": any_false / runs, "fwer_ci": [lo, hi],
@@ -152,11 +197,13 @@ def main(argv=None) -> int:
     ap.add_argument("--audit-n", type=int, default=20)
     ap.add_argument("--alpha", type=float, default=0.05)
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--scenarios", nargs="+", default=["boundary_single", "boundary_bundle", "power_bundle",
+                                                       "hitchhiker", *GIVEN])
     a = ap.parse_args(argv)
     res = []
     print("| scenario | audit | runs | P(any false cause) [95% CI] | power | replays/run |")
     print("|---|---|---:|---:|---:|---:|")
-    for sc in ("boundary_single", "boundary_bundle", "power_bundle", "hitchhiker"):
+    for sc in a.scenarios:
         for n in (0, a.audit_n):
             r = simulate(sc, a.runs, a.seed, n, a.alpha)
             res.append(r)

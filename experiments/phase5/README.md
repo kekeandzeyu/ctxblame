@@ -9,6 +9,7 @@ Plan and exit gate: [docs/ROADMAP.md](../../docs/ROADMAP.md#phase-5--engine-corr
 | 5.3 search/audit split with FWER control | done, null simulation below | `blame.py:Tester.audit`, `audit_findings`, `stats.py`, `null_sim.py` |
 | 5.4 Anthropic `cache_control` pinning | done, offline | `ablate.py:pin_cache_breakpoints` |
 | 5.5 GPU re-run of Qwen3-14B | done: gate met (final table below) | `run_p5.sh`, `p5c-*` results |
+| 5.6 audit: coupled members kept, every bundle re-audited | done offline (null-sim-v3); GPU run `p5d-*` queued | `blame.py:audit_findings`, `null_sim.py` |
 
 ## 5.1: chunking is unchanged on every existing case
 
@@ -131,9 +132,11 @@ a `hitchhiker` scenario:
 | carrier + weak line (hitchhiker) | off (v0.2) | 0.4% [0.1, 1.4] | 97% | 111 |
 | carrier + weak line (hitchhiker) | two-stage | 0.0% [0.0, 0.8] | 97% | 130 |
 
-The false-cause rate rises in the boundary scenario but stays below α, as theory
-predicts. When stage 1 drops the boundary member, stage 2 tests {X, Y}, which
-sits exactly on its null boundary and is rejected at most α of the time. The
+The false-cause rate rises in the boundary scenario but stays below α. *Correction
+(5.6):* the reason given here first, that stage 2 alone decides, was wrong for
+this design. Stage 2 ran only when stage 1 dropped a member; otherwise stage 1's
+own replays certified the bundle, so a false bundle had two chances and the bound
+was about 2α, not α. 5.6 removes the second chance. The
 simulated search rarely leaves the weak line in a bundle (real hitchhikers come
 from replay noise), so the hitchhiker scenario does not stress the fix.
 `test_audit_drops_a_hitchhiker_and_certifies_the_rest_on_new_replays` covers the
@@ -251,8 +254,64 @@ on new replays). A rule that drops a member only when its restore test keeps E
 and fails would revert `p3` and leave `p0` rejected rather than certifying its
 wrong member. It would probably also lose `gen/0-013` seed 1. Such bundles
 should be reported as coupled (`triggers_and_steers`, Phase 6.4), not certified
-or silently dropped. That rule is deliberately not tuned on these three cases;
-Phase 6's coalition tables give independent ground truth to set it.
+or silently dropped. 5.6 below does this. It sets no threshold, only the rule
+that a test which cannot see the choice is not evidence against a member. The
+coalition tables in Phase 6 check it against independent ground truth.
+
+### 5.6: coupled members and a strict sample split (offline; GPU run queued)
+
+Two changes to `audit_findings`, both from the `p5c-gen` diagnosis above:
+
+1. **Stage 1 sorts the members of a choice bundle by what their leave-one-in test
+   showed**, instead of dropping every member whose test fails:
+   - restores: the choice comes back. Stage 2 tests restoration.
+   - hitchhiker: E is clearly intact and the choice does not come back. Dropped.
+   - coupled: E itself stops (collapse test at α). Kept; stage 2 tests the
+     collapse, and the report marks the member `coupled` (the certified claim
+     for it is "keeping it while removing the others stops E").
+   - undetermined: E is neither intact nor clearly stopped. Kept and tested as
+     restoring, so a member is never dropped on a test that says nothing about it.
+2. **Every bundle is re-audited on new replays**, even when stage 1 changes
+   nothing, so stage 1 is never evidence and P(false certificate) ≤ α by sample
+   splitting. A one-member finding has nothing to choose and is audited once.
+
+The search also notes `triggers_and_steers suspected` (and the report sets
+`triggers_and_steers_suspected`) when, with a stabilizer kept, removing all the
+rest keeps the choice: `real/run4/step21` seed 2's outcome.
+
+**Null simulation**
+([results/null-sim-v3](results/null-sim-v3/null_sim.json), 500 runs, seed 0).
+The unaudited rows and `boundary_single` / `hitchhiker` are unchanged from v2.
+Two new conditional scenarios have an action family E (P(E) = 0.95 at baseline):
+`coupled_power` is the `p0` shape and `boundary_coupled` is its least-favourable
+null.
+
+| scenario | v2 audit | 5.6 audit | replays/run (v2 → 5.6) |
+|---|---:|---:|---:|
+| bundle with a member at the boundary, P(false) | 3.0% [1.8, 4.9] | **1.4%** [0.7, 2.9] | 286 → 287 |
+| true 2-way OR bundle, power | 99% | 97% | 139 → 198 |
+| carrier + weak line, power | 97% | 97% | 130 → 130 |
+| coupled OR bundle (`p0` shape), power | **0%**¹ | **97%** | 170¹ → 210 |
+| coupled member at the boundary, P(false) | – | 3.8% [2.4, 5.9] | – → 334 |
+
+¹ 40 runs with the v2 audit code. It drops the coupled carrier, as on the GPU.
+Without any audit, the same null gives a false cause in 98.2% of runs.
+
+**Predicted effect on the GPU runs.** Applying the stage-1 rule to the recorded
+`p5c` audits, without new replays:
+- `p0/tool_result_sentence_config`: `toolu_22` is coupled in all 3 seeds, so
+  the bundle is kept rather than losing its true carrier.
+- `p3/precond_2or_pnpm`: `read_pkg` is undetermined in all 3, so the bundle
+  goes uncertified and the precondition is no longer blamed.
+- `gen/0-013` seed 1: `call_13_2` is coupled (bundle F1 0.8 instead of 1).
+  Seed 2: undetermined.
+- `gen/0-037` seed 1: one member is undetermined (E at its threshold), which
+  would lose a hit.
+- `real`: no bundle reached stage 1 with a failing member, so nothing changes.
+
+Whether the stage-2 replays then certify these bundles is what `p5d-gen` and
+`p5d-real` measure (`RUNS="real5d gen5d" run_p5.sh`). They need a GPU box; the
+Phase 5 VM has been released.
 
 ### Phase 5.5 summary
 

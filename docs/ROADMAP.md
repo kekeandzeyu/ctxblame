@@ -131,6 +131,19 @@ Details and results: [experiments/phase5/README.md](../experiments/phase5/README
      carrier). The gen misses are E-coupled bundles where stage 1 drops a
      member on an E-collapsed restore test (→ 6.4).
 
+- [x] **5.6 Audit for coupled bundles** (from `p5c-gen`), offline:
+  - Stage 1 drops a bundle member only when E stays intact and the choice is not
+    restored.
+  - A member whose leave-one-in test stops E is kept as `coupled`, and stage 2
+    tests that collapse.
+  - Every bundle is re-audited on new replays, so stage 1 is never evidence: the
+    v2 design allowed about 2α.
+  - Null simulation v3: boundary false-cause rates 1.4% and 3.8% ≤ α; power on
+    the `p0` coupled shape 0% → 97%.
+  - `triggers_and_steers suspected` is reported when the stabilizer keeps the
+    choice.
+  - GPU confirmation (`p5d-real`, `p5d-gen`) runs on the next VM before Phase 6.
+
 **Gate:** offline suite green; type-I simulation within α; re-run F1 within
 the `v0.2` CI (or a documented reason why not); `run4/step21` finds a carrier or
 reports `diffuse_precondition` with the search continuing.
@@ -154,10 +167,10 @@ reports `diffuse_precondition` with the search continuing.
   $P(A \mid E)$. `tool_choice` forces a tool name only, so this applies where
   $E$ is a tool; intent-level $E$ (a Bash command family) is reported as not
   identifiable rather than forced. Then classify `precondition` vs
-  `triggers_and_steers` in the engine. From 5.5: report E-coupled bundles
-  (a member whose leave-one-in restore test collapses E) as coupled instead of
-  letting audit stage 1 drop that member, and stabilize at line level (the
-  `run4/step21` tool description); set both rules against the 6.1 tables.
+  `triggers_and_steers` in the engine. The audit's `coupled` members (5.6) and
+  `triggers_and_steers suspected` notes are the engine's first, conservative
+  version: check them against the 6.1 tables, and add line-level stabilizing for
+  the `run4/step21` tool description.
 
 **Gate:** ≥ 200 labelled cases on ≥ 2 models; ctxblame scored on all of them
 (per regime), with the oracle-dropped subset reported separately for comparison

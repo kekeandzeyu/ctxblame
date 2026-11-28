@@ -73,3 +73,70 @@ def test_audit_keeps_rejecting_a_bundle_whose_removal_does_not_flip():
     f = Cause(["b", "c"])
     asyncio.run(audit_findings([f], _Auditor(), 20, 0.05))
     assert f.certified is False and not any(k.startswith("stage1:") for k in f.audit)
+
+
+class _CondAuditor:
+    """Conditional audit on 20 replays. ``table`` maps a removal to (E count, A-given-E count)."""
+    def __init__(self, table):
+        self.table, self.calls = table, []
+
+    async def audit(self, removed, n):
+        self.calls.append(frozenset(removed))
+        e, a = self.table[frozenset(removed)]
+        gv = "intact" if e > 14 else "collapsed" if e < 5 else "unclear"
+        v = "collapsed" if gv == "collapsed" else "flipped" if a < e * 0.2 else "kept" if a > e * 0.7 else "unclear"
+        return Outcome(a, e, v, k_given=e, n_total=n, given_verdict=gv)
+
+    def p_value(self, o, kind):
+        return audit_p(o, kind, 0.45, 0.475)
+
+
+def test_audit_keeps_a_member_coupled_with_the_action_family():
+    import asyncio
+
+    from ctxblame.blame import Cause, audit_findings
+    # p0/tool_result_sentence_config shape: removing both flips with E intact;
+    # removing only b while keeping the carrier a stops E, so a's restoration is
+    # untestable. a must not be dropped as a hitchhiker; it is certified as coupled.
+    t = {frozenset("ab"): (20, 0), frozenset("b"): (0, 0), frozenset("a"): (20, 20)}
+    f = Cause(["a", "b"])
+    aud = _CondAuditor(t)
+    asyncio.run(audit_findings([f], aud, 20, 0.05))
+    assert f.members == ["a", "b"] and f.coupled == ["a"] and f.certified is True
+    assert "stage1:a" in f.audit and "a" in f.audit  # stage 2 tested the collapse on new replays
+    assert aud.calls == [frozenset("ab"), frozenset("b"), frozenset("a")] * 2
+
+
+def test_audit_never_drops_a_member_on_an_uninformative_test():
+    import asyncio
+
+    from ctxblame.blame import Cause, audit_findings
+    # keeping b alone leaves E at 10/20: neither intact nor clearly stopped
+    t = {frozenset("ab"): (20, 0), frozenset("a"): (10, 2), frozenset("b"): (20, 20)}
+    f = Cause(["a", "b"])
+    asyncio.run(audit_findings([f], _CondAuditor(t), 20, 0.05))
+    assert f.members == ["a", "b"] and f.coupled == [] and f.certified is False
+    assert "stage1:b" in f.audit and f.audit["b"].given_verdict == "unclear"  # tested again, still unclear
+
+
+def test_audit_drops_a_conditional_hitchhiker_only_when_e_stays_intact():
+    import asyncio
+
+    from ctxblame.blame import Cause, audit_findings
+    t = {frozenset("ab"): (20, 0), frozenset("a"): (20, 0), frozenset("b"): (20, 20)}
+    f = Cause(["a", "b"])
+    asyncio.run(audit_findings([f], _CondAuditor(t), 20, 0.05))
+    assert f.members == ["a"] and f.coupled == [] and f.certified is True
+
+
+def test_audit_reaudits_every_bundle_on_new_replays_even_when_nothing_is_dropped():
+    import asyncio
+
+    from ctxblame.blame import Cause, audit_findings
+    # a true OR bundle: stage 1 changes nothing, but must not be the evidence
+    t = {frozenset("ab"): (20, 0), frozenset("a"): (20, 20), frozenset("b"): (20, 20), frozenset("c"): (20, 0)}
+    f, single = Cause(["a", "b"]), Cause(["c"])
+    aud = _CondAuditor(t)
+    asyncio.run(audit_findings([f, single], aud, 20, 0.05))
+    assert f.certified and single.certified and f.members == ["a", "b"]
+    assert aud.calls == [frozenset("ab"), frozenset("b"), frozenset("a")] * 2 + [frozenset("c")]

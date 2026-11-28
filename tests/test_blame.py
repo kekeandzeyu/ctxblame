@@ -341,6 +341,18 @@ def test_search_after_stabilizer_searches_the_whole_rest_for_the_choice():
     assert [sorted(c.members) for c in causes] == [sorted(CARRIERS)]
 
 
+def test_search_reports_triggers_and_steers_when_the_stabilizer_carries_the_choice():
+    # real/run4/step21 seed 2 (p5c-real): the bash tool description both enables the
+    # action (removing it stops E) and holds the --tb=line example that steers it
+    chunks = [C(x) for x in ("tool_bash", "sys_rule", "hist_pytest", "c1")]
+    t = fake_cond(collapse_rule=lambda r: "tool_bash" in r, flip_rule=lambda r: "tool_bash" in r)
+    stabs, notes = [], []
+    _, causes = asyncio.run(search(chunks, t, n_controls=0, stabilizers=stabs, notes=notes,
+                                   max_preconditions=0))
+    assert stabs == [["tool_bash"]] and causes == []
+    assert any(n.startswith("triggers_and_steers suspected") for n in notes)
+
+
 def test_search_keeps_a_minimal_stabilizer_of_a_diffuse_precondition():
     # the agent tests as long as it still sees any 3 of the 8 reads: the smallest
     # removal that stops it has 6 chunks (> max_members), and no one read matters
