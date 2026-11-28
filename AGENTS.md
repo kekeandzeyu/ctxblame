@@ -15,7 +15,8 @@ Instructions for coding and research agents working in `ctxblame`.
 - `blame.py`: Coarse/line chunking (`chunk_request`, harness-injected `<system-reminder>` blocks as `injected` chunks), sequential `Tester`, conditional blame $P(A \mid E)$ (`--given`, `decide_conditional`), KV-cache-stratified suffix-first `ddmin`, leave-one-in hitchhiker pruning (`_prune_bundle`), diffuse-precondition stabilizer (`_stabilizer`), random same-size controls, the fresh-replay audit stage (`Tester.audit`, `audit_findings`), and forced-E tests (6.4: `force_tool_choice`, `Tester(force_tool=…)`, `Cause.forced` / `Cause.steers`; `--no-force`).
 - `stats.py`: Exact binomial tails and Holm adjustment for the audit.
 - `replay.py`, `pricing.py`: Async HTTP replay runner, Wilson intervals, model pricing table, and persistent hard USD spend cap (`Ledger` at `.ctxblame/spend.jsonl`).
-- `trace.py`, `cli.py`: Trace reader and CLI subcommands (`record`, `steps`, `replay`, `why`).
+- `wrap.py`: `ctxblame wrap -- <cmd>`: two recording proxies on ephemeral ports sharing one trace, with `ANTHROPIC_BASE_URL` / `OPENAI_BASE_URL` injected into the command (existing values become the upstreams).
+- `trace.py`, `cli.py`: Trace reader and CLI subcommands (`record`, `wrap`, `steps`, `replay`, `why`).
 
 ## Commands & Zero-Cost Verification
 

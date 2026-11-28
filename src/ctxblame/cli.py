@@ -1,5 +1,6 @@
 """ctxblame command line.
 
+    ctxblame wrap -- claude -p "fix the bug"                         # run an agent, record its calls
     ctxblame record --upstream https://api.deepseek.com/anthropic   # proxy; writes traces/<id>.jsonl
     ctxblame steps traces/<id>.jsonl                               # what is in the trace
     ctxblame replay traces/<id>.jsonl --step 14 -n 10              # does step 14 reproduce?
@@ -13,7 +14,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import blame, proxy, replay
+from . import blame, proxy, replay, wrap
 from .match import MODES
 from .trace import describe, load_trace, matcher_for
 
@@ -45,6 +46,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("record", help="run the recording proxy")
     proxy.add_args(p)
     p.set_defaults(func=proxy.run)
+
+    p = sub.add_parser("wrap", help="run a command with its LLM calls recorded (ctxblame wrap -- <cmd>)")
+    wrap.add_args(p)
+    p.set_defaults(func=wrap.run_cli)
 
     p = sub.add_parser("steps", help="list the steps (LLM calls) in a trace")
     p.add_argument("trace", type=Path)

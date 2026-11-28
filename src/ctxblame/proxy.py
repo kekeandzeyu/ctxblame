@@ -67,10 +67,12 @@ def default_trace_path(out_dir: Path) -> Path:
     return Path(out_dir) / f"{stamp}-{uuid.uuid4().hex[:6]}.jsonl"
 
 
-def make_app(upstream: str, trace: Path, quiet: bool = False) -> web.Application:
-    """Proxy to ``upstream``, appending recorded steps to the trace file ``trace``."""
+def make_app(upstream: str, trace: Path, quiet: bool = False,
+             recorder: TraceWriter | None = None) -> web.Application:
+    """Proxy to ``upstream``, appending recorded steps to the trace file ``trace``
+    (through ``recorder`` when given, so several proxies can share one trace)."""
     upstream = upstream.rstrip("/")
-    recorder = TraceWriter(trace)
+    recorder = recorder or TraceWriter(trace)
     app = web.Application(client_max_size=256 * 1024**2)
 
     async def on_startup(app: web.Application) -> None:

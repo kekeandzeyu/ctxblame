@@ -24,6 +24,23 @@ Two wire formats are supported, which covers most models: Anthropic Messages
 
 ## Record
 
+The simplest way is to wrap the agent command:
+
+```sh
+uv run ctxblame wrap -- claude -p "fix the failing test"   # or any agent command
+```
+
+`wrap` starts two recording proxies on free local ports (Anthropic and OpenAI
+format) and runs the command with `ANTHROPIC_BASE_URL` and `OPENAI_BASE_URL`
+pointing at them. Base URLs you have already set become the upstreams, so an
+agent pointed at DeepSeek or a local vLLM server keeps using it (or pass
+`--anthropic-upstream` / `--openai-upstream`). The proxies stop when the
+command exits, and `wrap` exits with the command's code. Only clients that
+read these variables are captured; calls to other APIs (e.g. the OpenAI
+Responses API) are forwarded but not recorded.
+
+To run the proxy yourself on a fixed port:
+
 ```sh
 # Anthropic format (Claude, or DeepSeek's Anthropic endpoint)
 uv run ctxblame record --upstream https://api.deepseek.com/anthropic
@@ -222,7 +239,7 @@ Phase 3 attribution benchmark at **$0 API cost**.
 
 ### Scope & practical limits
 - **An MRI for stubborn bugs, not an every-turn linter:** Isolating minimal causes takes ~200 replays per blamed step on short requests and ~300–550 on long agent traces (`$0` on local/Colab `vLLM`, `~$0.05–$0.10` on DeepSeek/Flash with prefix caching, but up to several dollars and 1–2 minutes on 60k+ token frontier models). Run it on the specific turn where an agent went off the rails.
-- **Upfront proxy capture (until `v0.3` log import):** `ctxblame` currently requires recording traffic through `ctxblame record` before the failure happens; retroactive import from existing local CLI transcripts is scheduled next (`v0.3`).
+- **Upfront proxy capture (until `v0.3` log import):** `ctxblame` currently requires recording traffic through `ctxblame wrap` or `ctxblame record` before the failure happens; retroactive import from existing local CLI transcripts is scheduled next (`v0.3`).
 - **High-entropy / coin-flip turns:** If the unablated step already splits ~50/50 across decisions on replay, there is no stable decision for context ablation to explain (`ctxblame` detects this on baseline replay and stops early).
 
 ## Roadmap
@@ -232,7 +249,7 @@ See [docs/ROADMAP.md](docs/ROADMAP.md) for the audit, the theory plan and the ex
 - **Phase 5, engine correctness:** split `<system-reminder>` blocks inside user turns into removable chunks, keep searching past diffuse preconditions, audit every reported cause on fresh replays (intersection-union + Holm), pin Anthropic `cache_control` breakpoints.
 - **Phase 6, ground truth independent of the method:** exhaustive $2^m$ removal tables per case (no oracle dropping), neutral probe lines, matched `tool_choice` interventions for rules that both trigger and steer the action. *Done:* 250 cases × 2 models. ctxblame scores 95% / 85% F1 on the cases `v0.2`'s oracle kept and 71% / 44% on the ones it dropped (Qwen3-14B / Llama-3.1-8B). With the action forced (6.4, v0.2.2), F1 on rules that trigger and steer rises from 53% to 62% (Qwen) and from 46% to 56% (Llama).
 - **Phase 7, steelmanned baselines and theory:** contrastive ContextCite, black-box group testing over keep-probabilities, full-context self-explanation; a group-testing formulation with the precondition gate as the separating structure.
-- **Phase 8, external validity:** `ctxblame wrap`, wire-captured steps from real harnesses on SWE-bench, `ctxblame verify` fix study, one approved closed-API run. `ctxblame import` (best effort, marked reconstructed) follows in `v0.3`.
+- **Phase 8, external validity:** `ctxblame wrap` (*done*), wire-captured steps from real harnesses on SWE-bench, `ctxblame verify` fix study, one approved closed-API run. `ctxblame import` (best effort, marked reconstructed) follows in `v0.3`.
 
 ## Tests
 
