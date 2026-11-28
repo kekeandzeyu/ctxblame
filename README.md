@@ -134,7 +134,7 @@ How it works:
    correction across findings then holds the family-wise error at `--alpha`
    (default 0.05). Findings that fail are listed as `uncertified`.
    `--audit-n 0` turns the audit off (the v0.2 behaviour).
-7. **Forced action (unreleased, `main`).** When E is a tool (`--given bash`), a
+7. **Forced action (unreleased).** When E is a tool (`--given bash`), a
    precondition is also replayed with that tool forced by `tool_choice`. The
    choice rate there is compared with the equally forced baseline, never with
    the unforced one. If removing the precondition still changes the choice, it
