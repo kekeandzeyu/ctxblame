@@ -229,6 +229,8 @@ def test_why_forces_E_and_reports_a_precondition_that_also_steers(tmp_path, monk
         assert [[m["id"] for m in c["members"]] for c in forced] == [["pair:call_edit"]]
         assert forced[0]["certified"] is True and forced[0]["audit"]["together"]["k"] == 0
         assert "triggers and steers" in out and "with bash forced" in out
+        # what the forced replies did instead: another step (pnpm add), not another package manager
+        assert "instead: run pnpm add" in out and pre["steer_test"]["dist"][0][0] == "run pnpm add"
         # the rule is an ordinary choice carrier (pnpm vs npm), unforced
         plain = [m["id"] for c in rep["causes"] if not c["forced"] for m in c["members"]]
         assert any(i.startswith("sys@msg0.") for i in plain)

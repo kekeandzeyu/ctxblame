@@ -35,8 +35,8 @@ sys.path.insert(0, str(HERE.parent / "phase3"))
 
 from ctxblame.ablate import AblationError  # noqa: E402
 from ctxblame.blame import apply_chunks, chunk_request, force_tool_choice, resolve_given  # noqa: E402
-from ctxblame.match import Matcher  # noqa: E402
-from ctxblame.formats import extract_decision  # noqa: E402
+from ctxblame.match import Matcher, intent  # noqa: E402
+from ctxblame.formats import ToolCall, extract_decision  # noqa: E402
 from ctxblame.pricing import Ledger  # noqa: E402
 from ctxblame.replay import (Replayer, build_headers, estimate_cost, parse_extra_body,  # noqa: E402
                              resolve_api_key, sample_decision, with_model_override)
@@ -70,9 +70,21 @@ def subsets(elements: list[str]) -> list[frozenset]:
 def count(samples, matcher, given, gtarget: str, target: str) -> dict:
     ok = [s for s in samples if s.ok]
     in_e = [s for s in ok if (given.same(sample_decision(s), gtarget) if given else True)]
-    k = sum(matcher.same(None, target, s.key, s.keys or [s.key]) for s in in_e)
-    return {"n": len(ok), "k_given": len(in_e), "k": k, "errors": len(samples) - len(ok),
-            "dist": _dist(ok)}
+    hit = [matcher.same(None, target, s.key, s.keys or [s.key]) for s in in_e]
+    return {"n": len(ok), "k_given": len(in_e), "k": sum(hit), "errors": len(samples) - len(ok),
+            "dist": _dist(ok), "replies": _replies(in_e, hit, gtarget)}
+
+
+def _replies(in_e, hit, tool: str) -> list:
+    """What the replies in E did: [A?, intent, count], so the step can be told apart offline
+    (a forced reply that runs another step is not a competing choice; 6.4)."""
+    from collections import Counter
+    out: Counter = Counter()
+    for s, a in zip(in_e, hit):
+        calls = [ToolCall(c["name"], c["args"]) for c in (s.calls or [])]
+        c = next((c for c in calls if c.name == tool), calls[0] if calls else None)
+        out[(bool(a), intent(c) if c else "<no tool call>")] += 1
+    return [[a, i, n] for (a, i), n in sorted(out.items(), key=lambda kv: -kv[1])]
 
 
 def _dist(ok) -> list:

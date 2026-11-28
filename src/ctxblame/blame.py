@@ -593,6 +593,21 @@ class Tester:
             return sum(self.matcher.same(None, self.target, s.key, s.keys or [s.key]) for s in in_e), len(in_e), len(ok)
         return sum(self.matcher.same(None, self.target, s.key, s.keys or [s.key]) for s in ok), len(ok), len(ok)
 
+    def _instead(self, samples: list[Sample]) -> list:
+        """With E forced: what the replies in E did instead of A, as intents (most common
+        first). A flip to another step ("run git status") and a flip to a competing
+        convention ("run flake8") are both a changed choice; this says which one it was."""
+        out: Counter = Counter()
+        for s in samples:
+            if not s.ok or not self.given_matcher.same(sample_decision(s), self.given_target):
+                continue
+            if self.matcher.same(None, self.target, s.key, s.keys or [s.key]):
+                continue
+            calls = sample_decision(s).calls
+            c = next((c for c in calls if c.name == self.force_tool), calls[0] if calls else None)
+            out[intent(c) if c else "<no tool call>"] += 1
+        return out.most_common(4)
+
     async def can_force(self) -> bool:
         """Forcing is usable: measure the forced baseline P(A | do(E)) once (``max_n``
         replays of the full request). Unusable if the provider ignores tool_choice or
@@ -676,9 +691,8 @@ class Tester:
                     max_n, extended = max_n * 2, True
                     continue
                 if new >= min_new and (v != "more" or new >= max_n * 2):
-                    dist = Counter(x for s in ok for x in set(s.keys or [s.key])).most_common(4)
                     out = Outcome(k, n, (v if v != "more" else "unclear") if n else "error",
-                                  sum(s.cost for s in samples), dist, k_given=n, n_total=n_ok,
+                                  sum(s.cost for s in samples), self._instead(samples), k_given=n, n_total=n_ok,
                                   note="" if n else "no reply used the forced tool")
                     break
             elif self.given_matcher is not None and self.given_target is not None:
@@ -742,7 +756,8 @@ class Tester:
         if forced:
             k, m, n_ok = self._count(samples, True)
             v = decide(k, m, self.forced_threshold, m, 1) if m else "error"
-            out = Outcome(k, m, "unclear" if v == "more" else v, cost, dist, k_given=m, n_total=n_ok)
+            out = Outcome(k, m, "unclear" if v == "more" else v, cost, self._instead(samples), k_given=m,
+                          n_total=n_ok)
             self.log.append({"removed": sorted(removed), "audit": True, "forced": True, "outcome": asdict(out)})
             return out
         if self.given_matcher is not None and self.given_target is not None:
@@ -1069,6 +1084,13 @@ async def _vet_members(members: list[str], restored: dict[str, Outcome], by_id: 
 
 TRIGGERS_AND_STEERS = "triggers_and_steers suspected: "
 TRIGGERS_AND_STEERS_FORCED = "triggers_and_steers (E forced): "
+
+
+def _instead_s(o: Outcome | None) -> str:
+    """'; instead: run git status 12, run git diff 3' for a forced outcome (Tester._instead)."""
+    if not o or not o.dist:
+        return ""
+    return "; instead: " + ", ".join(f"{i} {n}" for i, n in o.dist)
 
 
 def _forced_test(test):
@@ -1734,7 +1756,7 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
             say(_certificate(p))
         if p.steers:
             say(f"  triggers and steers: with {g_lbl} forced, removing it also changes the choice "
-                f"({p.steer_test}); see the forced cause below")
+                f"({p.steer_test}{_instead_s(p.steer_test)}); see the forced cause below")
         elif p.steers is False:
             say(f"  only a precondition: with {g_lbl} forced, removing it keeps the choice ({p.steer_test})")
     for keep in stabilizers:
@@ -1746,9 +1768,11 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
         what = "Cause" if c.specific is not False else "Context it needs (not specific)"
         forced_s = f", with {given_target} forced" if c.forced else ""
         if len(c.members) == 1:
-            say(f"\n{what} {n} (removing it flips the decision{forced_s}: {together}):")
+            say(f"\n{what} {n} (removing it flips the decision{forced_s}: {together}"
+                f"{_instead_s(together) if c.forced else ''}):")
         else:
-            say(f"\n{what} {n} (redundant: only removing all of these flips it{forced_s}: {together}):")
+            say(f"\n{what} {n} (redundant: only removing all of these flips it{forced_s}: {together}"
+                f"{_instead_s(together) if c.forced else ''}):")
         for cid in c.members:
             ch = by_id[cid]
             extra_s = ""
