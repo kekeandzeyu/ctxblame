@@ -512,14 +512,55 @@ def resolve_given(spec: str | None, key_args: list[str], target: str, matcher: M
     return Matcher("name", any_call=any_call), s
 
 
+def _tool_names(fmt: str, body: dict) -> list[str]:
+    tools = body.get("tools") or []
+    if fmt == ANTHROPIC:
+        return [t.get("name") for t in tools if isinstance(t, dict)]
+    return [(t.get("function") or {}).get("name") for t in tools if isinstance(t, dict)]
+
+
+def forcing_unavailable(fmt: str, body: dict, given_matcher: Matcher | None, given_target: str | None) -> str | None:
+    """Why the action family E cannot be forced with ``tool_choice`` (None = it can).
+
+    ``tool_choice`` forces a tool name, so only a tool-level E (``--given <tool>`` /
+    ``name``) is forced; an intent- or argument-level E (a command family) is not
+    identifiable this way. Anthropic does not allow a forced tool with extended thinking."""
+    if given_matcher is None or given_target is None:
+        return "no action family E (unconditional blame)"
+    if given_matcher.mode != "name":
+        return f"E is {given_matcher.mode}-level ({given_target!r}); tool_choice forces only a tool name"
+    if given_target not in _tool_names(fmt, body):
+        return f"E's tool {given_target!r} is not among the request's tools"
+    if fmt == ANTHROPIC and (body.get("thinking") or {}).get("type") in ("enabled", "adaptive"):
+        return "Anthropic does not allow a forced tool with extended thinking"
+    return None
+
+
+def force_tool_choice(fmt: str, body: dict, tool: str) -> dict:
+    """The request with ``tool`` forced: do(E) for a tool-level action family."""
+    out = dict(body)
+    out["tool_choice"] = ({"type": "tool", "name": tool} if fmt == ANTHROPIC
+                          else {"type": "function", "function": {"name": tool}})
+    return out
+
+
+FORCED = "\x00forced"  # cache-key marker: the same removal, replayed with E forced
+
+
 class Tester:
-    """Runs one removal test against the API: batches of replays until decided."""
+    """Runs one removal test against the API: batches of replays until decided.
+
+    With ``force_tool`` (E is that tool), ``forced=True`` replays each removal with
+    E forced by ``tool_choice`` and tests P(A | do(E), do(-S)) against half of the
+    equally forced baseline P(A | do(E)), measured once on the full request (6.4).
+    Never compared with the unforced P(A | E)."""
 
     def __init__(self, step: Step, base_url: str, api_key: str, matcher: Matcher, target: str,
                  chunks: dict[str, Chunk], ledger: Ledger, baseline_rate: float,
                  batch: int = 5, max_n: int = 15, concurrency: int = 8,
                  given_matcher: Matcher | None = None, given_target: str | None = None,
-                 baseline_given_rate: float | None = None, free: bool = False) -> None:
+                 baseline_given_rate: float | None = None, free: bool = False,
+                 force_tool: str | None = None) -> None:
         self.step, self.base, self.key = step, base_url, api_key
         self.matcher, self.target, self.chunks, self.ledger = matcher, target, chunks, ledger
         self.given_matcher, self.given_target = given_matcher, given_target
@@ -527,6 +568,10 @@ class Tester:
         self.given_threshold = (baseline_given_rate / 2) if baseline_given_rate is not None else None
         self.batch, self.max_n, self.conc = batch, max_n, concurrency
         self.free = free
+        self.force_tool = force_tool
+        self.forced_base: Outcome | None = None
+        self.forced_threshold: float | None = None
+        self.force_note = ""
         self.est = estimate_cost(step, base_url, model=step.body.get("model", ""), free=free)
         self.cache: dict[frozenset, Outcome] = {}
         self.samples: dict[frozenset, list] = {}
@@ -534,10 +579,50 @@ class Tester:
         self.replays = 0
         self.usage = {"input_uncached": 0, "input_cache_read": 0, "input_cache_write": 0, "output": 0}
 
-    def ablated(self, chunks: list[Chunk]) -> dict:
+    def ablated(self, chunks: list[Chunk], forced: bool = False) -> dict:
         """The request without ``chunks``; Anthropic cache breakpoints pinned at the frozen prefix."""
         body = apply_chunks(self.step.fmt, self.step.body, chunks)
-        return pin_cache_breakpoints(self.step.body, body) if self.step.fmt == ANTHROPIC else body
+        body = pin_cache_breakpoints(self.step.body, body) if self.step.fmt == ANTHROPIC else body
+        return force_tool_choice(self.step.fmt, body, self.force_tool) if forced else body
+
+    def _count(self, samples: list[Sample], forced: bool) -> tuple[int, int, int]:
+        """(A, of n, ok): with E forced, A among the replies that are in E."""
+        ok = [s for s in samples if s.ok]
+        if forced:
+            in_e = [s for s in ok if self.given_matcher.same(sample_decision(s), self.given_target)]
+            return sum(self.matcher.same(None, self.target, s.key, s.keys or [s.key]) for s in in_e), len(in_e), len(ok)
+        return sum(self.matcher.same(None, self.target, s.key, s.keys or [s.key]) for s in ok), len(ok), len(ok)
+
+    async def can_force(self) -> bool:
+        """Forcing is usable: measure the forced baseline P(A | do(E)) once (``max_n``
+        replays of the full request). Unusable if the provider ignores tool_choice or
+        forcing E changes the choice even with the whole context."""
+        if self.force_tool is None:
+            return False
+        if self.forced_base is None:
+            body = self.ablated([], forced=True)
+            if self.ledger.remaining() < self.est * self.max_n:
+                raise BudgetStop(f"budget left ${self.ledger.remaining():.3f}")
+            try:
+                got = await self.replayer().run(body, self.max_n, self.matcher)
+            except FatalReplayError as e:
+                self.forced_base = Outcome(0, 0, "rejected", note=str(e)[:300])
+                self.force_tool, self.force_note = None, f"forcing E was rejected: {str(e)[:200]}"
+                return False
+            self.replays += len(got)
+            k, n, n_ok = self._count(got, True)
+            self.forced_base = Outcome(k, n, "kept", sum(s.cost for s in got), k_given=n, n_total=n_ok)
+            self.log.append({"removed": [], "forced": True, "baseline": True, "outcome": asdict(self.forced_base)})
+            if n_ok == 0 or n < 0.8 * n_ok:
+                self.force_tool = None
+                self.force_note = f"the provider did not honour tool_choice ({n}/{n_ok} replies used it)"
+            elif n == 0 or k / n < 0.5:
+                self.force_tool = None
+                self.force_note = (f"forcing E changes the choice even with the whole context ({k}/{n}): "
+                                   "the forced comparison is not informative here")
+            else:
+                self.forced_threshold = k / n / 2
+        return self.force_tool is not None
 
     def replayer(self) -> Replayer:
         rec = self.step.record["request"]
@@ -545,14 +630,20 @@ class Tester:
                                                                               self.key),
                         self.ledger, self.base, self.est, self.conc, free=self.free)
 
-    async def __call__(self, removed: frozenset, extra: list[Chunk] = (), fresh: bool = False) -> Outcome:
+    async def __call__(self, removed: frozenset, extra: list[Chunk] = (), fresh: bool = False,
+                       forced: bool = False) -> Outcome:
         """``fresh``: confirm a finding with at least two more batches, deciding on
-        all replays of this removal together (with twice the usual cap)."""
+        all replays of this removal together (with twice the usual cap).
+        ``forced``: replay with E forced (see the class docstring)."""
         key = removed | frozenset(c.id for c in extra)
+        if forced:
+            if not await self.can_force():
+                return Outcome(0, 0, "error", note=self.force_note or "E cannot be forced")
+            key = key | {FORCED}
         if key in self.cache and not fresh:
             return self.cache[key]
         try:
-            body = self.ablated([self.chunks[i] for i in removed] + list(extra))
+            body = self.ablated([self.chunks[i] for i in removed - {FORCED}] + list(extra), forced=forced)
         except AblationError as e:
             out = Outcome(0, 0, "error", note=str(e))
             self.cache[key] = out
@@ -578,7 +669,19 @@ class Tester:
                     for k_u in self.usage:
                         self.usage[k_u] += s.usage.get(k_u) or 0
             ok = [s for s in samples if s.ok]
-            if self.given_matcher is not None and self.given_target is not None:
+            if forced:  # A among the replies in E, at half the forced baseline
+                k, n, n_ok = self._count(samples, True)
+                v = decide(k, n, self.forced_threshold, max_n, 2 * self.batch) if n else "more"
+                if v == "unclear" and not extended:
+                    max_n, extended = max_n * 2, True
+                    continue
+                if new >= min_new and (v != "more" or new >= max_n * 2):
+                    dist = Counter(x for s in ok for x in set(s.keys or [s.key])).most_common(4)
+                    out = Outcome(k, n, (v if v != "more" else "unclear") if n else "error",
+                                  sum(s.cost for s in samples), dist, k_given=n, n_total=n_ok,
+                                  note="" if n else "no reply used the forced tool")
+                    break
+            elif self.given_matcher is not None and self.given_target is not None:
                 k_given, k_target = 0, 0
                 for s in ok:
                     if self.given_matcher.same(sample_decision(s), self.given_target):
@@ -609,14 +712,17 @@ class Tester:
         self.replays += new
         self.samples[key] = samples
         self.cache[key] = out
-        self.log.append({"removed": sorted(key), "fresh": fresh, "outcome": asdict(out)})
+        self.log.append({"removed": sorted(key - {FORCED}), "fresh": fresh, **({"forced": True} if forced else {}),
+                         "outcome": asdict(out)})
         return out
 
-    async def audit(self, removed: frozenset, n: int) -> Outcome:
+    async def audit(self, removed: frozenset, n: int, forced: bool = False) -> Outcome:
         """``n`` fresh replays of this removal, decided once with no peeking. Never
         cached and never read by the search, so the search cannot have selected on them."""
+        if forced and not await self.can_force():
+            return Outcome(0, 0, "error", note=self.force_note or "E cannot be forced")
         try:
-            body = self.ablated([self.chunks[i] for i in removed])
+            body = self.ablated([self.chunks[i] for i in removed], forced=forced)
         except AblationError as e:
             return Outcome(0, 0, "error", note=str(e))
         if self.ledger.remaining() < self.est * n:
@@ -633,6 +739,12 @@ class Tester:
         cost = sum(s.cost for s in samples)
         dist = Counter(x for s in ok for x in set(s.keys or [s.key])).most_common(4)
         same = lambda s: self.matcher.same(None, self.target, s.key, s.keys or [s.key])  # noqa: E731
+        if forced:
+            k, m, n_ok = self._count(samples, True)
+            v = decide(k, m, self.forced_threshold, m, 1) if m else "error"
+            out = Outcome(k, m, "unclear" if v == "more" else v, cost, dist, k_given=m, n_total=n_ok)
+            self.log.append({"removed": sorted(removed), "audit": True, "forced": True, "outcome": asdict(out)})
+            return out
         if self.given_matcher is not None and self.given_target is not None:
             given = [s for s in ok if self.given_matcher.same(sample_decision(s), self.given_target)]
             k_t = sum(same(s) for s in given)
@@ -648,22 +760,29 @@ class Tester:
         return out
 
     def p_value(self, o: Outcome, kind: str) -> float:
-        return audit_p(o, kind, self.threshold, self.given_threshold or 0.5)
+        return audit_p(o, kind, self.threshold, self.given_threshold or 0.5, self.forced_threshold)
 
 
-def audit_p(o: Outcome, kind: str, threshold: float, given_threshold: float) -> float:
+def audit_p(o: Outcome, kind: str, threshold: float, given_threshold: float,
+            forced_threshold: float | None = None) -> float:
     """One-sided exact binomial p-value of an audit outcome, at the search's own thresholds.
 
     flip     H0: P(A | E, removal) >= threshold   (the removal does not flip the choice)
     restore  H0: P(A | E, removal) <= threshold   (keeping the member does not restore it)
     collapse H0: P(E | removal) >= given_threshold
     intact   H0: P(E | removal) <= given_threshold  (keeping the member does not restore E)
+    forced_flip     H0: P(A | do(E), removal) >= forced_threshold
+    forced_restore  H0: P(A | do(E), removal) <= forced_threshold
 
-    The thresholds come from the baseline replays, which the audit does not reuse,
-    so the tests are exact conditional on the baseline.
+    The thresholds come from the baseline replays (forced: the forced baseline),
+    which the audit does not reuse, so the tests are exact conditional on them.
     """
     if o.verdict in ("error", "rejected"):
         return 1.0
+    if kind in ("forced_flip", "forced_restore"):
+        if forced_threshold is None:
+            return 1.0
+        return (binom_cdf if kind == "forced_flip" else binom_sf)(o.k, o.n, forced_threshold)
     if kind == "flip":
         return binom_cdf(o.k, o.n, threshold)
     if kind == "restore":
@@ -723,7 +842,14 @@ class Cause:
     certified: bool | None = None  # None = not audited
     # bundle members coupled with E: keeping one while removing the rest of the
     # bundle stops the action family, so whether it restores the choice is untestable
+    # (unless E can be forced: then its restoration is tested with E forced)
     coupled: list[str] = field(default_factory=list)
+    # a choice claim with E forced (tool_choice): removing the members flips P(A | do(E))
+    forced: bool = False
+    # a precondition: with E forced, does removing it also change the choice?
+    # True = triggers_and_steers (set when its forced cause is confirmed and audited)
+    steers: bool | None = None
+    steer_test: Outcome | None = None
 
     @property
     def relation(self) -> str:
@@ -942,6 +1068,15 @@ async def _vet_members(members: list[str], restored: dict[str, Outcome], by_id: 
 
 
 TRIGGERS_AND_STEERS = "triggers_and_steers suspected: "
+TRIGGERS_AND_STEERS_FORCED = "triggers_and_steers (E forced): "
+
+
+def _forced_test(test):
+    """``test`` with E forced, in the search's test interface."""
+    async def ft(removed: frozenset, extra: list = (), fresh: bool = False) -> Outcome:
+        return await test(removed, extra, fresh, forced=True)
+    ft.force_tool = None  # a forced test is not forced again
+    return ft
 
 
 def _intact(o: Outcome) -> bool:
@@ -1018,30 +1153,57 @@ async def audit_findings(findings: list[Cause], auditor, n: int, alpha: float) -
       certified coupled member carries the claim "removing the others while
       keeping it stops E" (``Cause.coupled``; ``triggers_and_steers``-style).
     - undetermined (E neither intact nor clearly stopped): kept and tested as
-      restoring; a member is never dropped on a test that says nothing about it."""
-    async def run(members: list[str], removal: frozenset, kinds: tuple[str, str], coupled: set[str]):
-        audit = {"together": await auditor.audit(removal, n)}
+      restoring; a member is never dropped on a test that says nothing about it.
+
+    When E can be forced (``auditor.can_force()``, 6.4), a coupled member's
+    restoration is testable after all: stage 1 replays its leave-one-in removal
+    with E forced. If keeping it restores the choice under do(E), stage 2 tests
+    that (``forced:<id>``); if the choice is clearly not restored, it is a
+    hitchhiker and dropped; otherwise the collapse test above is kept. A
+    ``forced`` finding (a choice claim under do(E)) is audited entirely with E
+    forced, against the forced baseline."""
+    forceable = getattr(auditor, "force_tool", None) is not None  # measured lazily: only a coupled member needs it
+
+    async def run(members: list[str], removal: frozenset, kinds: tuple[str, str], coupled: set[str],
+                  forced_restore: set[str], forced: bool):
+        audit = {"together": await auditor.audit(removal, n, forced=True) if forced
+                 else await auditor.audit(removal, n)}
         p_main = auditor.p_value(audit["together"], kinds[0])
         p_members: dict[str, float] = {}
         if len(members) > 1:
             for cid in members:
-                audit[cid] = await auditor.audit(removal - {cid}, n)
+                if cid in forced_restore:
+                    audit[f"forced:{cid}"] = o = await auditor.audit(removal - {cid}, n, forced=True)
+                    p_members[cid] = auditor.p_value(o, "forced_restore")
+                    continue
+                audit[cid] = await auditor.audit(removal - {cid}, n, forced=True) if forced \
+                    else await auditor.audit(removal - {cid}, n)
                 p_members[cid] = auditor.p_value(audit[cid], "collapse" if cid in coupled else kinds[1])
         return audit, p_main, p_members
 
     for f in findings:
         removal = frozenset(f.removal or f.members)
-        kinds = ("collapse", "intact") if f.role == "precondition" else ("flip", "restore")
-        audit, p_main, p_members = await run(f.members, removal, kinds, set())
+        kinds = (("collapse", "intact") if f.role == "precondition" else
+                 ("forced_flip", "forced_restore") if f.forced else ("flip", "restore"))
+        audit, p_main, p_members = await run(f.members, removal, kinds, set(), set(), f.forced)
         drop: list[str] = []
         coupled: set[str] = set()
+        forced_restore: set[str] = set()
         for cid, p in p_members.items():
             if p <= alpha:
                 continue
             o = audit[cid]
-            if f.role != "precondition" and o.n_total is not None:  # conditional blame: E observed
+            if f.role != "precondition" and not f.forced and o.n_total is not None:  # E observed
                 if auditor.p_value(o, "collapse") <= alpha:
                     coupled.add(cid)
+                    if forceable and p_main <= alpha and await auditor.can_force():
+                        fo = await auditor.audit(removal - {cid}, n, forced=True)
+                        audit[f"forced:{cid}"] = fo
+                        if auditor.p_value(fo, "forced_restore") <= alpha:
+                            forced_restore.add(cid)
+                        elif fo.flipped:  # E forced, keeping it does not bring the choice back
+                            coupled.discard(cid)
+                            drop.append(cid)
                 elif o.given_verdict == "intact":
                     drop.append(cid)
             else:
@@ -1051,7 +1213,8 @@ async def audit_findings(findings: list[Cause], auditor, n: int, alpha: float) -
             f.members = [m for m in f.members if m not in drop]
             f.removal = [m for m in (f.removal or []) if m not in drop]
             removal = removal - set(drop)
-            audit, p_main, p_members = await run(f.members, removal, kinds, coupled)
+            audit, p_main, p_members = await run(f.members, removal, kinds, coupled - forced_restore,
+                                                 forced_restore & set(f.members), f.forced)
             audit = {**stage1, **audit}
             f.coupled = [m for m in f.members if m in coupled]
         f.audit = audit
@@ -1069,8 +1232,8 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
                  max_preconditions: int = 3, stratify: bool = True,
                  strict_restore: bool = False, member_controls: int = 0,
                  stabilize: bool = True, stabilizers: list[list[str]] | None = None,
-                 audit_n: int = 0, alpha: float = 0.05, uncertified: list[Cause] | None = None
-                 ) -> tuple[Outcome, list[Cause]]:
+                 audit_n: int = 0, alpha: float = 0.05, uncertified: list[Cause] | None = None,
+                 force: bool = False) -> tuple[Outcome, list[Cause]]:
     """KV-cache-stratified suffix-first search.
 
     Probes suffix tiers before prefix tiers to preserve KV prompt-cache hits,
@@ -1082,6 +1245,9 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
 
     With ``audit_n`` > 0, every finding is then certified on fresh replays
     (``audit_findings``); findings that fail move to ``uncertified``.
+
+    With ``force`` and a tool-level E (``test.force_tool``), each precondition and
+    stabilizer is also tested with E forced (6.4): see ``Cause.steers``.
 
     Returns ``(probe_outcome, causes)``; isolated preconditions are appended to
     ``preconditions``, stabilizers to ``stabilizers`` and search explanations to
@@ -1238,30 +1404,60 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
                 seen.add(line)
                 notes.append(f"choice carrier inside precondition {cid}: {line}")
 
+    # 6.4: removing a precondition stops E, so P(A | E) says nothing about whether it
+    # also steers the choice. With E forced (tool_choice), compare P(A | do(E), do(-S))
+    # with the forced baseline P(A | do(E)): a flip makes S triggers_and_steers, and
+    # S becomes a choice claim under do(E) (audited like any finding). A stabilizer
+    # gets the same test, and if it flips, a forced search for the lines that steer.
+    steer_of: dict[int, Cause] = {}
+    if force and (preconds or stabs) and getattr(test, "force_tool", None) is not None and await test.can_force():
+        ft = _forced_test(test)
+        for pre in preconds:
+            if len(causes) >= max_causes:
+                break
+            pre.steer_test = o = await ft(frozenset(pre.members))
+            if o.flipped:
+                fc = Cause(list(pre.members), forced=True)
+                causes.append(fc)
+                steer_of[id(fc)] = pre
+            elif o.verdict == "kept":
+                pre.steers = False
+        for keep in stabs:
+            if len(causes) >= max_causes:
+                break
+            if (await ft(frozenset(keep))).flipped:
+                s = await ddmin(list(keep), ft, pred=is_flipped)
+                causes.append(Cause(list(s), forced=True))
+                notes.append(f"{TRIGGERS_AND_STEERS_FORCED}the stabilizer of the action family also steers the "
+                             f"choice: with E forced, removing {', '.join(s)} changes it")
+    elif force and (preconds or stabs) and getattr(test, "force_note", ""):
+        notes.append(f"E not forced: {test.force_note}")
+
     for cause in causes:
+        t_c = _forced_test(test) if cause.forced else test
         if refine:
-            cause.members = await _refine_members(cause.members, by_id, test, is_flipped)
-        cause.members, cause.restored = await _prune_bundle(cause.members, by_id, test, is_flipped, notes)
+            cause.members = await _refine_members(cause.members, by_id, t_c, is_flipped)
+        cause.members, cause.restored = await _prune_bundle(cause.members, by_id, t_c, is_flipped, notes)
         removal = list(cause.members)  # what is removed to confirm the flip
         cause.removal = removal
-        if strict_restore or member_controls:
+        if (strict_restore or member_controls) and not cause.forced:
             # vetted-out members stay in the confirming removal (the flip may need
             # them gone too), but are not reported as carriers
             cause.members, cause.restored = await _vet_members(
                 cause.members, cause.restored, by_id, test, strict_restore, member_controls,
                 control_pool, protected_ids, rng, notes)
-        cause.together = await test(frozenset(removal), fresh=True)
+        cause.together = await t_c(frozenset(removal), fresh=True)
         if not cause.together.flipped:
             notes.append(f"dropped an unconfirmed finding ({', '.join(cause.members)}): {cause.together} "
                          "after more replays")
             continue
         if len(cause.members) > 1:
             for cid in cause.members:
-                cause.alone[cid] = await test(frozenset([cid]))
+                cause.alone[cid] = await t_c(frozenset([cid]))
         size = sum(by_id[c].chars for c in cause.members)
         for ctl in pick_controls(control_pool, size, set(cause.members) | protected_ids, n_controls, rng):
             cause.controls.append((" / ".join(_short(c.text, 40) for c in ctl),
-                                   await test(frozenset(), extra=ctl)))
+                                   await t_c(frozenset(), extra=ctl)))
     causes = [c for c in causes if c.together and c.together.flipped]
     if audit_n:
         await audit_findings(causes + preconds, test, audit_n, alpha)
@@ -1283,6 +1479,14 @@ async def search(coarse: list[Chunk], test, max_causes: int = 3, refine: bool = 
             uncertified.extend(failed)
         causes = [c for c in causes if c.certified]
         preconds[:] = [p for p in preconds if p.certified]
+    final = {id(c) for c in causes}
+    for fid, pre in steer_of.items():
+        if fid in final:
+            pre.steers = True
+            fc = next(c for c in causes if id(c) == fid)
+            notes.append(f"triggers_and_steers: {', '.join(pre.members)}: removing it stops the action family, "
+                         f"and with E forced removing {', '.join(fc.members)} also changes the choice "
+                         f"({fc.together})")
     causes.sort(key=lambda c: c.specific is False)  # specific causes first
     everything = first_flip if first_flip is not None else last_probe
     return everything, causes
@@ -1348,6 +1552,9 @@ def add_args(ap) -> None:
                          "(intersection-union within a bundle, Holm across findings); 0 = off (v0.2 behaviour)")
     ap.add_argument("--alpha", type=float, default=0.05,
                     help="family-wise error rate for the audit (default 0.05)")
+    ap.add_argument("--no-force", action="store_true",
+                    help="ablation: never force the action family with tool_choice; a precondition is then "
+                         "not tested for also steering the choice (v0.2.1 behaviour)")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--base-url", default=None)
     ap.add_argument("--model", default=None, help="override the model name in the replayed request")
@@ -1377,7 +1584,8 @@ def _serialize_findings(findings: list[Cause], by_id: dict[str, Chunk]) -> list[
              "restored": {k: asdict(v) for k, v in c.restored.items()},
              "controls": [{"removed": t, **asdict(o)} for t, o in c.controls],
              "certified": c.certified, "p_value": c.p_value, "p_adjusted": c.p_adjusted,
-             "coupled": c.coupled,
+             "coupled": c.coupled, "forced": c.forced, "steers": c.steers,
+             "steer_test": asdict(c.steer_test) if c.steer_test else None,
              "audit": {k: asdict(v) for k, v in c.audit.items()}} for c in findings]
 
 
@@ -1458,9 +1666,12 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
     for c in coarse:
         for k in c.children:
             by_id[k.id] = k
+    no_force = forcing_unavailable(fmt, step.body, given_matcher, given_target)
+    force = not getattr(args, "no_force", False)
     test = Tester(step, base, api_key, matcher, target, by_id, ledger, b_cond_rate, args.batch, args.max_n,
                   args.concurrency, given_matcher=given_matcher, given_target=given_target,
-                  baseline_given_rate=b_given_rate, free=free)
+                  baseline_given_rate=b_given_rate, free=free,
+                  force_tool=given_target if force and no_force is None else None)
     think = [c.id for c in coarse if c.kind == "thinking"]
     if think:
         o = await test(frozenset(think))
@@ -1485,7 +1696,8 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
                                           stabilize=not getattr(args, "no_stabilize", False),
                                           stabilizers=stabilizers,
                                           audit_n=getattr(args, "audit_n", 0),
-                                          alpha=getattr(args, "alpha", 0.05), uncertified=uncertified)
+                                          alpha=getattr(args, "alpha", 0.05), uncertified=uncertified,
+                                          force=force)
         stopped = None
     except BudgetStop as e:
         everything, causes, stopped = None, [], str(e)
@@ -1520,6 +1732,11 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
                 + ("" if p.specific else "  -> NOT specific: random removals stop it too"))
         if p.certified is not None:
             say(_certificate(p))
+        if p.steers:
+            say(f"  triggers and steers: with {g_lbl} forced, removing it also changes the choice "
+                f"({p.steer_test}); see the forced cause below")
+        elif p.steers is False:
+            say(f"  only a precondition: with {g_lbl} forced, removing it keeps the choice ({p.steer_test})")
     for keep in stabilizers:
         say(f"\nDiffuse context the action family needs (kept while searching the choice; {len(keep)} chunk(s)):")
         for cid in keep:
@@ -1527,10 +1744,11 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
     for n, c in enumerate(causes, 1):
         together = c.together
         what = "Cause" if c.specific is not False else "Context it needs (not specific)"
+        forced_s = f", with {given_target} forced" if c.forced else ""
         if len(c.members) == 1:
-            say(f"\n{what} {n} (removing it flips the decision: {together}):")
+            say(f"\n{what} {n} (removing it flips the decision{forced_s}: {together}):")
         else:
-            say(f"\n{what} {n} (redundant: only removing all of these flips it: {together}):")
+            say(f"\n{what} {n} (redundant: only removing all of these flips it{forced_s}: {together}):")
         for cid in c.members:
             ch = by_id[cid]
             extra_s = ""
@@ -1577,6 +1795,10 @@ async def why(step: Step, args, api_key: str, base: str, out=None) -> dict:
                   diffuse_preconditions=[[{"id": m, "kind": by_id[m].kind, "label": by_id[m].label,
                                            "text": by_id[m].text} for m in keep] for keep in stabilizers],
                   triggers_and_steers_suspected=any(n.startswith(TRIGGERS_AND_STEERS) for n in notes),
+                  forcing={"tool": test.force_tool, "unavailable": no_force if force else "--no-force",
+                           "note": test.force_note or None,
+                           "baseline": asdict(test.forced_base) if test.forced_base else None,
+                           "threshold": test.forced_threshold},
                   cache_stats=cache_stats,
                   notes=notes, stopped=stopped, tests=test.log, cost=cost,
                   replays=test.replays + len(samples))

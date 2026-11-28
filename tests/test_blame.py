@@ -601,3 +601,75 @@ def test_tester_pins_cache_breakpoints_on_ablated_anthropic_requests(tmp_path):
                free=True)
     out = t.ablated([by_id["pair:B"]])
     assert _marks(out)[-1] == ("messages", 2, "content", 0) and len(_marks(out)) == 3
+
+
+# ------------------------------------------------------------------ 6.4: E forced by tool_choice
+
+def test_force_tool_choice_and_when_E_can_be_forced():
+    from ctxblame.blame import force_tool_choice, forcing_unavailable
+    oai = {"tools": [{"type": "function", "function": {"name": "bash"}}], "messages": []}
+    anth = {"tools": [{"name": "Bash", "input_schema": {}}], "messages": []}
+    assert force_tool_choice(OPENAI, oai, "bash")["tool_choice"] == {"type": "function", "function": {"name": "bash"}}
+    assert force_tool_choice(ANTHROPIC, anth, "Bash")["tool_choice"] == {"type": "tool", "name": "Bash"}
+    assert "tool_choice" not in oai  # the recorded request is not changed
+    assert forcing_unavailable(OPENAI, oai, Matcher("name"), "bash") is None
+    assert "intent-level" in forcing_unavailable(OPENAI, oai, Matcher("intent"), "run pytest")
+    assert "not among" in forcing_unavailable(OPENAI, oai, Matcher("name"), "read_file")
+    assert "unconditional" in forcing_unavailable(OPENAI, oai, None, None)
+    think = {**anth, "thinking": {"type": "enabled", "budget_tokens": 1024}}
+    assert "extended thinking" in forcing_unavailable(ANTHROPIC, think, Matcher("name"), "Bash")
+
+
+def fake_forced(collapse_rule, flip_rule, forced_flip_rule):
+    """fake_cond plus E forced: ``forced_flip_rule(removed)`` -> the choice flips under do(E)."""
+    base = fake_cond(collapse_rule, flip_rule)
+
+    async def test(removed, extra=(), fresh=False, forced=False):
+        if forced:
+            r = frozenset(removed) | frozenset(c.id for c in extra)
+            return (Outcome(0, 10, "flipped", k_given=10, n_total=10) if forced_flip_rule(r)
+                    else Outcome(10, 10, "kept", k_given=10, n_total=10))
+        return await base(removed, extra, fresh)
+
+    async def can_force():
+        return True
+    test.force_tool, test.can_force, test.force_note = "bash", can_force, ""
+    return test
+
+
+def test_search_with_E_forced_separates_triggers_and_steers_from_a_pure_precondition():
+    # edit_file: removing it stops E, and with E forced the choice stays (pure precondition).
+    # doc_rule: removing it stops E too, and with E forced the agent picks another command
+    # (the p3/precond_2or_pnpm shape): it triggers and steers.
+    chunks = [C(x) for x in ("tool_bash", "sys_rule", "doc_rule", "edit_file", "c3")]
+    t = fake_forced(collapse_rule=lambda r: bool(r & {"edit_file", "doc_rule"}),
+                    flip_rule=lambda r: {"tool_bash", "sys_rule"} <= r,
+                    forced_flip_rule=lambda r: "doc_rule" in r or {"tool_bash", "sys_rule"} <= r)
+    preconds, notes = [], []
+    _, causes = asyncio.run(search(chunks, t, n_controls=0, preconditions=preconds, notes=notes, force=True))
+    steers = {p.members[0]: p.steers for p in preconds}
+    assert steers == {"edit_file": False, "doc_rule": True}
+    forced = [c.members for c in causes if c.forced]
+    assert forced == [["doc_rule"]]
+    assert [sorted(c.members) for c in causes if not c.forced] == [["sys_rule", "tool_bash"]]
+    assert any(n.startswith("triggers_and_steers: doc_rule") for n in notes)
+    # without forcing (v0.2.1), both are plain preconditions and nothing is said about steering
+    preconds2: list[Cause] = []
+    _, causes2 = asyncio.run(search(chunks, t, n_controls=0, preconditions=preconds2))
+    assert all(p.steers is None for p in preconds2) and not any(c.forced for c in causes2)
+
+
+def test_search_with_E_forced_finds_the_steering_line_inside_a_stabilizer():
+    # real/run4/step21: the bash tool description enables the action (a stabilizer) and
+    # one of its lines (the --tb=line example) steers the choice once E is forced
+    kids = [C("tool_bash.1"), C("tool_bash.2"), C("tool_bash.3")]
+    chunks = [C("tool_bash", kids), C("sys_rule"), C("hist_pytest")]
+    t = fake_forced(collapse_rule=lambda r: "tool_bash" in r or "tool_bash.1" in r,
+                    flip_rule=lambda r: "tool_bash" in r,
+                    forced_flip_rule=lambda r: "tool_bash" in r or "tool_bash.2" in r)
+    stabs, notes = [], []
+    _, causes = asyncio.run(search(chunks, t, n_controls=0, stabilizers=stabs, notes=notes,
+                                   max_preconditions=0, force=True))
+    assert stabs == [["tool_bash"]]
+    assert [(c.members, c.forced) for c in causes] == [(["tool_bash.2"], True)]
+    assert any(n.startswith("triggers_and_steers (E forced)") for n in notes)
